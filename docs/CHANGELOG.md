@@ -11,6 +11,7 @@ Music and engine content only; the instrument, its UI and its saving are PERF-1'
 * A saved-pieces image of its own ("DRK1"); PERF-1 and HYP-1 banks are no longer read; a factory piece loads exactly as its recipe (the power-on nudge is gone).
 * Browser: DARK-1 page, its own storage keys, a preset browser driven by the engine, new wasm exports, a one-file build (`tools/make_standalone.py`).
 * Tests: `tests/dark/`; the PERF-1 scenarios re-pinned to the DARK-1 presets and retimed for the longer builds.
+* **Own identity on the firmware hub:** release builds are `FM-1_32XXYYZZ` (1.0.1 is `FM-1_32010001`), no longer PERF-1's `FM-1_7XXYYZZ`, so the hub can tell DARK-1 from every other firmware.
 * **Wander** (two new settings pages after SET): the music changes on its own, on the bar: a new piece (this genre or any), a swapped drum kit or part sound, knobs drifting, layers going in and out. Everything sits on top of the stored piece (like Mood) and goes when a new piece starts or Wander is switched off. Not kept at power-off. The browser page has a strip with the same eight settings. Tests: `tests/dark/test_wander.py` (the real app in the host simulator), `tests/dark/wander_wasm.mjs` (the browser engine, minutes of audio) and a Wander section in `browser_test.py`.
 
 ---

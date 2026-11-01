@@ -23,7 +23,7 @@ REPO = "https://github.com/deamonSLINKY/PERF-1"
 pkg = SRC / "build" / f"amb-{ver}.fwsc"
 raw = pkg.read_bytes()
 product = product_of(raw)
-if not re.fullmatch(r"FM-1_7\d{6}", product):
+if not re.fullmatch(r"FM-1_32\d{6}", product):
     sys.exit(f"{pkg}: identity {product!r}: make a release build (tools/release.sh {ver})")
 if b"FELUCCA-LOADER-1" not in raw:
     sys.exit(f"{pkg}: no update loader in it")

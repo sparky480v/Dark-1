@@ -39,7 +39,7 @@ static inline int32_t clamp(int32_t v, int32_t lo, int32_t hi) { return v < lo ?
 #endif
 #define FELUCCA_UAC EN_UAC
 #ifndef FELUCCA_ID
-#define FELUCCA_ID "FM-1_700"     /* package identity (tools/build.py) */
+#define FELUCCA_ID "FM-1_32000000"     /* package identity (tools/build.py) */
 #endif
 #define USB_DX 1                    /* the DX7's SysEx: the player's voices (dx_service) */
 #include "usb.c"

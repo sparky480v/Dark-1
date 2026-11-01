@@ -51,7 +51,8 @@ SDK_SHA256 = {
     "cfg/eq_cfg_hw.bin": "41167491bffed4651750719c973d2758adeb9021a5670d02d6a53c85ed80ea7d",
 }
 
-PRODUCT = "FM-1_700"                # package identity; release builds are FM-1_7XXYYZZ (see main)
+ID_PREFIX = "32"                   # DARK-1's own number on the firmware hub (3275 = DARK on a phone keypad); the hub takes codes of 3 to 8 digits
+PRODUCT = "FM-1_" + ID_PREFIX + "000000"   # package identity; release builds are FM-1_32XXYYZZ (see main)
 VERSION = None                      # FELUCCA_VERSION for release builds (default: firmware/src/ui.c)
 
 
@@ -345,18 +346,18 @@ def mmio_check():
 def main():
     global PRODUCT, VERSION
     ap = argparse.ArgumentParser()
-    ap.add_argument("--release", metavar="X.Y[.Z]", help="release build: identity FM-1_7XXYYZZ, version string X.Y[.Z]")
+    ap.add_argument("--release", metavar="X.Y[.Z]", help="release build: identity FM-1_32XXYYZZ, version string X.Y[.Z]")
     ap.add_argument("--sdk", type=Path, help="JieLi AC79 SDK checkout (default: $AC79_SDK)")
     a = ap.parse_args()
     name = "amb.fwsc"
     if a.release:
-        # identity FM-1_7 + major, minor, patch as two digits each (0.1 -> FM-1_7000100): FM-1 is the
+        # identity FM-1_32 + major, minor, patch as two digits each (0.1 -> FM-1_32000100): FM-1 is the
         # model the update tools match on; the number is ours (X0X is FM-1_9...). Digits only after the
         # underscore, as the tools parse it.
         m = re.fullmatch(r"(\d{1,2})\.(\d{1,2})(?:\.(\d{1,2}))?(-[A-Za-z0-9]+)?", a.release)
         if not m:
             raise SystemExit(f"--release {a.release}: use X.Y[.Z][-suffix], up to two digits each")
-        PRODUCT = "FM-1_7%02d%02d%02d" % (int(m[1]), int(m[2]), int(m[3] or 0))
+        PRODUCT = "FM-1_" + ID_PREFIX + "%02d%02d%02d" % (int(m[1]), int(m[2]), int(m[3] or 0))
         VERSION = a.release.upper()
         name = f"amb-{a.release}.fwsc"
     fm1pkg_make.SDK = a.sdk

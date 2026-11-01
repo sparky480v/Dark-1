@@ -1,0 +1,9 @@
+{
+  "what": "Dark-music firmware for the FM-1: 16 dark genres (industrial, horror, darkwave, dark techno and more) with 10 pieces each, 160 in all. Wander mode changes pieces, sounds, knobs and layers on its own, so a groove keeps evolving without being touched.",
+  "author": "Polystellarflow",
+  "kinds": [
+    "groove"
+  ],
+  "image": "docs/card.png",
+  "play": "https://sparky480v.github.io/Dark-1/play/"
+}

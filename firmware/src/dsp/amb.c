@@ -12,14 +12,17 @@
 
 const char *const EN_NOTE_NAME[12] = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
 const char *const EN_MODE_NAME[EN_NMODES] = {"Ionian", "Dorian", "Phrygian", "Lydian", "Mixolyd.", "Aeolian",
-                                             "Pent maj", "Pent min", "Locrian", "Harm min", "Phryg dom", "Dbl harm", "Whole tone", "Blues min"};
+                                             "Pent maj", "Pent min", "Locrian", "Harm min", "Phryg dom", "Dbl harm", "Whole tone", "Blues min",
+                                             "Hung min", "Neapol min", "Dim W-H", "Persian"};
 #define B(a, b, c, d, e, f, g) (1u << (a) | 1u << (b) | 1u << (c) | 1u << (d) | 1u << (e) | 1u << (f) | 1u << (g))
 const uint16_t EN_MODE_POOL[EN_NMODES] = {
     B(0, 2, 4, 5, 7, 9, 11), B(0, 2, 3, 5, 7, 9, 10), B(0, 1, 3, 5, 7, 8, 10), B(0, 2, 4, 6, 7, 9, 11),
     B(0, 2, 4, 5, 7, 9, 10), B(0, 2, 3, 5, 7, 8, 10), B(0, 2, 4, 7, 9, 9, 9),  B(0, 3, 5, 7, 10, 10, 10),
     /* DARK-1: Locrian (b2 b5: the unstable one), harmonic minor, Phrygian dominant, double harmonic (the "Arabic" scale), whole tone, minor blues */
     B(0, 1, 3, 5, 6, 8, 10), B(0, 2, 3, 5, 7, 8, 11), B(0, 1, 4, 5, 7, 8, 10), B(0, 1, 4, 5, 7, 8, 11),
-    B(0, 2, 4, 6, 8, 10, 10), B(0, 3, 5, 6, 7, 10, 10)};
+    B(0, 2, 4, 6, 8, 10, 10), B(0, 3, 5, 6, 7, 10, 10),
+    /* 1.0.2: Hungarian minor, Neapolitan minor, diminished whole-half (eight notes), Persian */
+    B(0, 2, 3, 6, 7, 8, 11), B(0, 1, 3, 5, 7, 8, 11), B(0, 2, 3, 5, 6, 8, 9) | 1u << 11, B(0, 1, 4, 5, 6, 8, 11)};
 #undef B
 const char *const EN_LANE_NAME[EN_NLANE] = {"Kick", "Snare", "Clap", "Hat", "Open hat", "Perc"};
 
@@ -279,7 +282,7 @@ static const char *const PAD_DEST_NAME[4] = {"Filter", "Level", "Pan", "Pitch"};
 static const char *const DRONE_DEST_NAME[4] = {"Cutoff", "Pitch", "Level", "Drive"};
 static const char *const NOISE_NAME[8] = {"Mint", "Clean", "Light", "Used", "Worn", "Scratched", "Dusty", "Trashed"};   /* the vinyl's wear */
 static const char *const TRIG_NAME[6] = {"Chord", "1 bar", "2 bars", "4 bars", "8 bars", "Off"};
-static const char *const THEME_NAME[EN_NTHEME] = {"Imp", "Synth", "Acid", "Ice", "Ember", "Phosphor"};
+static const char *const THEME_NAME[EN_NTHEME] = {"Crimson", "Synth", "Acid", "Ice", "Ember", "Phosphor"};
 /* the voice bank: what each voice can play (the sounds themselves: PAD_SOUND, DRONE_SOUND, ACID_SOUND, and
  * the kits: the old styles' drums) */
 const char *const EN_PAD_SOUND[EN_NSOUND] = {"Tomb", "Choir", "Strings", "Shards", "Cathedral", "Ember", "Stabs", "Abyss",
@@ -292,7 +295,7 @@ const char *const EN_ACID_SOUND[EN_NACID] = {"Saw", "Square", "Driven", "Sync", 
                                               "Eclipse", "Bleep", "Fifth", "Toll", "Organ", "Laser", "Fold", "Dusk",
                                               "Marimba", "E.Piano", "Bone", "Brass", "Gong", "Clav", "Vibes", "Digital",
                                               "Super", "CZ", "Mini", "Hyper", "CZ Pulse", "CZ Bell", "Lead"};
-const char *const EN_KIT_NAME[EN_NKIT] = {"Pound", "Rumble", "Crush", "Anvil", "Ritual", "Coffin", "Slam", "Hangar", "Machine", "Nave", "Void", "Bone", "Neuro", "Dread"};
+const char *const EN_KIT_NAME[EN_NKIT] = {"Pound", "Rumble", "Crush", "Anvil", "Ritual", "Coffin", "Slam", "Hangar", "Machine", "Nave", "Void", "Bone", "Neuro", "Dread", "Tomb", "Static", "Piston", "Marrow"};
 
 /* the envelopes' times, from their knobs (0..100), in seconds */
 static float pe_atk_s(int v) { return 0.05f * fm_exp2f((float)v * 0.0764f); }        /* 0.05 .. 10 s */
@@ -880,6 +883,22 @@ static const kit_t KITS[EN_NKIT] = {
     {3.0f, 0.0013f, 0.30f, 1.50f, 0.25f, 1.4f, 0.6f,
      180.0f, 310.0f, 1.7f, 0.8f, 1.15f, 330.0f, 1.2f,
      1.3f, 0.6f, 0.7f, 1.1f, 250.0f, 2.2f, 1.4f, 1.25f, 0.0f, 0.05f},
+    /* 14 Tomb (1.0.2): a deep soft thud with a long dark tail, a hollow low snare, muffled hats, a slow low tom */
+    {2.2f, 0.0010f, 0.34f, 1.80f, 0.06f, 0.8f, 0.8f,
+     110.0f, 190.0f, 0.8f, 1.0f, 1.6f, 420.0f, 1.4f,
+     0.8f, 0.8f, 0.5f, 1.6f, 55.0f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f},
+    /* 15 Static (1.0.2): glitch: a clicky short kick, a noise-burst snare, hissing ticks, an FM chirp; crushed */
+    {7.0f, 0.0026f, 0.08f, 0.35f, 0.80f, 2.2f, 0.0f,
+     380.0f, 700.0f, 2.4f, 0.4f, 0.5f, 300.0f, 0.5f,
+     2.4f, 0.1f, 1.0f, 0.5f, 700.0f, 3.1f, 2.0f, 1.0f, 0.3f, 0.5f},
+    /* 16 Piston (1.0.2): factory: a hard flat thump, a steam-hiss snare, ringing pipes for hats, a hammered pipe */
+    {5.0f, 0.0020f, 0.13f, 0.55f, 0.45f, 2.5f, 0.2f,
+     260.0f, 480.0f, 2.2f, 0.6f, 0.7f, 260.0f, 0.8f,
+     1.7f, 0.7f, 0.9f, 1.6f, 240.0f, 2.9f, 2.2f, 1.1f, 0.0f, 0.25f},
+    /* 17 Marrow (1.0.2): ritual: a warm round skin kick, a bone-dry rattle snare, shaker-like hats, a hollow log */
+    {3.0f, 0.0013f, 0.20f, 0.90f, 0.04f, 1.0f, 0.3f,
+     150.0f, 240.0f, 1.0f, 0.9f, 1.0f, 380.0f, 0.9f,
+     1.0f, 0.8f, 0.7f, 1.1f, 130.0f, 1.4f, 0.8f, 1.0f, 0.0f, 0.0f},
 };
 static const kit_t *KK = &KITS[0], *KS = &KITS[0], *KH = &KITS[0], *KP = &KITS[0];   /* kick, snare and
                                                  * clap, hats, perc: each its kit */
@@ -1856,7 +1875,7 @@ static int sec, sec_bars, sec_req, pat_now, pat_next;   /* sec_bars: a build's b
 static uint32_t bars;                           /* bars played (the drone's envelope counts them) */
 static uint8_t fill_hold;
 static uint8_t riser_cut;                         /* the drop: the build's riser is cut at once (its high-pass was thinning the first kick) */
-static uint8_t fill_q, fill_bar, dj_sync, drop_imp;   /* a fill asked for the next bar; this bar's; the DJ follows the chords; the drop's impact is due */
+static uint8_t fill_q, fill_bar, dj_sync, drop_hit;   /* a fill asked for the next bar; this bar's; the DJ follows the chords; the drop's impact is due */
 /* SECTIONS by genre (audit M-13): what a breakdown keeps (the kick: house, techno, dub; the hats: drum and bass), how far the pad rises in it (percent),
  * how many bars a build takes (a trap's two, a house's eight), and whether the kick comes back for the build's last bar (the four on the floor) */
 static const dk_sect_t SECT[EN_NGENRE] = DK_SECT_TABLE;   /* DARK-1: per genre, from dark_presets.h */
@@ -1893,7 +1912,7 @@ static uint8_t lane_src[EN_NLANE];              /* the pattern each lane plays (
  * eighths, the quarters last); above, hits arrive on the most important empty steps (up to half of them, at 100). The pattern is never edited. */
 uint16_t en_lane_mask(int l, int pat, int dens)
 {
-    static const uint8_t IMP[16] = {0, 8, 4, 12, 2, 10, 6, 14, 1, 3, 5, 7, 9, 11, 13, 15};   /* the steps, most important first */
+    static const uint8_t STEP_RANK[16] = {0, 8, 4, 12, 2, 10, 6, 14, 1, 3, 5, 7, 9, 11, 13, 15};   /* the steps, most important first */
     uint32_t b = en_pats[(unsigned)pat < EN_NPAT ? pat : 0][(unsigned)l < EN_NLANE ? l : 0];
     int pop = bits16(b), n, k;
     if (dens == 50)
@@ -1901,15 +1920,15 @@ uint16_t en_lane_mask(int l, int pat, int dens)
     if (dens < 50) {
         n = (pop * (50 - dens) + 25) / 50;
         for (k = 15; k >= 0 && n > 0; k--)
-            if (b >> IMP[k] & 1u) {
-                b &= ~(1u << IMP[k]);
+            if (b >> STEP_RANK[k] & 1u) {
+                b &= ~(1u << STEP_RANK[k]);
                 n--;
             }
     } else {
         n = ((16 - pop) * (dens - 50) + 50) / 100;
         for (k = 0; k < 16 && n > 0; k++)
-            if (!(b >> IMP[k] & 1u)) {
-                b |= 1u << IMP[k];
+            if (!(b >> STEP_RANK[k] & 1u)) {
+                b |= 1u << STEP_RANK[k];
                 n--;
             }
     }
@@ -2009,7 +2028,7 @@ static void section_cmd(int c)                  /* the player's: on the bar */
     } else if (sec != SEC_GROOVE) {             /* the drop: at once the full groove (the breakdown's swell and the build's dip gone, not eased out), the kick, clap and open hat on the one */
         sec = SEC_GROOVE;
         brk = 0.0f;
-        drop_imp = 1;
+        drop_hit = 1;
         riser_cut = 1;
         drop_tonic = 0;
         if (deg != 0 && nsteps > 1 && frand() < 0.7f) {   /* the drop lands at home, mostly */
@@ -2258,6 +2277,7 @@ static const cm_snd_t CM_SOUND[CM_NPLAIN] = {
 };
 const char *EN_CM_SOUND[EN_NCMSND] = {"Pluck", "Marimba", "E.Piano", "Kalimba", "Bell", "Vibes", "Gong", "Clav", "Digital", "Brass", "Bleep", "Glass",
     "DK TINE EP", "GLASS TOLL", "SUB PULSE", "DREAD BRSS", "GHOST PAD", "LOG SKIN", "COLD ORGAN", "BONE PICK", "BLACK BRSS", "IRON BASS", "CATHEDRAL", "HOLLOW WD", "CLAV BITE", "FUNERAL ST", "SHARD PAD", "WRAITH LD", "DIRGE HARP", "DEAD KALIM", "BREATH FLT", "RUST PANS", "REESE BASS", "DOOM TUBUL", "SLIDE MOAN", "WIRE GTR", "DEAD MUTE", "DRIVE GTR", "ROT SLAP", "SIREN BRSS", "COLD SAX", "MUTE HORN",
+    "ASH PIANO", "VOID BELL", "GRAVE VOX", "TAR STAB", "HEX BASS", "MOLD WIND", "CRYPT HARP", "NEON KNELL",
     "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)",
     "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)"};
 const char *const EN_CM_STYLE[EN_NCMSTYLE] = {"Up", "Down", "Up-down", "Random", "Skip", "Thirds"};
@@ -2267,7 +2287,7 @@ const char *const EN_CM_RATE[4] = {"1/4", "3/16", "1/8", "1/16"};   /* slowest t
 #define FM_OUT 0.22f                            /* the DX voices' level against the plain sounds; FM_GAIN: each patch's, to level them */
 /* fmcal levels each voice's peak to the plain sounds'; the ear hears loudness, and a voice that sustains sits 30-40 dB above a plain pluck 0.3 s into
  * a note (audit M-65), so the sustaining ones are taken down 8 dB (x0.40; x0.42 nylon and harp, x0.55 steel drum) and the percussive ones stay */
-static const float FM_GAIN[EN_NCMFM] = {0.98f, 1.51f, 0.91f, 1.81f, 4.08f, 3.75f, 1.12f, 6.00f, 1.92f, 0.91f, 1.47f, 3.66f, 6.00f, 6.00f, 1.89f, 1.12f, 2.52f, 6.00f, 2.30f, 1.59f, 0.44f, 1.16f, 2.69f, 3.02f, 6.00f, 1.10f, 5.92f, 2.23f, 1.83f, 3.16f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f};   /* DARK-1: tests/host/fmcal on the dark voices (capped at 6); loaded voices 0.5 */   /* (the loaded voices: not measured, a sustaining voice's -6 dB) */
+static const float FM_GAIN[EN_NCMFM] = {0.98f, 1.51f, 0.91f, 1.81f, 4.08f, 3.75f, 1.12f, 6.00f, 1.92f, 0.91f, 1.47f, 3.66f, 6.00f, 6.00f, 1.89f, 1.12f, 2.52f, 6.00f, 2.30f, 1.59f, 0.44f, 1.16f, 2.69f, 3.02f, 6.00f, 1.10f, 5.92f, 2.23f, 1.83f, 3.16f, 1.0f, 1.70f, 1.86f, 1.40f, 0.24f, 1.02f, 2.78f, 1.46f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f};   /* DARK-1: tests/host/fmcal on the dark voices (capped at 6); loaded voices 0.5 */   /* (the loaded voices: not measured, a sustaining voice's -6 dB) */
 /* the DX voices are rendered by the other core, a chunk ahead: its job renders this chunk's samples into a ring, and the first core plays the ones from
  * FM_D samples before (a chunk), so it never waits for them; the cost is that they sound 5.8 ms late */
 #define FM_R 512
@@ -2602,7 +2622,7 @@ static void bl_step(int st, int32_t w)
     case 6: hit = BL_RIFF[g].mask >> st & 1; break;
     default: hit = BL_FIG[(mode - 7) % EN_NBLFIG].mask >> st & 1; break;
     }
-    if (drop_imp && st == 0)
+    if (drop_hit && st == 0)
         hit = 1;
     if (!hit)
         return;
@@ -2864,7 +2884,7 @@ static void tick(void)
         }
         if (hit && par[P_PROB + l] < 100 && frand() * 100.0f >= (float)par[P_PROB + l])   /* the lane's probability: some hits do not sound */
             hit = 0;
-        if (drop_imp && st == 0 && (l == L_KICK || l == L_CLAP || l == L_OHAT)) {   /* the drop lands */
+        if (drop_hit && st == 0 && (l == L_KICK || l == L_CLAP || l == L_OHAT)) {   /* the drop lands */
             hit = 1;
             vel = l == L_KICK ? 1.0f : 0.95f;
             if (l == L_OHAT)
@@ -2889,7 +2909,7 @@ static void tick(void)
             dbl = 3;
         if (hit && l == L_KICK && (fxm & FXB(FX_DBLKICK)))                  /* DBL KICK: and again half a step on */
             dbl = 1;
-        if (hit && sec == SEC_GROOVE && !fill_hold && !fill_bar && !(dd_fill && st >= 8) && !drop_imp) {   /* the step's tricks: its level, push and ratchet (not in a fill, a build or the drop's own hits) */
+        if (hit && sec == SEC_GROOVE && !fill_hold && !fill_bar && !(dd_fill && st >= 8) && !drop_hit) {   /* the step's tricks: its level, push and ratchet (not in a fill, a build or the drop's own hits) */
             static const float LV[4] = {1.0f, 0.4f, 0.7f, 1.12f};
             const uint32_t md = en_mod[l][ls & 15];
             vel = fm_clampf(vel * (1.0f + (LV[md >> 6 & 3u] - 1.0f) * (float)par[P_ACCENT] * 0.02f), 0.05f, 1.0f);   /* (Accents 50: as marked) */
@@ -2957,7 +2977,7 @@ static void tick(void)
         }
     }
     en_drum_pos = (uint8_t)st;
-    drop_imp = 0;
+    drop_hit = 0;
     if (links_on() && par[P_LK_PERC] && sec == SEC_GROOVE) {
         if (perc_hit)
             acid_step(loose(sw, 6.0f));         /* the links: the perc lane is the acid's clock */

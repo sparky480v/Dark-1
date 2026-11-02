@@ -258,8 +258,7 @@ a guarantee. Otherwise, recovery needs
 New to PERF-1? **Start here**, at the top of this manual, walks you through your first hour. This is the
 short version.
 
-1. Switch it on. The **deamonSLINKY** card shows (the slinky mascot hops twice and blinks, then the name and
-   PRESENTS), then the **PERF-1** card (the version, "by deamonSLINKY", "based on HYP-1 by RedtailWorks"),
+1. Switch it on. The **DARK-1** card shows ("by Polystellarflow"), then the credit card (the version, "based on PERF-1 by deamonSLINKY", "based on HYP-1 by RedtailWorks"),
    with sixteen steps filling in and the white keys lighting with them. Any button or key skips the cards.
    Then a random piece from the HYPNO bank starts playing.
 2. Turn **SELECT** to move through the pages. The four knobs under the screen change what each page shows.
@@ -302,7 +301,7 @@ short version.
 | **HOME** | The Tempo page. Again: the Perform screen, then back to Tempo. Twice quickly: the visualizers. Held: the settings. Held with **SELECT**: the tempo. |
 | **SAVE** | A breakdown on the next bar. Again: a build and the drop. Held: the drop. On Global: stores the piece. |
 | **SEQ** | The Drums page. Again: Links, Kit, Drum drift, Groove, Steps, Feel, Phrase. Held: the sequencer. Tapped in the sequencer: back to Drums. With **SEL** held: the links on and off. |
-| **PLAY** | Play and stop. |
+| **PLAY** | Play and stop. With **SEL**: Dice, a roll of Wander's changes. |
 | **REC** | Freeze: the chord holds and the reverb rings on until you press it again. With **SEL**: Capture, which writes the bar you played on Jam into the acid line or the pluck loop (section 10). |
 | White keys | The scale: each key adds or removes its note (the root stays). On the pages of a voice played by hand, and on Jam: that voice. In the sequencer: the 16 steps. In the FX menu: the effects. On Perform, the visualizers, and with **GLO** held: the track mix. |
 | Black keys | The same as the white keys. |
@@ -342,8 +341,7 @@ hardware (section 18).
 `V01` for dub, `N05` for DnB, `B04`, `G09`, `E06`, `T10`, `S03`, `F01`, `R07`, `W01`, `A05`, `P02` for the others). A mark in the tag means the piece has changes
 you haven't stored. Next to the tag are the root and the mode.
 
-**Top right.** The slinky mascot. It hops on the kick, squashes on the snare, jumps on the drop, sleeps in a
-breakdown and shakes in a build. Next to it is the tempo. It says `EXT` while an outside MIDI clock (another
+**Top right.** The tempo. It says `EXT` while an outside MIDI clock (another
 device sending its tempo over MIDI) drives it, and shows a play triangle beside it while stopped. To the left
 of those, marks show what's on:
 
@@ -371,8 +369,7 @@ of those, marks show what's on:
 - Behind it, a pentagram turns once every 16 bars, and runes flare by the notes the pluck plays.
 - In the middle is a demon eye. In a groove it's half open: the pupil widens on the kick and the gaze flips
   on the snare. It shuts in a breakdown. In a build it opens wide and trembles, and the phrase ring breaks
-  into spinning gaps. The drop brings a white flash and a shock ring. **SEL** + **HOME** puts the slinky imp
-  there instead (kept after power-off).
+  into spinning gaps. The drop brings a white flash and a shock ring.
 - At the top right, a bar fills towards the next chord change, or says `held` while frozen.
 - When the FM-1 is working hard, it stops drawing the pentagram and runes first.
 
@@ -423,7 +420,7 @@ columns are **KNOB1** to **KNOB4**.
 | Acid line | **ARP** x3 | Density | Length (1-16) | Range (1-3 octaves) | Mutate (hold **SEL** and turn to choose what a mutation changes: all, notes, rhythm or accents) |
 | Acid answer | **ARP** x4 | Answer (off, octave, fifth, third, mirror, reverse, rotate, sparse, accents) | Every (the 2nd to the 8th time round the line, or Drift: the bar before the drums change) | Direction (down 2, down, same, up, up 2) | Sync (bar, or the whole loop) |
 | Acid steps | **ARP** x5 | Step (pick one with a white key: rest, note, accent, slide, accent + slide) | Note (0-11 scale steps above the chord) | Octave (0-3) | Frozen (free, frozen) |
-| Pluck | **ARP** x6 | Level | Sound (12 + 30 DX7 + yours) | Density | Octave (-2 to +2) |
+| Pluck | **ARP** x6 | Level | Sound (12 + 38 DX7 + yours) | Density | Octave (-2 to +2) |
 | Pluck 2 | **ARP** x7 | Decay | Style (up, down, up-down, random, skip, thirds) | Rate (1/4, 3/16, 1/8, 1/16, slow to fast) | Range (1-3 octaves) |
 | Deja vu | **ARP** x8 | Pluck vu (0 always new notes, 100 locked) | Loop (4, 8, 16, 32 notes) | Leaps (notes jumping an octave) | Motif (0 off to 100: how often a bar reworks the phrase's first bar) |
 | Pluck steps | **ARP** x9 | Step (pick a step with a white key: rest, soft, note, accent) | Note (1-12: the chord's notes, low to high) | Octave (the pluck's, -2 to +2) | Frozen (free, frozen) |
@@ -637,7 +634,7 @@ stored it. If you didn't, it plays the factory piece with small random changes.
 
 ## 7. Sounds, kits and playing
 
-Each voice has its own list of sounds, and each drum can take its sound from any of fourteen kits. The sounds you
+Each voice has its own list of sounds, and each drum can take its sound from any of eighteen kits. The sounds you
 pick are stored with the piece.
 
 To change a voice's sound, turn the **Sound** knob on its page, or hold **SEL** and turn **ALGORITHM** on any of its
@@ -954,7 +951,7 @@ Hold **SEL** and turn the Mutate knob on that page to choose what a rewrite chan
 
 ![The Kit page](img/perf-screen-kit.png)
 
-Press **SEQ** three times for the Kit page. Each knob picks one drum's sound from the same fourteen kits: the kick,
+Press **SEQ** three times for the Kit page. Each knob picks one drum's sound from the same eighteen kits: the kick,
 the snare (with the clap), the hats (closed and open) and the perc.
 
 Some kits **duck** other parts: each kick briefly turns them down, which gives a pumping feel. Some **crush** the
@@ -1519,7 +1516,7 @@ Every few bars, on the bar, in a groove, Wander does one to three things. It cha
 | | **KNOB3** | Knobs: send some knobs drifting a step at a time (the acid's cutoff and density, the pad's brightness and detune, the bass's cutoff, the pluck's density, drive, reverb, echo, Evolve, and the tempo a few BPM) |
 | | **KNOB4** | Layers: mute some layers for a while (the hats, perc, acid, pad, pluck; the bass too when wild). The kick and the snare always play |
 
-Moving to another genre is the genre dial's own move, so Wander makes it only when you have no unsaved changes and no SAVE waiting to be written; otherwise it stays in the genre. What it does to the music is laid on top of the piece, like Mood: the stored piece is never changed, SAVE stores the piece as you left it, and a new piece starts clean. A knob you turn yourself is yours again at once, and the layers you mute yourself stay muted. When Wander is turned off, everything goes back to the piece's own values. Its settings are not kept when the power goes off (it always starts off); the Auto-DJ keeps going as before and the two can run together.
+Moving to another genre is the genre dial's own move, so Wander makes it only when you have no unsaved changes and no SAVE waiting to be written; otherwise it stays in the genre. What it does to the music is laid on top of the piece, like Mood: the stored piece is never changed, SAVE stores the piece as you left it, and a new piece starts clean. A knob you turn yourself is yours again at once, and the layers you mute yourself stay muted. When Wander is turned off, everything goes back to the piece's own values. Its settings are kept when the power goes off; Wander itself starts off unless the Wander knob is set to **ON+KEEP**, which switches it on at every power-on. **Dice** (**SEL** + **PLAY** while a groove plays) rolls a handful of Wander's changes at once without turning it on. The Auto-DJ keeps going as before and the two can run together.
 
 ### Mood
 
@@ -1637,7 +1634,7 @@ The four settings are stored with the piece. The default is a light 1.5:1 at -12
 | **ENV** | On a pad, bass or acid page: takes that voice away from the automatic part so it only plays what you play by hand. Press again to hand it back. |
 | **FX** | Walks through the effects' settings pages one by one, then back to the keys. |
 | A key in the FX menu | Opens that effect's settings page. |
-| **HOME** | Changes the middle of the sigil on the home screen: the eye or the imp. |
+| **HOME** | Nothing extra on the home screen. |
 | **GLO** | Remote: the FM-1's panel plays the emulator (section 17). Works only when stopped, because it stops the music. If the music is playing, the screen says `STOP FIRST`. |
 | **EDIT** | A secret. Works only when stopped. It starts the music by itself. |
 | Black keys 1-6 (in the sequencer) | Copies the pattern you're editing into pattern 1-6. Without SEL, the black keys in the sequencer choose the lane's source (section 8). |
@@ -1664,7 +1661,7 @@ To open the **settings** page, **hold HOME** for just under a second (0.7 s) wit
 
 ### Visualizers
 
-![DISCO, with the dancer on the drum pattern](img/perf-screen-viz-disco.png)
+![SIGIL, the eye in its circle over the drum pattern](img/perf-screen-viz-disco.png)
 
 ![KALEIDO](img/perf-screen-viz-kaleido.png)
 
@@ -1678,7 +1675,7 @@ While a visualizer is up, the knobs are still the FX knobs, **ALGORITHM** still 
 | KALEIDO | Curves drawn from the sound, mirrored four ways like a kaleidoscope, turning and fading. A kick throws out a ring. |
 | BARS | A real spectrum analyser: 24 bars from 70 Hz (low) to 10 kHz (high). |
 | FLUX | A media-player style light show: the spectrum folded back on itself into a trippy bloom. |
-| DISCO | The mascot dancing in a room with a disco ball, light beams and a floor that lights up along with the drum pattern. He jumps on the kicks and changes moves every couple of bars (sway, twirl, wave, headbang, stomp). He sleeps in a breakdown, shakes in a build, and jumps with confetti on the drop. |
+| SIGIL | A ritual circle with a turning pentagram and a demon eye in the middle, in a room with a mirror ball, light beams and a floor that lights up along with the drum pattern. The sixteen dots round the circle are the drum pattern's steps. The eye is half open in a groove, its slit pupil widening on the kick and its gaze flipping on the snare; it shuts in a breakdown, trembles wide open in a build, and a shock ring leaves the circle on the drop. |
 | LIFE | A Game of Life style pattern of cells that the drums feed: the kick drops a cluster, the snare a spray, a hat a spark. |
 | ORBIT | A looping line drawing (a harmonograph) made from the notes of the chord. It changes shape with every chord. |
 | AUTO | Picks one of the others, and switches to a new one at each section change and every 32 bars. |
@@ -1716,19 +1713,19 @@ Installing another firmware, or reinstalling, can wipe what PERF-1 has stored. T
 The **Global** page (**GLO**) has four knobs:
 
 - **Root**: the key the music is in.
-- **Theme**: the colours. Choose Imp, Synth, Acid, Ice, Ember or Phosphor.
+- **Theme**: the colours. Choose Crimson, Synth, Acid, Ice, Ember or Phosphor.
 - **Tune**: fine tuning, +-50 cents (a cent is a hundredth of a semitone).
 - **Genre**: the bank of pieces, the same as **GLO** + **PRESETS**.
 
 MIDI out and the USB audio level are on the **USB & MIDI** settings page. Press **SEL** + **FX** to walk to it; it comes right after Settings.
 
-Synth is a look of its own, the Synth Imp, shown below. A night sky sits behind the sigil, with a striped sun on the horizon. The sun sinks in a breakdown, rises through a build and flashes on the drop. A floor of lines runs towards the horizon once a beat, and the imp glows like a neon tube.
+Synth is a look of its own, the Synth look, shown below. A night sky sits behind the sigil, with a striped sun on the horizon. The sun sinks in a breakdown, rises through a build and flashes on the drop. A floor of lines runs towards the horizon once a beat, and the sigil glows like a neon tube.
 
 ![The Synth look: the home screen](img/perf-screen-home-synth.png)
 
-All the other themes are colour versions of the Imp look. The background is a warm black, and each voice keeps one colour everywhere. In Imp, the pad is bone white, the bass crimson, the acid lime, the pluck ice-teal and the drums pink. The ember colour marks whatever is happening right now.
+All the other themes are colour versions of the Crimson look. The background is a warm black, and each voice keeps one colour everywhere. In Crimson, the pad is bone white, the bass crimson, the acid lime, the pluck ice-teal and the drums pink. The ember colour marks whatever is happening right now.
 
-Along the top of the header is a beat bar. The beats are taller marks, and the step playing is lit. Under it is a coil, the slinky's spring, which stretches on each kick. A piece waiting for the next bar shows as `>08` beside the key and mode.
+Along the top of the header is a beat bar. The beats are taller marks, and the step playing is lit. A piece waiting for the next bar shows as `>08` beside the key and mode.
 
 The knob strip at the bottom has **tabs**. Each tab is one group of pages. The tab you're in opens up to show its name, with a dot for each page. The knob values are shown large, with a bar under each. Hold **SEL** and the tabs are replaced by a one-line hint of what shift does on this page.
 
@@ -1960,7 +1957,7 @@ You were holding **OCT-** and **OCT+** together. Let go before the countdown end
 Run the **hardware calibration** (a Felucca feature). Hold **OCT-** and **OCT+** while you switch the FM-1 on. It asks you to press each button and turn each knob in turn, and saves the result. If you don't touch anything for 30 seconds it gives up and changes nothing.
 
 **The DX7 voices I loaded don't show up.**
-Use the pluck's Sound knob, or **SEL** + **ALGORITHM** on a Pluck page. Your voices come after the 30 built-in DX7 voices. Check that the page said they were sent and the header showed `DX7 VOICES n LOADED`, that the pluck's Level isn't 0, and that the FM-1 runs PERF-1 0.11 or later. A bank must pass the DX7 checksum.
+Use the pluck's Sound knob, or **SEL** + **ALGORITHM** on a Pluck page. Your voices come after the 38 built-in DX7 voices. Check that the page said they were sent and the header showed `DX7 VOICES n LOADED`, that the pluck's Level isn't 0, and that the FM-1 runs PERF-1 0.11 or later. A bank must pass the DX7 checksum.
 
 **Crackles or dropouts.**
 Look at the load line (section 16). `XR` goes up by one with each click. `S1` or `S2` mean the FM-1 is already easing off to keep up. Heavy DX plucks, a shimmer reverb and the fast genres push it hardest. Record a status log for a minute (Live status on the installer page, or `fm1log.py`) and send the CSV to deamonSLINKY, with the piece, its sounds and the tempo.
@@ -1977,7 +1974,7 @@ MIDI notes coming in on channel 1 add and remove notes from the scale. Send on a
 
 **Feedback and contributing.** Comments, ideas and bug reports are welcome, and anyone is invited to help: [open an issue on GitHub](https://github.com/deamonSLINKY/PERF-1/issues/new/choose). The source is at <https://github.com/deamonSLINKY/PERF-1>. A bug report helps most when it includes the version (shown on the boot card), the genre and piece, and, for anything about load or crackles, a status log (section 16).
 
-PERF-1 is by **deamonSLINKY**: the firmware, the slinky mascot and the pages around them. It is a fork of **HYP-1**, a [RedtailWorks](https://www.redtail.works) project, which is itself a fork of [AMB-1](https://github.com/charlesvestal/fm1-amb) by Charles Vestal.
+PERF-1 is by **deamonSLINKY**: the firmware and the pages around them. It is a fork of **HYP-1**, a [RedtailWorks](https://www.redtail.works) project, which is itself a fork of [AMB-1](https://github.com/charlesvestal/fm1-amb) by Charles Vestal.
 
 The platform (USB, update loader, storage, installer) is [Felucca](https://github.com/hugelton/Felucca) by Leo Kuroshita (@kurogedelic), Hügelton Instruments. It reaches PERF-1 by way of X0X and FoMni. The panel calibration is Felucca's. The boot guard, knob acceleration, help cards and anti-aliased drawing came from X0X.
 

@@ -1,44 +1,40 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
-"""The deamonSLINKY mascot (the sprite of the boot card in firmware/src/app/ui.c, its colours) as PNGs for the web pages:
-web/img/slinky.png (a logo, 4 px a pixel) and web/img/favicon.png (32 x 32).  python tools/make_logo.py
-The pages carry them inline (tools/make_logo.py --inline rewrites the data: URIs in web/amb_installer.html)."""
+"""DARK-1's logo for the web pages: a ritual circle, a pentagram and an eye (drawn here, nothing borrowed), as PNGs:
+web/img/dark1.png (92 x 92) and web/img/favicon.png (32 x 32).  python tools/make_logo.py [--inline]
+--inline rewrites the logo and the favicon (data: URIs) in web/amb_installer.html, web/editor/index.html and web/emu/index.html."""
 import base64
 import io
+import math
 import os
 import re
 import sys
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-UI = os.path.join(HERE, "..", "firmware", "src", "app", "ui.c")
-PAL = {"K": (27, 16, 34), "T": (27, 16, 34), "H": (242, 230, 196), "h": (196, 173, 126), "Y": (255, 212, 71),
-       "R": (224, 52, 79), "r": (156, 29, 58), "L": (255, 143, 143)}
+BG, RING, STAR, EYE, IRIS, PUPIL = (20, 14, 12), (156, 29, 58), (224, 52, 79), (244, 232, 200), (111, 224, 210), (20, 14, 12)
 
 
-def sprite():
-    t = open(UI, encoding="utf-8").read()
-    m = re.search(r"static const char \*const MASCOT\[23\] = \{(.*?)\};", t, re.S)
-    rows = re.findall(r'"([^"]*)"', m.group(1))
-    assert len(rows) == 23 and all(len(r) == 23 for r in rows), "the sprite changed shape"
-    return rows
-
-
-def render(rows, scale, size=None):
-    w = 23 * scale
-    im = Image.new("RGBA", (w, w), (0, 0, 0, 0))
-    for y, r in enumerate(rows):
-        for x, c in enumerate(r):
-            if c in PAL:
-                for dy in range(scale):
-                    for dx in range(scale):
-                        im.putpixel((x * scale + dx, y * scale + dy), PAL[c] + (255,))
-    if size:
-        out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-        out.paste(im, ((size - w) // 2, (size - w) // 2))
-        return out
-    return im
+def draw(size):
+    k = 4                                              # drawn four times larger, then reduced (smooth edges)
+    n = size * k
+    im = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    c, r = n / 2, n * 0.46
+    d.ellipse([c - r, c - r, c + r, c + r], fill=BG + (255,), outline=RING + (255,), width=max(2, n // 40))
+    pts = [(c + r * 0.86 * math.cos(-math.pi / 2 + i * 2 * math.pi / 5), c + r * 0.86 * math.sin(-math.pi / 2 + i * 2 * math.pi / 5)) for i in range(5)]
+    for i in range(5):
+        d.line([pts[i], pts[(i + 2) % 5]], fill=STAR + (255,), width=max(2, n // 48))
+    w, h = r * 0.62, r * 0.34                          # the eye: an almond
+    top = [(c + x, c - h * (1 - (x / w) ** 2)) for x in [w * (j / 20 - 1) for j in range(41)]]
+    bot = [(x, 2 * c - y) for x, y in reversed(top)]
+    d.polygon(top + bot, fill=EYE + (255,))
+    ir = h * 0.95
+    d.ellipse([c - ir, c - ir, c + ir, c + ir], fill=IRIS + (255,))
+    pw = max(2, n // 60)
+    d.rectangle([c - pw, c - ir, c + pw, c + ir], fill=PUPIL + (255,))
+    return im.resize((size, size), Image.LANCZOS)
 
 
 def png(im):
@@ -48,16 +44,15 @@ def png(im):
 
 
 def main():
-    rows = sprite()
-    logo, fav = png(render(rows, 4)), png(render(rows, 1, 32))
+    logo, fav = png(draw(92)), png(draw(32))
     os.makedirs(os.path.join(HERE, "..", "web", "img"), exist_ok=True)
-    open(os.path.join(HERE, "..", "web", "img", "slinky.png"), "wb").write(logo)
+    open(os.path.join(HERE, "..", "web", "img", "dark1.png"), "wb").write(logo)
     open(os.path.join(HERE, "..", "web", "img", "favicon.png"), "wb").write(fav)
-    print("slinky.png %d B, favicon.png %d B" % (len(logo), len(fav)))
+    print("dark1.png %d B, favicon.png %d B" % (len(logo), len(fav)))
     if "--inline" in sys.argv:
         d1 = "data:image/png;base64," + base64.b64encode(logo).decode()
         d2 = "data:image/png;base64," + base64.b64encode(fav).decode()
-        for name in ("amb_installer.html", os.path.join("editor", "index.html")):
+        for name in ("amb_installer.html", os.path.join("editor", "index.html"), os.path.join("emu", "index.html")):
             p = os.path.join(HERE, "..", "web", name)
             t = open(p, encoding="utf-8").read()
             t = re.sub(r'(<img class="logo" src=")[^"]*(")', lambda m: m.group(1) + d1 + m.group(2), t)

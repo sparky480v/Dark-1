@@ -35,19 +35,21 @@
                                         * and a kit (en_style_sounds); they were kits 0..4 */
 #define EN_NSOUND 24                   /* the sounds each of pad and drone can play */
 #define EN_NACID 31                    /* the acid's (more: supersaws, CZs, minis) */
-#define EN_NFMFACT 30                  /* the DX7 voices of fm6.inc built in */
+#define EN_NFMFACT 38                  /* the DX7 voices of fm6.inc built in */
 #define EN_NUSER 16                     /* and the ones the player loads (SysEx, en_user_voice), after them */
 #define EN_NCMFM (EN_NFMFACT + EN_NUSER)   /* the counter-melody's six-operator FM sounds: after the plain ones */
 #define EN_NCMSND (12 + EN_NCMFM)      /* the counter-melody's sounds */
 #define EN_NCMSTYLE 6                  /* its styles */
-#define EN_NKIT 14                      /* the sounds each drum (kick, snare + clap, hats, perc) can play */
+#define EN_NKIT 18                      /* the sounds each drum (kick, snare + clap, hats, perc) can play */
 enum { EN_V_PAD, EN_V_DRONE, EN_V_ACID, EN_V_SAMPLE, EN_V_PLUCK };   /* the voices the keys can play (en_note) */
 
 /* modes: pools relative to the root (bit i: root + i semitones) */
 enum { MODE_IONIAN, MODE_DORIAN, MODE_PHRYGIAN, MODE_LYDIAN, MODE_MIXOLYDIAN, MODE_AEOLIAN, MODE_PENT_MAJ,
        MODE_PENT_MIN,
        /* DARK-1: the dark scales, after the original eight so a stored mode number keeps its meaning */
-       MODE_LOCRIAN, MODE_HARM_MIN, MODE_PHRYG_DOM, MODE_DBL_HARM, MODE_WHOLE_TONE, MODE_BLUES_MIN, EN_NMODES };
+       MODE_LOCRIAN, MODE_HARM_MIN, MODE_PHRYG_DOM, MODE_DBL_HARM, MODE_WHOLE_TONE, MODE_BLUES_MIN,
+       /* 1.0.2: Hungarian minor, Neapolitan minor, the diminished (whole-half) scale, Persian */
+       MODE_HUNG_MIN, MODE_NEAP_MIN, MODE_DIMIN, MODE_PERSIAN, EN_NMODES };
 extern const char *const EN_MODE_NAME[EN_NMODES];
 extern const uint16_t EN_MODE_POOL[EN_NMODES];
 extern const char *const EN_NOTE_NAME[12];

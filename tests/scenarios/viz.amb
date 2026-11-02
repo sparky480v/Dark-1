@@ -41,6 +41,14 @@ shot viz_orbit.png
 spin SELECT 1
 wait 1500
 expect view 34
+shot viz_vortex.png
+spin SELECT 1
+wait 1500
+expect view 34
+shot viz_tunnel.png
+spin SELECT 1
+wait 1500
+expect view 34
 shot viz_auto.png
 spin SELECT 1
 wait 300

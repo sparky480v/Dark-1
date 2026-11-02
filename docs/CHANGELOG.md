@@ -6,12 +6,25 @@ Music and engine content only; the instrument, its UI and its saving are PERF-1'
 
 * Sixteen dark genres with ten pieces each, all defined in `firmware/src/dsp/dark_presets.h` (genre names, 160 recipes, per-genre chord habits, sections, bass,
   comping, ghost notes, step tricks, latched effects and drum pattern sets).
-* Fourteen new drum kits; the pad, drone and acid sounds re-tuned darker and renamed; thirty new original FM voices; six new scales; three new chord kinds; tempo
+* Fourteen new drum kits; the pad, drone and acid sounds re-tuned darker and renamed; thirty new original FM voices (38 since 1.0.2); six new scales (ten since 1.0.2); three new chord kinds; tempo
   floor 56.
 * A saved-pieces image of its own ("DRK1"); PERF-1 and HYP-1 banks are no longer read; a factory piece loads exactly as its recipe (the power-on nudge is gone).
 * Browser: DARK-1 page, its own storage keys, a preset browser driven by the engine, new wasm exports, a one-file build (`tools/make_standalone.py`).
 * Tests: `tests/dark/`; the PERF-1 scenarios re-pinned to the DARK-1 presets and retimed for the longer builds.
+* **The SIGIL visualizer** (was DISCO) shows a ritual circle, a turning pentagram and a demon eye (it opens and closes with the section, its pupil follows the kick, its gaze the snare) in place of the dancing mascot.
 * **Own identity on the firmware hub:** release builds are `FM-1_32XXYYZZ` (1.0.1 is `FM-1_32010001`), no longer PERF-1's `FM-1_7XXYYZZ`, so the hub can tell DARK-1 from every other firmware.
+## 1.0.2
+
+* **Wander's settings are kept** at power-off. The Wander knob has a third choice, **ON+KEEP**: Wander is on again every time you switch the FM-1 on.
+* **Dice** (SEL + PLAY, while a groove plays): rolls a handful of changes at once, wild, of Wander's own kinds (kits, sounds, knobs, layers), without turning Wander on. The piece stays; roll again, change piece, or turn Wander off to clear them.
+* **Two new visualizers:** VORTEX (a spiral that turns with the tempo) and TUNNEL (rings rushing at you); AUTO now cycles through them too.
+* **Four new scales:** Hungarian minor, Neapolitan minor, diminished (whole-half) and Persian (eighteen in all).
+* **Eight new FM voices** (thirty-eight built in: ASH PIANO, VOID BELL, GRAVE VOX, TAR STAB, HEX BASS, MOLD WIND, CRYPT HARP, NEON KNELL) and **four new drum kits** (Tomb, Static, Piston, Marrow: eighteen kits). Your own DX7 voices now start eight places later in the list, so a stored piece that used one is shifted.
+* The slinky mascot of PERF-1 is gone from everywhere; the boot card is DARK-1's own.
+* Release identity `FM-1_32010002`.
+
+## 1.0.1
+
 * **Wander** (two new settings pages after SET): the music changes on its own, on the bar: a new piece (this genre or any), a swapped drum kit or part sound, knobs drifting, layers going in and out. Everything sits on top of the stored piece (like Mood) and goes when a new piece starts or Wander is switched off. Not kept at power-off. The browser page has a strip with the same eight settings. Tests: `tests/dark/test_wander.py` (the real app in the host simulator), `tests/dark/wander_wasm.mjs` (the browser engine, minutes of audio) and a Wander section in `browser_test.py`.
 
 ---

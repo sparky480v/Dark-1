@@ -202,7 +202,7 @@ static void old_bank_load(int n)
     int old_rate, old_theme, old_tone;
     const uint8_t *raw = image;
     old_tone = n >= (int)HDR && rd16(raw + 18) < 3;                    /* P_AC_EVERY was the old unused tone (50) */
-    old_theme = n >= (int)HDR && rd16(raw + 18) < 2;                 /* the themes were in the order Synth, Acid, Ice, Ember, Phosphor, Imp */
+    old_theme = n >= (int)HDR && rd16(raw + 18) < 2;                 /* the themes were in the order Synth, Acid, Ice, Ember, Phosphor, Crimson */
     old_rate = n >= (int)HDR && rd16(raw + 18) == 0;   /* a bank from before the pluck's Rate was sorted slow to fast: 1/8, 1/16, 1/4, 3/16 */
     npar = n >= (int)HDR ? rd16(raw + 8) : 0u;
     stride = npar * 2u + 2u + 2u * EN_NPAT * EN_NLANE;
@@ -214,7 +214,7 @@ static void old_bank_load(int n)
         glob.theme = (int16_t)rd16(raw + 16);
         glob_from_old = 1;
         if (old_theme)
-            glob.theme = (int16_t)(glob.theme >= 5 ? 0 : glob.theme + 1);   /* (Imp is the first now, the others one on) */
+            glob.theme = (int16_t)(glob.theme >= 5 ? 0 : glob.theme + 1);   /* (Crimson is the first now, the others one on) */
         for (i = 0; i < NPIECES; i++) {
             const uint8_t *q = raw + HDR + (uint32_t)i * stride;
             slot_t *s = &proj.slot[i];

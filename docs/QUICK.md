@@ -37,10 +37,10 @@
 | **ARP** | Acid; again Acid env, Acid line, Acid answer, Acid steps, Pluck, Pluck 2, Deja vu, Pluck steps. | | |
 | **EDIT** | The next chord, on the next bar. | | Stopped: starts the music by itself. |
 | **GLO** | Global (Root, Theme, Tune, Genre). SAVE here stores the piece. | 0.4 s: the mix map, the load meter. | Remote: the FM-1 plays the emulator. |
-| **HOME** | Tempo page; again Perform; again Tempo. Twice quickly: visualizers. Leaves the FX menu. | 0.7 s: the settings. | The sigil's middle: eye or imp. |
+| **HOME** | Tempo page; again Perform; again Tempo. Twice quickly: visualizers. Leaves the FX menu. | 0.7 s: the settings. | Nothing extra. |
 | **SAVE** | Breakdown on the next bar; again a build, then the drop. On Global: store. | 0.5 s: the drop. | On Global, 1.5 s: back to factory. |
 | **SEQ** | Drums; again Links, Kit, Drum drift, Groove, Steps, Feel, Phrase. In the sequencer: back to Drums. | 0.4 s: the sequencer. | The links on and off. |
-| **PLAY** | Play and stop. | | |
+| **PLAY** | Play and stop. | | Dice: a roll of Wander's changes. |
 | **REC** | Freeze: the chord holds, the reverb rings on, until pressed again. | | Capture: the bar played on Jam into the voice's line. |
 | White keys | Add or remove a scale note (the root stays). By hand, Jam: notes. Sequencer: the 16 steps. FX: effects. Perform, GLO held: the mix. | A scene key 0.6 s: store it. | White 1-6 (`F3`..`D4`): pattern 1-6, on the bar. |
 | Black keys | The same. Sequencer: which pattern the lane plays (black 1-6; black 7: follow). | | Sequencer: copy this pattern into 1-6. |
@@ -67,7 +67,7 @@
 | Acid line | ARP x3 | Density | Length (1-16) | Range (1-3 oct) | Mutate (SEL + knob: what it changes) |
 | Acid answer | ARP x4 | Answer (off, 8 kinds, page 6) | Every (2nd .. 8th, drift) | Direction (down 2 .. up 2) | Sync (bar, loop) |
 | Acid steps | ARP x5 | Step (rest, note, accent, slide) | Note (0-11 scale steps) | Octave (0-3) | Frozen (free, frozen) |
-| Pluck | ARP x6 | Level | Sound (12 + 30 DX + yours) | Density | Octave (-2 to +2) |
+| Pluck | ARP x6 | Level | Sound (12 + 38 DX + yours) | Density | Octave (-2 to +2) |
 | Pluck 2 | **ARP** x7 | Decay | Style (up, down, up-down ..) | Rate (1/4, 3/16, 1/8, 1/16) | Range (1-3 oct) |
 | Deja vu | ARP x8 | Pluck vu (0 new .. 100 locked) | Loop (4, 8, 16, 32 notes) | Leaps (an octave away) | Motif (develop the first bar) |
 | Pluck steps | ARP x9 | Step (rest, soft, note, accent) | Note (1-12, the chord's notes low to high) | Octave (-2 to +2) | Frozen (free, frozen) |
@@ -231,7 +231,7 @@ Want the drums to change by themselves? **Change**: off, the next pattern, or a 
 
 ### What the screen says
 
-**Top left:** the piece's tag (`01` HYPNO, `L03` lofi ..; a mark on it means unstored changes), the root and the mode. **Top right:** the mascot, the tempo (`EXT` on an outside clock; a play triangle while stopped), then the marks: **BREAK**, **BUILD** (with `>`: waiting for the bar; `DROP 3`: bars to the drop), **KNOB** (an FX knob off home), **KEY** (the drop's key change is on), **S1>** (a scene waiting), **DJ**, **FX** (effects latched, menu closed), a small dot (a save to memory waiting).
+**Top left:** the piece's tag (`01` HYPNO, `L03` lofi ..; a mark on it means unstored changes), the root and the mode. **Top right:** the tempo (`EXT` on an outside clock; a play triangle while stopped), then the marks: **BREAK**, **BUILD** (with `>`: waiting for the bar; `DROP 3`: bars to the drop), **KNOB** (an FX knob off home), **KEY** (the drop's key change is on), **S1>** (a scene waiting), **DJ**, **FX** (effects latched, menu closed), a small dot (a save to memory waiting).
 
 **Left:** the levels of pad (P), bass (D), acid (A), pluck (C) and kit (K). **Middle:** the **sigil**, turned so the chord's root is at the top. The scale's notes are lit and the chord's notes are joined into a shape (a triad is a triangle, a seventh chord four-sided), with its name under the eye. Around it run the 4-bar phrase and the bar's 16 steps. The eye is half open in a groove, shut in a breakdown, wide in a build. **Right:** the pattern playing (`PAT 1`; `> 3` when one waits) and the load line (page 7). **Above the knobs:** the voice's sound, `BY HAND`, `+LINK` or `LINKS OFF`, the octave when it isn't home, the page's name and dots. On a change of page the header says where you are: `DRUMS  PHRASE 8/8`.
 
@@ -284,7 +284,7 @@ Drum hits push the other voices, 0 to 100 each; **SEL + SEQ** turns them all on 
 
 ### The kits (SEQ x3)
 
-Each knob picks one drum's sound from the same fourteen kits: Kick, Snare (and clap), Hats (closed and open), Perc. **SEL + ALGORITHM** on any drums page turns all four to the next kit. Mix them freely.
+Each knob picks one drum's sound from the same eighteen kits: Kick, Snare (and clap), Hats (closed and open), Perc. **SEL + ALGORITHM** on any drums page turns all four to the next kit. Mix them freely.
 
 | Kit | The kick | The rest |
 |---|---|---|
@@ -327,7 +327,7 @@ The counter-melody: two plucked voices taking turns, an arpeggio of the chord on
 
 **Deja vu** (ARP x8) makes the pluck remember its last 4, 8, 16 or 32 notes (**Loop**). **Pluck vu** is the chance a note coming round is the same as last time (0 all new, 100 locked); a locked phrase still follows the chord. **Leaps**: how often a new note jumps an octave. **Motif**: the first bar of each eight-bar phrase is the idea, and the bars after develop it (moved up or down, turned upside down now and then, a new ending, back in the fifth bar). 60 by default; 0 makes up every bar fresh. Changing Loop, or a new piece, forgets the loop.
 
-**Sounds:** 12 plain (Pluck, Marimba, E.Piano, Kalimba, Bell, Vibes, Gong, Clav, Digital, Brass, Bleep, Glass), then 30 built-in DX7 voices on a six-voice, six-operator FM synth like the Yamaha DX7 (all 32 algorithms, envelopes, scaling, velocity, LFO, pitch envelope, feedback): DX Tine EP, Glass Bell, Round Bass, Brass Sect, Soft Pad, Wood Bars, Drawbars, Nylon Pick, Brass 2, Solid Bass, Bells, Marimba, Clavinet, Strings, Glass Pad, Sync Lead, Harp, Kalimba, Flute, Steel Drum, Saw Bass, Tubular, Steel Gtr, Clean Gtr, Muted Gtr, Drive Gtr, Slap Bass, Synth Brass, Sax, Mute Trumpet. Then up to 16 of **your own** (page 8), named `DX` and the voice's name. Heavy patches play three or four notes at most. SEL + ALGORITHM on a pluck page steps through the sounds there are.
+**Sounds:** 12 plain (Pluck, Marimba, E.Piano, Kalimba, Bell, Vibes, Gong, Clav, Digital, Brass, Bleep, Glass), then 38 built-in DX7 voices on a six-voice, six-operator FM synth like the Yamaha DX7 (all 32 algorithms, envelopes, scaling, velocity, LFO, pitch envelope, feedback): DX Tine EP, Glass Bell, Round Bass, Brass Sect, Soft Pad, Wood Bars, Drawbars, Nylon Pick, Brass 2, Solid Bass, Bells, Marimba, Clavinet, Strings, Glass Pad, Sync Lead, Harp, Kalimba, Flute, Steel Drum, Saw Bass, Tubular, Steel Gtr, Clean Gtr, Muted Gtr, Drive Gtr, Slap Bass, Synth Brass, Sax, Mute Trumpet. Then up to 16 of **your own** (page 8), named `DX` and the voice's name. Heavy patches play three or four notes at most. SEL + ALGORITHM on a pluck page steps through the sounds there are.
 
 ### The bass
 
@@ -394,7 +394,7 @@ Go to **Global** (GLO) and press **SAVE**. The piece is stored as it is (every p
 
 ### Visualizers
 
-**HOME twice quickly**; HOME again leaves. **SELECT** chooses (remembered): PLASMA, KALEIDO, BARS (a 24-band spectrum), FLUX, DISCO (the mascot dancing to the drums), LIFE, ORBIT (the chord drawn as a pendulum pattern), AUTO. The knobs stay the FX knobs, ALGORITHM the mood, the keys the track mix; FX opens its menu over them.
+**HOME twice quickly**; HOME again leaves. **SELECT** chooses (remembered): PLASMA, KALEIDO, BARS (a 24-band spectrum), FLUX, SIGIL (a ritual circle with a demon eye), LIFE, ORBIT (the chord drawn as a pendulum pattern), VORTEX, TUNNEL, AUTO. The knobs stay the FX knobs, ALGORITHM the mood, the keys the track mix; FX opens its menu over them.
 
 ### What is remembered across power-off
 
@@ -424,7 +424,7 @@ How hard the FM-1 is working: `CPU 41 XR 0`, with `C2 38` and `S1` or `S2` under
 
 **The editor** has two tabs. **Sound**: every setting of the piece playing, with the FM-1's page names and ranges, plus a page for the rest (lane levels, tunings, decays, chances, lengths; pans and sends; octaves; by-hand switches). Changes play at once; store the piece on the FM-1 to keep them. **DX7 voices**: read the 16 slots, edit a voice (name, algorithm, feedback, LFO, pitch envelope, each operator's level, ratio, envelope, scaling, velocity); **Live** sends each change as you make it; load `.syx` banks, save a slot or the bank as `.syx`.
 
-**Your own DX7 voices**: up to 16, kept after power-off, after the Pluck page's 30 built-in DX sounds. From the installer: **Load DX7 voices**, choose `.syx` files (32-voice banks, single voices, bare 4096-byte banks), tick up to 16, press **Send the chosen voices**. **Clear the loaded voices** empties the slots. From any librarian app, a 32-voice bank dump to the FM-1's USB MIDI port replaces the loaded voices with its first 16; a single-voice dump adds one after the last. The header says `DX7 VOICES 16 LOADED`, `1 ADDED` or `BAD CHECKSUM` (a damaged file). Levels aren't matched (adjust the pluck's Level). A piece stores the pluck's sound by slot number. Free banks: Bobby Blues' DX7 archive, Soundarchive, Yamaha Black Boxes (licences are their authors').
+**Your own DX7 voices**: up to 16, kept after power-off, after the Pluck page's 38 built-in DX sounds. From the installer: **Load DX7 voices**, choose `.syx` files (32-voice banks, single voices, bare 4096-byte banks), tick up to 16, press **Send the chosen voices**. **Clear the loaded voices** empties the slots. From any librarian app, a 32-voice bank dump to the FM-1's USB MIDI port replaces the loaded voices with its first 16; a single-voice dump adds one after the last. The header says `DX7 VOICES 16 LOADED`, `1 ADDED` or `BAD CHECKSUM` (a damaged file). Levels aren't matched (adjust the pluck's Level). A piece stores the pluck's sound by slot number. Free banks: Bobby Blues' DX7 archive, Soundarchive, Yamaha Black Boxes (licences are their authors').
 
 **The emulator** runs the firmware in the browser. Drag or scroll a knob, click buttons and keys; Shift-click (or right-click) holds a button until the next click. **New start** restarts it (stored pieces stay, in that browser); **Forget stored** clears them. Keys: Space PLAY, Enter REC, Esc HOME, V / L / P ENV / LFO / ARP, M SEQ (hold it for the sequencer), O / C / N GLO / EDIT / SEL, backtick FX, B SAVE, Z / X OCT- / OCT+, Up / Down SELECT, Q-I and A-K the white keys 1-8 and 9-16, 1-0 and - the black keys 1-11.
 
@@ -438,12 +438,12 @@ How hard the FM-1 is working: `CPU 41 XR 0`, with `C2 38` and `S1` or `S2` under
 - **A short dip or tick when you store or change a setting:** normal (saving to memory). **A stored piece came back as before:** the power went off during the save. **My changes vanished:** only a stored piece (Global, SAVE) is kept.
 - **The installer doesn't find the FM-1:** Chrome or Edge, a data cable, no DAW using the port, MIDI with SysEx allowed. **It offers an old version:** hard-refresh. **An install was cut off:** run it again; the FM-1 stays in update mode. **`PERF-1 SAFE MODE`:** two crashes while starting; reinstall, or PLAY to try again. **`UPDATE MODE IN 3..`:** you're holding OCT- and OCT+; let go.
 - **Buttons or knobs don't match their labels:** hold OCT- and OCT+ while switching on; the calibration asks for each control in turn (it gives up after 30 s untouched).
-- **Loaded DX7 voices don't show:** they come after the 30 built-in DX sounds; check for `LOADED`, the pluck's Level, the checksum.
+- **Loaded DX7 voices don't show:** they come after the 38 built-in DX sounds; check for `LOADED`, the pluck's Level, the checksum.
 - **Crackles or dropouts:** watch `XR` and `S1`/`S2`; run Live status a minute and send the CSV with the piece, its sounds, the tempo.
 - **The emulator doesn't see the FM-1:** no DAW on the port; Chrome, Edge or Firefox (not Safari); SEL + GLO for remote.
 
 ### Credits and licence
 
-PERF-1 is by **deamonSLINKY**: the firmware, the slinky mascot and the pages around them. It is a fork of **HYP-1** (RedtailWorks), itself a fork of **AMB-1** by Charles Vestal. The platform layer (USB, update loader, storage, installer, the panel calibration) is **Felucca** by Leo Kuroshita (Hügelton Instruments), by way of X0X and FoMni. The six-operator FM engine, its factory voices and the second-core work are from **Melodee** by Kerem Kilic (Ellic Studio); its synthesis is after **Dexed** by Pascal Gauthier, on **MSFA** by Raph Levien (Google). The bass line modes, pad comping, ghost notes, deja vu and the motif follow ideas in **Tuna** by delirioux, written afresh for this engine. The plate reverb is Jon Dattorro's; the emulator idea is Groove OS's; the hardware knowledge is FM-1-RE's. Fonts: Chakra Petch and Barlow Semi Condensed (SIL OFL 1.1). Source and issues: https://github.com/deamonSLINKY/PERF-1 (a bug report is most useful with the version, the genre and piece, and a status log). **Licence: GPL-3.0-only, no warranty.** M-VAVE and FM-1 are trademarks of their owners; PERF-1 is not affiliated with M-VAVE.
+PERF-1 is by **deamonSLINKY**: the firmware and the pages around them. It is a fork of **HYP-1** (RedtailWorks), itself a fork of **AMB-1** by Charles Vestal. The platform layer (USB, update loader, storage, installer, the panel calibration) is **Felucca** by Leo Kuroshita (Hügelton Instruments), by way of X0X and FoMni. The six-operator FM engine, its factory voices and the second-core work are from **Melodee** by Kerem Kilic (Ellic Studio); its synthesis is after **Dexed** by Pascal Gauthier, on **MSFA** by Raph Levien (Google). The bass line modes, pad comping, ghost notes, deja vu and the motif follow ideas in **Tuna** by delirioux, written afresh for this engine. The plate reverb is Jon Dattorro's; the emulator idea is Groove OS's; the hardware knowledge is FM-1-RE's. Fonts: Chakra Petch and Barlow Semi Condensed (SIL OFL 1.1). Source and issues: https://github.com/deamonSLINKY/PERF-1 (a bug report is most useful with the version, the genre and piece, and a status log). **Licence: GPL-3.0-only, no warranty.** M-VAVE and FM-1 are trademarks of their owners; PERF-1 is not affiliated with M-VAVE.
 
 </div>

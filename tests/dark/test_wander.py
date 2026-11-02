@@ -160,6 +160,33 @@ check(r.get("wander") == 0, "off")
 check(r.get("wmute") == 0 and all(r.get(f"wovr{i}") == -1 for i in range(8)) and all(r.get(f"woff{i}") == 0 for i in range(11)), "no override, offset or mute left")
 check(all(r.get(f"enpar{p}") == r.get(f"par{p}") for p in KNOB_P + SND_P), "the engine plays the piece's own values again")
 
+# ------------------------------------------------------------------------------------------------------------------------------
+print("Wander's settings are kept across a power-off (1.0.2); ON+KEEP starts it on")
+def kept(keep):
+    L = go_wander(["spin K1 %d" % (2 if keep else 1), "wait 50", "spin K2 1", "wait 50", "spin K3 1", "wait 50", "spin K4 -1", "wait 50", "tap FX", "wait 100", "wait 9000", "reboot", "wait 3000"])
+    # after the reboot: the on state, and the page's knobs (uiv19 every, 20 amount, 21 pieces)
+    return [l for l in L] + [f"expect {n} 999999" for n in ("wander", "uiv19", "uiv20", "uiv21", "uiv22")]
+for keep in (0, 1):
+    rows, out = run(kept(keep), 0, 0)
+    got = {}
+    for l in out:
+        m = re.match(r"FAIL expect (\w+) == 999999, got (-?\d+)", l)
+        if m:
+            got[m[1]] = int(m[2])
+    check(got.get("wander") == (2 if keep else 0), f"after power-off, Wander is {'on again (ON+KEEP)' if keep else 'off'}: {got.get('wander')}")
+    check(got.get("uiv19") == 3 and got.get("uiv20") == 2 and got.get("uiv21") == 0 and got.get("uiv22") == 1, f"every/amount/pieces/kits kept: {got}")
+
+# ------------------------------------------------------------------------------------------------------------------------------
+print("Dice (SEL + PLAY, 1.0.2): a roll of changes with Wander off; the piece stays; the engine plays them")
+rows, _ = run(["seed 0", "wait 1500", "wait 40000", "press SEL", "tap PLAY", "release SEL", "wait 1500"], 4, 3000)
+r = rows[-1] if rows else {}
+check(len(rows) == 4, f"{len(rows)} samples")
+check(r.get("wander") == 0, "Wander is still off")
+check(r.get("piece") == rows[0].get("piece") and r.get("genre") == rows[0].get("genre"), "the piece stays")
+moved = r.get("wmute", 0) != 0 or any(r.get(f"wovr{i}", -1) >= 0 for i in range(8)) or any(r.get(f"wtgt{i}", 0) != 0 for i in range(11))
+check(moved, "the dice changed sounds, knobs or layers")
+check(any(r.get(f"enpar{p}") != r.get(f"par{p}") for p in KNOB_P + SND_P) or r.get("wmute", 0) != 0, "and the engine plays them")
+
 print()
 print("RESULT: %s" % ("FAIL, %d" % len(fails) if fails else "0"))
 sys.exit(1 if fails else 0)

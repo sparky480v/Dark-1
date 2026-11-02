@@ -42,8 +42,8 @@ enum { V_TEMPO, V_PAD, V_PADENV, V_PADLFO, V_CHORDS, V_DRONE, V_DRENV, V_DRLFO, 
 static const char *const VIEW_NAME[NVIEWS] = {"Tempo", "Pad", "Pad env", "Pad LFO", "Chords", "Bass", "Bass env",
                                               "Bass LFO", "Bass line", "Acid", "Acid env", "Acid line", "Acid answer", "Acid steps", "Pluck", "Pluck 2", "Deja vu", "Pluck steps", "Drums", "Links", "Kit", "Drum drift", "Groove", "Steps", "Feel", "Phrase", "Space", "Reverb", "Comp/Limit", "Mixer", "Global", "Jam",
                                               "Sequencer", "Perform", "Visual"};
-enum { VZ_PLASMA, VZ_KALEIDO, VZ_BARS, VZ_FLUX, VZ_DISCO, VZ_LIFE, VZ_ORBIT, VZ_AUTO, VZ_N };   /* the visualizers (viz.c) */
-static const char *const VZ_NAME[VZ_N] = {"PLASMA", "KALEIDO", "BARS", "FLUX", "DISCO", "LIFE", "ORBIT", "AUTO"};
+enum { VZ_PLASMA, VZ_KALEIDO, VZ_BARS, VZ_FLUX, VZ_DISCO, VZ_LIFE, VZ_ORBIT, VZ_VORTEX, VZ_TUNNEL, VZ_AUTO, VZ_N };   /* the visualizers (viz.c) */
+static const char *const VZ_NAME[VZ_N] = {"PLASMA", "KALEIDO", "BARS", "FLUX", "SIGIL", "LIFE", "ORBIT", "VORTEX", "TUNNEL", "AUTO"};
 /* the knobs of each page: a parameter, or one of these (the sequencer's: the lane's) */
 enum { K_LVL = 200, K_TUNE, K_DEC, K_MXT, K_MXL, K_MXP, K_MXS, K_GRT, K_GRD, K_GRS, K_GRA, K_ACT, K_ACD, K_STR, K_STP, K_STV, K_PCOND, K_ASTY, K_ASNO, K_ASOC, K_PSNO, K_PSLV, K_GENRE, K_NONE, K_FXF, K_FXC, K_FXT, K_FXW };   /* K_GENRE: the genre on Global; K_FX*: the FX menu's own knobs */
 static const char *const FXK_LABEL[4] = {"Filter", "Crush", "Throw", "Wash"};
@@ -96,6 +96,7 @@ static const uint8_t RAMP_BPM[5] = {0, 2, 4, 8, 12};
 static const char *const INTRO_NAME[5] = {"OFF", "1 MIN", "2 MIN", "4 MIN", "8 MIN"};             /* the slow progression from Play */
 static const uint16_t INTRO_S[5] = {0, 60, 120, 240, 480};
 static const char *const ONOFF_NAME[2] = {"OFF", "ON"};
+static const char *const WON_NAME[3] = {"OFF", "ON", "ON+KEEP"};   /* DARK-1: Wander off, on, or on and kept (on again at every power-on) */
 static const char *const WEVERY_NAME[5] = {"4 BARS", "8 BARS", "16 BARS", "32 BARS", "64 BARS"};
 static const char *const WAMT_NAME[3] = {"SUBTLE", "MEDIUM", "WILD"};
 static const char *const WPIECE_NAME[3] = {"STAY", "GENRE", "ANY"};
@@ -160,7 +161,7 @@ static const struct {
                             {"Gate", KN_NAME, EN_FXS_RP_GATE, RPG_NAME, 4}, {"Refresh", KN_NAME, EN_FXS_RP_REFRESH, RPR_NAME, 3}}},   /* the eight repeat keys' page (fx_page_of maps them all here) */
     {"USB & MIDI", 63, 0, {{"Level", KN_NAME, 12, USBL_NAME, 2}, {"MIDI out", KN_PAR, P_MIDI, 0, 0}, {"Scanlines", KN_NAME, 14, ONOFF_NAME, 2}, {"", KN_NONE, 0, 0, 0}}},   /* the cable: the USB audio's level (the knob's, or fixed), MIDI out (it was Global's); and the screen's scanlines */
     {"SET", 63, 0, {{"Rounds", KN_NAME, 15, ROUNDS_NAME, 4}, {"Ramp", KN_NAME, 16, RAMP_NAME, 5}, {"Intro", KN_NAME, 17, INTRO_NAME, 5}, {"", KN_NONE, 0, 0, 0}}},   /* the set: rounds a piece, the tempo's climb, the intro */
-    {"WANDER", 63, 0, {{"Wander", KN_NAME, 18, ONOFF_NAME, 2}, {"Every", KN_NAME, 19, WEVERY_NAME, 5}, {"Amount", KN_NAME, 20, WAMT_NAME, 3}, {"Pieces", KN_NAME, 21, WPIECE_NAME, 3}}},   /* DARK-1: the music changes on its own (the first page) */
+    {"WANDER", 63, 0, {{"Wander", KN_NAME, 18, WON_NAME, 3}, {"Every", KN_NAME, 19, WEVERY_NAME, 5}, {"Amount", KN_NAME, 20, WAMT_NAME, 3}, {"Pieces", KN_NAME, 21, WPIECE_NAME, 3}}},   /* DARK-1: the music changes on its own (the first page) */
     {"WANDER 2", 63, 0, {{"Kits", KN_NAME, 22, ONOFF_NAME, 2}, {"Sounds", KN_NAME, 23, ONOFF_NAME, 2}, {"Knobs", KN_NAME, 24, ONOFF_NAME, 2}, {"Layers", KN_NAME, 25, ONOFF_NAME, 2}}},   /* and what it may change */
     {"JAM", 63, 0, {{"Voice", KN_NAME, 7, JV_NAME, 4}, {"Keys", KN_NAME, 8, JM_NAME, 3}, {"Octave", KN_NAME, 9, JO_NAME, 5}, {"Answer", KN_NAME, 10, ONOFF_NAME, 2}}},   /* (the last: ui_knob_param counts on it) */
 };
@@ -357,18 +358,18 @@ static const uint8_t BLACK_KEY[11] = {1, 3, 5, 8, 10, 13, 15, 17, 20, 22, 25};
 #define FACTORY_HOLD 1500u             /* SAVE held this long on Global: the piece to its factory settings */
 
 /* ---------------------------------------------------------------- themes --- */
-/* six palettes for the screen (Global > Theme; the look, Imp, is the same in all of them): a ground, its panel and lines, the text, an accent for what is
+/* six palettes for the screen (Global > Theme; the look is the same in all of them): a ground, its panel and lines, the text, an accent for what is
  * happening now, a primary for the music in three shades (the pad and the chord; the acid; the drone),
  * the drums' colour, and a colour for the sections and freeze. Each layer has a dark tint for shapes at rest. */
 typedef struct {
     uint16_t bg, panel, line, dim, text, acc, pad, pad_t, acid, acid_t, bass, bass_t, pulse, pulse_t, frost, pluck;
 } theme_t;
 static const theme_t THEMES[EN_NTHEME] = {
-    /* Imp: warm black, bone, crimson, lime, pink; ember is for "now" (the playhead, the knob you touched) */
+    /* Crimson: warm black, bone, crimson, lime, pink; ember is for "now" (the playhead, the knob you touched) */
     {RGB(20, 14, 12), RGB(42, 30, 27), RGB(78, 56, 49), RGB(166, 140, 126), RGB(244, 232, 200), RGB(255, 212, 71),
      RGB(242, 230, 196), RGB(86, 78, 62), RGB(182, 242, 60), RGB(60, 80, 22), RGB(224, 52, 79), RGB(84, 22, 32),
      RGB(255, 143, 143), RGB(88, 52, 52), RGB(150, 210, 255), RGB(111, 224, 210)},
-    /* Synth (Synth Imp, 0.14.18): demon synthwave: a night sky, crimson to magenta neon, a banded sun on the horizon behind the sigil, the imp in tube light */
+    /* Synth (0.14.18): demon synthwave: a night sky, crimson to magenta neon, a banded sun on the horizon behind the sigil. */
     {RGB(12, 3, 24), RGB(28, 6, 32), RGB(69, 18, 63), RGB(154, 95, 134), RGB(255, 233, 242), RGB(255, 225, 74),
      RGB(192, 140, 255), RGB(60, 36, 96), RGB(182, 255, 46), RGB(50, 80, 16), RGB(255, 47, 95), RGB(84, 16, 36),
      RGB(255, 138, 61), RGB(88, 44, 24), RGB(150, 210, 255), RGB(62, 240, 255)},
@@ -390,7 +391,7 @@ static const theme_t THEMES[EN_NTHEME] = {
      RGB(120, 220, 140), RGB(20, 52, 28), RGB(240, 255, 140), RGB(200, 240, 150)},
 };
 static const theme_t *th = &THEMES[0];
-#define LOOK_SYNTH (th == &THEMES[1])           /* the Synth theme has a look of its own: the horizon behind the sigil, the neon imp */
+#define LOOK_SYNTH (th == &THEMES[1])           /* the Synth theme has a look of its own: the horizon behind the sigil */
 #define K_BG (th->bg)
 #define K_PANEL (th->panel)
 #define K_LINE (th->line)
@@ -444,13 +445,13 @@ static struct {
     uint8_t w_mute, w_prev;            /* the layers it has muted (a MIX bit each); the categories seen last frame (w_cat) */
     uint16_t w_n;                      /* bars since the last change */
     uint32_t w_rng, w_t;               /* its dice; the glide's clock */
+    uint8_t w_dice;                    /* 1.0.2 Dice (SEL + PLAY): what the dice rolled stays on the piece, as Wander's changes do, until another piece or Wander off */
     uint8_t w_hist[4];                 /* the last four pieces it chose (genre * 10 + piece + 1): not chosen again */
     int8_t w_off[11], w_tgt[11];       /* each wandering knob: the offset now, and where it is going (W_KNOB) */
     int16_t w_ovr[8];                  /* each wandering sound: the one playing instead of the piece's (-1: the piece's own) (W_SND) */
     uint8_t scene_quant, scene_q;      /* a scene waits for the next bar (1) or comes at once (0); the one waiting: slot + 1 */
     uint8_t key_set, key_on, sec_last; /* the drop's key change (0 same, 1 +2, 2 +3, 3 +5, 4 +7); it is on; the section last seen */
     uint8_t viz;                       /* the visualizer on the SELECT dial (VZ_*) */
-    uint8_t centre_imp;                /* the sigil's middle: the eye (0) or the imp (SEL + HOME); kept with the visualizer's byte */
     uint8_t eu_n[EN_NLANE], eu_r[EN_NLANE];   /* the sequencer's Euclid tricks: each lane's hits and rotation, as last set */
     uint8_t flex_last;                 /* the Flex Beat pad pressed last (0..14) */
     uint8_t flex_lock;                 /* the Flex pattern that is latched (with the one FX_FLEX bit in fx_lock) */
@@ -772,10 +773,11 @@ static int w_cat(void)                           /* the categories on, as bits: 
 {
     return (ui.w_kits ? 1 : 0) | (ui.w_voices ? 2 : 0) | (ui.w_knobs ? 4 : 0) | (ui.w_layers ? 8 : 0);
 }
+#define W_LIVE (ui.w_on || ui.w_dice)
 static int wander_val(int p, int v)              /* the engine's value of a parameter: the piece's, with what Wander has put on it */
 {
     int i;
-    if (!ui.w_on)
+    if (!W_LIVE)
         return v;
     for (i = 0; i < NWS; i++)
         if (W_SND[i] == p)
@@ -821,6 +823,8 @@ static void wander_state_clear(int mask)         /* forget what Wander did (1 ki
             ui.w_off[i] = ui.w_tgt[i] = 0;
     if (mask & 8)
         ui.w_mute = 0;
+    if ((mask & 7) == 7)
+        ui.w_dice = 0;
 }
 static void wander_clear(int mask)               /* and the engine back to the piece's own */
 {
@@ -889,7 +893,7 @@ static void wander_fire(void)                    /* one change: one to three thi
             const en_param_t *pi = en_param_info(W_SND[s]);
             int hi = pi->hi, v, cur = ui.w_ovr[s] >= 0 ? ui.w_ovr[s] : proj.par[W_SND[s]];
             if (W_SND[s] == P_CM_SND)
-                hi = 12 + 30 - 1;                /* (the plain sounds and the thirty built-in FM voices: not the player's own slots) */
+                hi = 12 + EN_NFMFACT - 1;                /* (the plain sounds and the thirty built-in FM voices: not the player's own slots) */
             v = (int)(w_rnd() >> 8) % (hi + 1);
             if ((int)(w_rnd() >> 8) % 4 == 0 || v == proj.par[W_SND[s]])
                 v = -1;                          /* sometimes home: the piece's own sound again */
@@ -922,6 +926,28 @@ static void wander_fire(void)                    /* one change: one to three thi
         }
     }
 }
+static void dice_roll(void)                      /* SEL + PLAY: a handful of changes at once, wild, with Wander's own kinds of change (never a new piece) */
+{
+    const uint8_t sa = ui.w_amt, sp = ui.w_piece, sk = ui.w_kits, sv = ui.w_voices, sn = ui.w_knobs, sl = ui.w_layers;
+    int i;
+    if (!en_playing || en_sec != EN_SEC_GROOVE) {
+        say("DICE", en_playing ? "IN A GROOVE" : "PLAY FIRST");
+        return;
+    }
+    if (ui.w_dice) {                             /* the last roll goes first */
+        ui.w_dice = 0;
+        wander_clear(15);
+    }
+    if (!ui.w_rng)
+        ui.w_rng = plat_ms() * 2654435761u + 1u;
+    ui.w_rng ^= plat_ms();
+    ui.w_dice = 1;
+    ui.w_amt = 2, ui.w_piece = 0, ui.w_kits = ui.w_voices = ui.w_knobs = ui.w_layers = 1;
+    for (i = 0; i < 3; i++)
+        wander_fire();
+    ui.w_amt = sa, ui.w_piece = sp, ui.w_kits = sk, ui.w_voices = sv, ui.w_knobs = sn, ui.w_layers = sl;
+    say("DICE", "ROLLED");
+}
 static void wander_bar(void)                     /* a new bar (while playing) */
 {
     if (!ui.w_on || en_intro_k < 1.0f)
@@ -937,7 +963,7 @@ static void wander_tick(void)                    /* each frame: on and off, a ca
 {
     const uint32_t now = plat_ms();
     int i;
-    if (ui.w_on != (ui.w_prev >> 4 & 1u)) {
+    if (!!ui.w_on != (ui.w_prev >> 4 & 1u)) {
         ui.w_prev = (uint8_t)((ui.w_prev & 15u) | (ui.w_on ? 16u : 0u));
         if (ui.w_on) {
             ui.w_rng = now * 2654435761u + 1u;
@@ -954,7 +980,7 @@ static void wander_tick(void)                    /* each frame: on and off, a ca
             wander_clear(gone);
         ui.w_prev = (uint8_t)((ui.w_prev & 16u) | (uint8_t)cats);
     }
-    if (!ui.w_on || !en_playing || now - ui.w_t < 220u)
+    if (!W_LIVE || !en_playing || now - ui.w_t < 220u)
         return;
     ui.w_t = now;
     for (i = 0; i < NWK; i++)
@@ -1059,8 +1085,8 @@ static void fxp_set(int k, int v)
     int lo, hi;
     fxp_range(k, &lo, &hi);
     v = v < lo ? lo : v > hi ? hi : v;
-    if (v != fxp_get(k) && FXP_CTL(k).kind != KN_PAR && !(FXP_UI(k) && FXP_CTL(k).idx >= 18))
-        ui.set_dirty = 1;                        /* a setting changed: written when it has been left alone a moment (settings_save); Wander's are not kept, so not for them */
+    if (v != fxp_get(k) && FXP_CTL(k).kind != KN_PAR && !(FXP_UI(k) && FXP_CTL(k).idx == 18 && v != 2 && fxp_get(k) != 2))
+        ui.set_dirty = 1;                        /* a setting changed: written when it has been left alone a moment (settings_save); Wander's are kept since 1.0.2 (on and off alone is not: only "on+keep") */
     switch (FXP_CTL(k).kind) {
     case KN_PAR:                                 /* an engine parameter: the project's, the dial pages' way */
         knob_set(FXP_CTL(k).idx, v);
@@ -1531,10 +1557,10 @@ static void knob_set(int k, int v)
         return;
     knob_range(k, &lo, &hi);
     v = v < lo ? lo : v > hi ? hi : v;
-    if (ui.w_on)
+    if (W_LIVE)
         wander_release(p);                       /* (a knob the player turns is the player's) */
     if (v == proj.par[p]) {
-        if (ui.w_on)
+        if (W_LIVE)
             wander_send(p);                      /* (Wander's sound or offset let go: the engine back to the piece's) */
         return;
     }
@@ -2263,7 +2289,7 @@ static void shift_lane(int restore)             /* the sequencer: SEL + OCT-, th
 }
 
 /* ------------------------------------------------------------ buttons --- */
-/* the tab chain along the bottom (imp_tabs), and the breadcrumb's names: a tab a voice or group, with its pages */
+/* the tab chain along the bottom (tab_chain), and the breadcrumb's names: a tab a voice or group, with its pages */
 static const struct { const char *name; char ltr; uint8_t first, n; } TB[10] = {
     {"TEMPO", 'T', V_TEMPO, 1}, {"PAD", 'P', V_PAD, 4}, {"BASS", 'B', V_DRONE, 4}, {"ACID", 'A', V_ACID, 5}, {"PLUCK", 'L', V_CMEL, 4},
     {"DRUMS", 'R', V_DRUMS, 8}, {"SPACE", 'S', V_SPACE, 2}, {"MIX", 'M', V_MASTER, 2}, {"GLOBAL", 'G', V_GLOBAL, 1}, {"JAM", 'J', V_JAM, 1}};
@@ -2754,12 +2780,6 @@ static void input(void)
             }
             if (i == B_SEQ)
                 ui.seq_held = 0;
-            if (i == B_HOME && (btn >> B_SEL & 1u)) {   /* shift: the sigil's middle, the eye or the imp */
-                ui.centre_imp = (uint8_t)!ui.centre_imp;
-                ui.set_lazy = 1;
-                ui.btn_used |= m | 1u << B_SEL;
-                say("SIGIL", ui.centre_imp ? "THE IMP" : "THE EYE");
-            }
 #ifndef EN_WEB
             if (i == B_GLO && (btn >> B_SEL & 1u)) {   /* shift: remote, the panel plays the browser (stopped only: it stops the music) */
                 if (en_playing) {
@@ -2818,7 +2838,10 @@ static void input(void)
                 shift_lane(i == B_OCTUP);      /* shift: the lane cleared, or the piece's own */
                 ui.btn_used |= m | 1u << B_SEL;
             }
-            if (i == B_PLAY)                   /* transport on the press */
+            if (i == B_PLAY && (btn >> B_SEL & 1u)) {   /* shift: the dice (1.0.2) */
+                ui.btn_used |= m | 1u << B_SEL;
+                dice_roll();
+            } else if (i == B_PLAY)                   /* transport on the press */
                 button((int)i);
         } else if (i == B_SAVE && ui.save_global) {
             ui.save_global = 0;                /* Global: SAVE let go, the piece stored (unless held to factory) */
@@ -3259,115 +3282,20 @@ static uint16_t mix(uint16_t a, uint16_t b, int t)   /* t 0..16: a -> b */
 }
 static int q16(float x) { return x <= 0.0f ? 0 : x >= 1.0f ? 16 : (int)(x * 16.0f + 0.5f); }
 
-static const char *const MASCOT[23];
-static uint16_t mascot_color(char ch);
-/* the mascot, one pixel a pixel, on a spring like the big dancer's (viz.c), smaller: a hop on the kick (the head lags, the coils spread
- * as he rises, he squashes on landing and wobbles), a squash on the snare, a bigger jump on the drop; asleep in a breakdown (eyes
- * shut, sagging), wide awake in a build (shaking) */
-static struct {
-    float dh, dhv, lift, lv, kprev, sprev;     /* the head's spring (px, + up) and its speed; the hop's height and speed */
-    uint32_t t;
-    uint8_t sec;
-} hm;
-static void mascot_step(void)
-{
-    const uint32_t now = plat_ms();
-    float dt = (float)(now - hm.t) * 0.001f;
-    int s;
-    const int kedge = en_drum_glow[0] > 0.6f && hm.kprev <= 0.6f, sedge = en_drum_glow[1] > 0.6f && hm.sprev <= 0.6f;
-    hm.t = now;
-    hm.kprev = en_drum_glow[0], hm.sprev = en_drum_glow[1];
-    if (dt > 0.1f)
-        dt = 0.1f;
-    if (dt <= 0.0f)
-        return;
-    if (!en_playing) {
-        hm.lift = hm.lv = 0.0f;
-    } else {
-        if (en_sec != hm.sec) {                          /* the drop: a big jump */
-            if (en_sec == EN_SEC_GROOVE && hm.sec != EN_SEC_GROOVE && hm.lift <= 0.0f) {
-                hm.lv = 52.0f;
-                hm.lift = 0.01f;
-                hm.dhv -= 40.0f;
-            }
-            hm.sec = en_sec;
-        }
-        if (kedge && hm.lift <= 0.0f && en_sec == EN_SEC_GROOVE) {
-            hm.lv = 36.0f;
-            hm.lift = 0.01f;
-            hm.dhv -= 32.0f;                              /* anticipation: the head lags */
-        }
-        if (sedge && en_sec == EN_SEC_GROOVE && hm.lift <= 0.0f)
-            hm.dhv -= 55.0f;                              /* a stomp on the snare: squashed, then up */
-    }
-    for (s = 0; s < 4; s++) {
-        const float h = dt * 0.25f;
-        float tg;
-        if (hm.lift > 0.0f || hm.lv > 0.0f) {
-            hm.lv -= 200.0f * h;
-            hm.lift += hm.lv * h;
-            if (hm.lift <= 0.0f && hm.lv < 0.0f) {
-                hm.dhv += hm.lv * 2.3f;                   /* landing: squashed */
-                hm.lift = 0.0f;
-                hm.lv = 0.0f;
-            }
-        }
-        tg = hm.lift > 0.0f ? fm_fabsf(hm.lv) * 0.11f : 0.0f;       /* stretched by the speed */
-        if (en_playing && en_sec == EN_SEC_BREAK)
-            tg = -2.0f;
-        hm.dhv += (-300.0f * (hm.dh - tg) - 10.0f * hm.dhv) * h;
-        hm.dh += hm.dhv * h;
-    }
-    hm.dh = fm_clampf(hm.dh, -3.0f, 4.0f);
-    hm.lift = fm_clampf(hm.lift, 0.0f, 3.0f);
-}
-static void draw_mascot(int32_t x, int32_t y, int sleepy)
-{
-    int r, c;
-    for (r = 0; r < 23; r++) {
-        /* rows 0..10 the head, then four coils of three rows: each shifted by its share of the stretch. Within a coil the share runs down
-         * across its width (the spring winds down to the right), so the stretch parts the coils along the winding, not straight across */
-        const int grp = r <= 10 ? 0 : (r - 8) / 3;
-        const int32_t dy0 = (int32_t)(hm.lift + hm.dh * (float)(4 - grp) * 0.25f + 0.5f);
-        for (c = 0; c < 23; c++) {
-            char ch = MASCOT[r][c];
-            int32_t dy = dy0;
-            if (ch == '.')
-                continue;
-            if (ch == 'Y' && sleepy)
-                ch = 'K';
-            if (grp > 0 && c < 16)
-                dy = (int32_t)(hm.lift + hm.dh * ((float)(4 - grp) - fm_clampf((float)(c - 2) * (1.0f / 13.0f), 0.0f, 1.0f)) * 0.25f + 0.5f);
-            cv_pset(x + c, y + r - dy, (ch == 'K' || ch == 'T') && !LOOK_SYNTH ? K_LINE : mascot_color(ch));
-        }
-    }
-}
-
 /* the header: the piece in a tag, its root and mode; on the right, the tempo with a beat light (a play
  * triangle while stopped), the section and a dot while the kit is unsaved. Messages take its place
  * for a moment. */
 /* THE HEADER'S EXTRAS: the header has a beat bar along its top (sixteen ticks, the beats taller, the step
- * playing lit) and a coil along its bottom, the slinky's spring, that stretches on the kick. */
-#define IMP_TEAL (th->pluck)                    /* the pluck's colour in the theme */
-static void imp_header(void)
+ * playing lit) and a thin line along its bottom that brightens on the kick. */
+#define PLUCK_COL (th->pluck)                    /* the pluck's colour in the theme */
+static void header_extras(void)
 {
     const float kg = fm_clampf(en_drum_glow[0], 0.0f, 1.0f);
-    const float amp = 1.0f + 2.2f * kg, st = 0.33f;
-    const float ph = (float)(plat_ms() % 1200u) * (FM_TWO_PI / 1200.0f);
-    float s = fm_sinf(ph), c = fm_cosf(ph);
-    const float ss = fm_sinf(st), cs = fm_cosf(st);
     const uint16_t cc = mix(K_LINE, K_BASS, 7 + q16(kg) * 9 / 16);
-    int32_t x;
     int i;
     for (i = 0; i < 16; i++)                     /* the bar's sixteen steps */
         cv_rect(i * 15 + 1, 0, 13, i % 4 ? 1 : 2, en_playing && i == (int)en_drum_pos ? K_ACC : K_LINE);
-    for (x = 0; x < 240; x++) {                  /* the coil */
-        const int32_t y = 26 + (int32_t)(s * amp + (s < 0.0f ? -0.5f : 0.5f));
-        const float ns = s * cs + c * ss;
-        c = c * cs - s * ss;
-        s = ns;
-        cv_pset(x, y, cc);
-    }
+    cv_rect(0, 26, 240, 1, cc);
 }
 
 static void draw_header(void)
@@ -3375,8 +3303,7 @@ static void draw_header(void)
     char t[24];
     int msg = plat_ms() < ui.msg_until;
     uint32_t h;
-    mascot_step();
-    if (ui.frame % 2u)                          /* (the spring moves every frame; the header is redrawn thirty times a second) */
+    if (ui.frame % 2u)                          /* (the header is redrawn fifteen times a second) */
         return;
     h = hash(hash(hash(2166136261u, proj.piece | (uint32_t)proj.par[P_ROOT] << 8 | (uint32_t)proj.pool << 12),
                            en_playing | (uint32_t)en_sec << 2 | (uint32_t)en_sec_req << 9 | (uint32_t)msg << 5 |
@@ -3390,8 +3317,7 @@ static void draw_header(void)
     h = hash(h, (plat_battery() >= 591u ? 3u : plat_battery() >= 561u ? 2u : plat_battery() >= 531u ? 1u : 0u) | (uint32_t)plat_usb_power() << 4 | (uint32_t)(plat_battery() != 0xFFFFFFFFu) << 5);
     if (msg)
         h = hash(hash(h, (uint32_t)ui.msg[0][0] << 8 | ui.msg[0][1]), ui.msg_until);
-    h = hash(h, (uint32_t)(int)(hm.lift * 2.0f) | (uint32_t)((int)(hm.dh * 2.0f) + 16) << 4 |
-                    (uint32_t)(en_playing && en_sec == EN_SEC_BUILD ? 1u + (ui.frame / 2u & 1u) : 0u) << 12);
+    h = hash(h, (uint32_t)(en_playing && en_sec == EN_SEC_BUILD ? 1u + (ui.frame / 2u & 1u) : 0u) << 12);
     h = hash(h, (uint32_t)(plat_ms() / 66u) | (uint32_t)q16(en_drum_glow[0]) << 20 | (uint32_t)(en_playing ? en_drum_pos + 1u : 0u) << 25);
     h = hash(h, ui.piece_q);
     if (h == ui.sig[0])
@@ -3404,7 +3330,7 @@ static void draw_header(void)
     } else {
         int32_t x = 207, w;
         const uint32_t bv = plat_battery();
-        if (bv != 0xFFFFFFFFu && bv > 100u) {      /* the battery, left of the mascot: a cell, its charge in three steps (the stock firmware's own: the divider's reading under 531 is the last, 561 and 591 the others), a bolt in it while USB powers the unit */
+        if (bv != 0xFFFFFFFFu && bv > 100u) {      /* the battery: a cell, its charge in three steps (the stock firmware's own: the divider's reading under 531 is the last, 561 and 591 the others), a bolt in it while USB powers the unit */
             const int lvl = bv >= 591u ? 3 : bv >= 561u ? 2 : bv >= 531u ? 1 : 0;
             const uint16_t bc = lvl == 0 ? K_ACC : lvl == 1 ? K_FROST : K_DIM;
             int j;
@@ -3420,7 +3346,6 @@ static void draw_header(void)
             }
             x -= 20;
         }
-        /* DARK-1: no mascot in the corner (PERF-1 drew its imp here) */
         if (project_pending()) {                   /* not yet in flash (the theme, Tune, MIDI out: two seconds on) */
             cv_round(x - 5, 12, 5, 5, 2, K_DIM);
             x -= 11;
@@ -3533,7 +3458,7 @@ static void draw_header(void)
             cv_text(w + 8, 8, &FONT_XS, q, K_ACC);
         }
     }
-    imp_header();
+    header_extras();
     cv_blit(0, 0);
 }
 
@@ -3554,7 +3479,7 @@ static void polar(int32_t cx, int32_t cy, float r, int i, int n, int32_t *x, int
  * top, the chord's tones joined into a figure (a triad a triangle, a seventh a four-sided shape: the chord's kind read as a shape, its name
  * under the eye). Outside, the 4-bar phrase drawing itself round; then the bar's 16 steps (the kick's larger, the acid's gates tinted, the
  * playhead white); a pentagram turning once in 16 bars behind it; runes flaring by the notes the pluck plays. In the middle a demon eye
- * (SEL + HOME: the slinky imp instead): half open in a groove, its slit pupil widening on the kick and its gaze flipping on the snare;
+ *: half open in a groove, its slit pupil widening on the kick and its gaze flipping on the snare;
  * shut in a breakdown; wide and trembling in a build, the phrase ring opening in spinning gaps; a white flash and a shock ring on the
  * drop. When the engine sheds load the pentagram and the runes go first. */
 static struct {
@@ -3698,11 +3623,7 @@ static void draw_sigil(void)
                     if (RUNE[sg.rn[i].kind][r] >> (4 - c) & 1u)
                         cv_pset(x - 2 + c, y - 2 + r, mix(K_BG, K_ACC, 16 - (int)(age * 16u / 700u)));
         }
-    if (ui.centre_imp) {                         /* the imp, summoned into it (in the Synth look he stands on the sun, no box) */
-        if (!LOOK_SYNTH)
-            cv_rect(CX - 13, CY - 14, 27, 27, K_BG);
-        draw_mascot(CX - 11, CY - 12, play && en_sec == EN_SEC_BREAK);
-    } else if (LOOK_SYNTH) {                     /* the scanner (the Synth look): a slit whose opening follows the section, a light sweeping across it once in two beats */
+    if (LOOK_SYNTH) {                     /* the scanner (the Synth look): a slit whose opening follows the section, a light sweeping across it once in two beats */
         const uint32_t dage = now - sg.drop_t;
         const int flash = play && sg.drop_t && dage < 450u;
         const int open = flash ? 12 : !play ? 3 : en_sec == EN_SEC_BREAK ? 1 : en_sec == EN_SEC_BUILD ? 8 : 5;
@@ -4084,7 +4005,7 @@ static void draw_fxedit(void)
                 cv_text(4, 50, &FONT_XS, p == 25 ? "WANDER CHANGES THE MUSIC BY ITSELF:" : "WHAT WANDER MAY CHANGE: THE DRUM KITS,", K_DIM);
                 cv_text(4, 64, &FONT_XS, p == 25 ? "A NEW PIECE, SOUND, KNOBS OR LAYERS," : "THE SOUNDS, THE KNOBS, THE LAYERS.", K_DIM);
                 cv_text(4, 78, &FONT_XS, p == 25 ? "ON THE BAR. THE STORED PIECE IS SAFE." : "YOUR OWN MUTES AND TURNS STAY YOURS.", K_DIM);
-                cv_text(4, 92, &FONT_XS, p == 25 ? "NOT KEPT AT POWER-OFF. DIAL: NEXT PAGE." : "NOT KEPT AT POWER-OFF. DIAL: NEXT PAGE.", K_DIM);
+                cv_text(4, 92, &FONT_XS, p == 25 ? "KEPT AT POWER-OFF. ON+KEEP: ON AT START." : "KEPT AT POWER-OFF. DIAL: NEXT PAGE.", K_DIM);
             }
         }
     }
@@ -4615,7 +4536,7 @@ static void draw_scope(int kind)
         const int ty = proj.par[P_RV_TYPE] < 0 ? 0 : proj.par[P_RV_TYPE] > 2 ? 2 : proj.par[P_RV_TYPE];
         const float len = 0.25f + 0.75f * (float)proj.par[P_SIZE] * 0.01f, amt = (float)proj.par[P_RV_X] * 0.01f,
                     gap = (6.0f + 24.0f * (float)proj.par[P_RV_PRE] * 0.01f) * (1.0f / 30.0f) * 0.2f, hold = 0.12f + 0.45f * amt;
-        col = IMP_TEAL;
+        col = PLUCK_COL;
         cv_text(6, 2, &FONT_B, "REVERB", col);
         cv_text(6 + text_w(&FONT_B, "REVERB") + 8, 6, &FONT_XS, TY[ty], K_TEXT);
         cv_text(6, SC_Y + SC_H + 6, &FONT_XS, ty == 1 ? "AN OCTAVE UP, BLOOMING IN THE TAIL" : ty == 2 ? "CUT OFF AFTER THE HOLD" : "THE PLATE'S TAIL, AFTER THE PREDELAY", K_DIM);
@@ -4985,7 +4906,7 @@ static void draw_scope(int kind)
         const int st = proj.par[P_CM_STYLE], ri = proj.par[P_CM_RATE] & 3, n = 6;
         const float T = 0.1f * fm_exp2f((float)proj.par[P_CM_DEC] * 0.045f);
         int s, k;
-        col = IMP_TEAL;
+        col = PLUCK_COL;
         for (x = 0; x < SC_W; x++) {
             const float u = (float)x / (float)(SC_W - 1);
             sc_y[x] = (uint8_t)(scope_expo(u * 1.2f / T, 10.0f) * (float)(SC_H - 8) * 0.45f);
@@ -5350,7 +5271,7 @@ static void draw_main(void)
                     (uint32_t)q16(en_acid_level) << 18);
     for (i = 0; i < 5; i++)
         h = hash(h, (uint32_t)proj.par[i]);
-    h = hash(h, (en_playing ? plat_ms() / 66u : 0u) | (uint32_t)en_sec << 28 | (uint32_t)ui.centre_imp << 30 | (uint32_t)en_shed_level << 26);   /* the sigil moves: 15 frames a second while playing */
+    h = hash(h, (en_playing ? plat_ms() / 66u : 0u) | (uint32_t)en_sec << 28 | (uint32_t)en_shed_level << 26);   /* the sigil moves: 15 frames a second while playing */
     if (h == ui.sig[1])
         return;
     ui.sig[1] = h;
@@ -5379,17 +5300,17 @@ static uint16_t view_color(void)                /* the page's voice in its colou
     const int g = group_of(ui.view == V_SEQ ? V_DRUMS : ui.view);
     switch (g >= 0 ? GROUP[g].btn : -1) {
     case B_LFO: return K_BASS;
-    case B_ARP: return ui.view == V_CMEL || ui.view == V_CMEL2 || ui.view == V_CMVU || ui.view == V_CMSTEP ? IMP_TEAL : K_ACID;
+    case B_ARP: return ui.view == V_CMEL || ui.view == V_CMEL2 || ui.view == V_CMVU || ui.view == V_CMSTEP ? PLUCK_COL : K_ACID;
     case B_SEQ: return K_PULSE;
     case B_HOME: return KC_REPEAT;
     default: return ui.view == V_JAM ? KC_MOVE : perf_like() ? KC_FILTER : K_PAD;
     }
 }
 
-/* the accordion tabs (the Imp skin's knob strip): a chip a group of pages; the one you are in opens to its name and a pip a page */
-static void imp_tabs(void)
+/* the accordion tabs (the accordion skin's knob strip): a chip a group of pages; the one you are in opens to its name and a pip a page */
+static void tab_chain(void)
 {
-    const uint16_t col[10] = {K_TEXT, K_PAD, K_BASS, K_ACID, IMP_TEAL, K_PULSE, K_FROST, K_DIM, K_TEXT, KC_MOVE};
+    const uint16_t col[10] = {K_TEXT, K_PAD, K_BASS, K_ACID, PLUCK_COL, K_PULSE, K_FROST, K_DIM, K_TEXT, KC_MOVE};
     const int v = ui.view == V_SEQ ? V_DRUMS : ui.view >= V_PERF ? V_TEMPO : (int)ui.view;
     int32_t x = 3;
     int i;
@@ -5524,7 +5445,7 @@ static void draw_knobs(void)
             cv_text(4, 14, &FONT_XS, ui.view == V_SEQ ? "SEL: KEYS=PATTERNS KNOBS=TRICKS" :
                                      voice_of(ui.view) >= 0 ? "SEL: ALGO=SOUND ENV=HAND PRE=PIECE" : "SEL: PRESETS=PIECE ALGO=SOUND", K_ACC);   /* the footer hint: what shift does here */
         else if (!ui.fx_menu)
-            imp_tabs();                          /* tabs, a chip a group */
+            tab_chain();                          /* tabs, a chip a group */
         else for (k = 0; k < ndots; k++) {
             int cur, same;
             if (ui.fx_menu) {
@@ -6068,7 +5989,9 @@ static void settings_save(void)
     s.pm_tgt = ui.pm_tgt;
     s.gx_pat = ui.gx_pat;
     s.usb = (uint16_t)(ui.usb_fixed | (!ui.fm_dy) << 1 | ui.scan << 2 |   /* (bit 1: the DX set chosen; DY is the default since 0.14.21, so older settings read as DY) */ (ui.dj_rounds & 7) << 3 | (ui.dj_ramp & 7) << 6 | (ui.intro & 7) << 9);
-    s.viz = (uint8_t)(ui.viz | ui.centre_imp << 7);
+    s.viz = (uint8_t)(ui.viz | 0x80u);           /* (bit 7: the Wander settings below are the player's; older records read 0 and keep the defaults) */
+    s.uiv[11] = (uint8_t)((ui.w_every & 7) | (ui.w_amt & 3) << 3 | (ui.w_piece & 3) << 5 | (ui.w_kits & 1) << 7);
+    s.usb |= (uint16_t)((ui.w_voices & 1) << 12 | (ui.w_knobs & 1) << 13 | (ui.w_layers & 1) << 14 | (ui.w_on == 2 ? 1 : 0) << 15);
     if (plat_store_save(OBJ_SET, &s, sizeof s) == 0) {
         set_disk = s;
         set_have = 1;
@@ -6143,7 +6066,12 @@ static void settings_load(void)
         en_gate_pat(ui.gx_pat);
     }
     ui.viz = (uint8_t)((s.viz & 0x7Fu) % VZ_N);
-    ui.centre_imp = (uint8_t)(s.viz >> 7);
+    if (s.viz & 0x80u) {                         /* Wander's settings (1.0.2) */
+        ui.w_every = (uint8_t)((s.uiv[11] & 7) % 5), ui.w_amt = (uint8_t)((s.uiv[11] >> 3 & 3) % 3), ui.w_piece = (uint8_t)((s.uiv[11] >> 5 & 3) % 3);
+        ui.w_kits = s.uiv[11] >> 7 & 1;
+        ui.w_voices = s.usb >> 12 & 1, ui.w_knobs = s.usb >> 13 & 1, ui.w_layers = s.usb >> 14 & 1;
+        ui.w_on = (uint8_t)(s.usb >> 15 & 1 ? 2 : 0);
+    }
     ui.set_dirty = 0;
 }
 
@@ -6172,93 +6100,16 @@ static void autosave(void)
         quiet_write(2);                          /* playing: the theme, Tune, MIDI out (faded) */
 }
 
-/* THE BOOT CARDS. First deamonSLINKY (the maker): its mascot, a slinky with demon horns (a 23 x 20 sprite, 4 px a pixel; the Hellfire
- * colorway of the logo concept), the name in two colours, a ringed bar and "PRESENTS". Then PERF-1 in big pixel letters, what it is,
- * and the credit (a fork of HYP-1 by RedtailWorks), with sixteen steps filling in (the white keys lighting with them) until the
- * music starts. Any button or key: straight to the music.
- * Sprite letters: K outline, H horn, h horn shade, Y eye, R body, r body shade, L highlight, T tail, . nothing. */
-static const char *const MASCOT[23] = {
-    "..K............K.......",
-    ".KHK..........KHK......",
-    "..KHK........KHK.......",
-    "..KhK.KKKKKK.KhK.......",
-    "...KhKRRRRRRKhK........",
-    "..KRLLRRRRRRRRRK.......",
-    ".KRLRKKRRRRKKRRRK......",
-    ".KRRRYYRRRRYYRRRK......",
-    ".KRRRKRRRRRRKRRRK......",
-    ".KrrrKHKKKKHKrrrK...K..",
-    "..KKKKKKKKKKKKKK...KRK.",
-    "..KRLLRKKKKrrrrK..KRLRK",
-    "..KrrrrRLRRKKKK...KKKKK",
-    "...KKKKrrrrRRRRK....T..",
-    "..KRLLRKKKKrrrrK....T..",
-    "..KrrrrRLRRKKKK.....T..",
-    "...KKKKrrrrRRRRK...T...",
-    "..KRLLRKKKKrrrrK..T....",
-    "..KrrrrRLRRKKKK...T....",
-    "...KKKKrrrrRRRRKTT.....",
-    "..KRLLRKKKKrrrrK.......",
-    "..KrrrrRLRRKKKKK.......",
-    "...KKKKKKKKKKKK........"};
-static uint16_t mascot_color(char ch)
-{
-    if (LOOK_SYNTH)                              /* neon tube light: a magenta outline, chrome horns, cyan eyes, the body dark */
-        switch (ch) {
-        case 'K': case 'T': return RGB(255, 47, 142);
-        case 'H': return RGB(255, 255, 255);
-        case 'h': return RGB(159, 220, 255);
-        case 'Y': return RGB(62, 240, 255);
-        case 'R': return RGB(58, 11, 48);
-        case 'r': return RGB(36, 6, 31);
-        case 'L': return RGB(255, 122, 209);
-        default: return 0;
-        }
-    switch (ch) {
-    case 'K': case 'T': return RGB(27, 16, 34);
-    case 'H': return RGB(242, 230, 196);
-    case 'h': return RGB(196, 173, 126);
-    case 'Y': return RGB(255, 212, 71);
-    case 'R': return RGB(224, 52, 79);
-    case 'r': return RGB(156, 29, 58);
-    case 'L': return RGB(255, 143, 143);
-    default: return 0;
-    }
-}
-
-static void splash_mascot(int hop, int blink)    /* the mascot, hopped up hop pixels, its eyes shut when blinking */
-{
-    int x, y;
-    cv_begin(240, 108, K_BG);
-    for (y = 0; y < 23; y++)
-        for (x = 0; x < 23; x++)
-            if (MASCOT[y][x] != '.')
-                cv_rect(120 - 23 * 2 + x * 4, 108 - 23 * 4 + y * 4 - hop, 4, 4, mascot_color(blink && MASCOT[y][x] == 'Y' ? 'K' : MASCOT[y][x]));
-    cv_blit(0, 0);
-}
-
+/* THE BOOT CARD: DARK-1 in big pixel letters, "BY POLYSTELLARFLOW" under it, and sixteen steps filling in (the white keys lighting
+ * with them) until the music starts. Any button or key: straight to the music. */
 static void draw_hyp(void);
 static void draw_splash(void)
 {
     draw_hyp();
     ui.splash = 2;
-    return;
-#if 0
-    int i;
-    lcd_fill(0, 0, 240, 240, K_BG);
-    splash_mascot(0, 0);
-    cv_begin(240, 132, K_BG);                    /* the name, the rings, and what's next */
-    text_c(120, 0, &FONT_L, "DEAMON", RGB(242, 230, 196));
-    text_c(120, 36, &FONT_L, "SLINKY", RGB(255, 143, 143));
-    for (i = 0; i < 9; i++)
-        cv_rect(48 + i * 16, 86, 12, 6, i & 1 ? RGB(224, 52, 79) : RGB(156, 29, 58));
-    cv_frame(40, 80, 160, 18, K_LINE);
-    text_c(120, 110, &FONT_XS, "PRESENTS", K_DIM);
-    cv_blit(0, 108);
-#endif
 }
 
-/* the second card: PERF-1, big 5 x 7 pixel letters (6 px a pixel), an orange shadow under the purple */
+/* the title: big 5 x 7 pixel letters (6 px a pixel), an orange shadow under the purple */
 #define BIG_N 6
 #define BIG_PX 6
 static const uint8_t BIG_GLYPH[BIG_N][7] = {
@@ -6292,18 +6143,6 @@ static void splash_tick(void)                    /* the HYP-1 card's steps, fill
 {
     uint32_t t = plat_ms() - ui.boot_t, t1 = 0u, n, k = 0, i;   /* DARK-1: the title card from the start */
     if (ui.splash == 1) {
-        static uint32_t last = 0xFFFFFFFFu;
-        if (t < t1) {                              /* the mascot hops twice, then blinks */
-            const int hop = t < t1 * 3u / 5u ? (int)(14.0f * fm_fabsf(fm_sinf(FM_PI * (float)t / (float)(t1 * 3u / 10u + 1u)))) : 0,
-                      blink = t > t1 * 3u / 4u && t < t1 * 7u / 8u;
-            const uint32_t s = (uint32_t)hop | (uint32_t)blink << 8;
-            if (s != last) {
-                last = s;
-                splash_mascot(hop, blink);
-            }
-            return;
-        }
-        last = 0xFFFFFFFFu;
         ui.splash = 2;
         draw_hyp();
     }

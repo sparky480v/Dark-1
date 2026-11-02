@@ -66,7 +66,7 @@ original, and every one of the 160 recipes is different from every other and fro
 
 * `firmware/src/dsp/dark_presets.h` (new): the single source of truth above.
 * `firmware/src/dsp/amb.c`: the recipe block replaced (`en_piece_g`, `en_piece_pats_g`, `en_piece_mods_g`, `en_genre_fx`, names); six new scales
-  (Locrian, harmonic minor, Phrygian dominant, double harmonic, whole tone, blues minor); three new chord kinds (diminished 7th, minor-major 7th, cluster); the
+  (Locrian, harmonic minor, Phrygian dominant, double harmonic, whole tone, blues minor; 1.0.2: Hungarian minor, Neapolitan minor, diminished, Persian); three new chord kinds (diminished 7th, minor-major 7th, cluster); the
   tempo floor lowered from 70 to 56; fourteen new drum kits (kick sweep, decay, click, drive, rumble; snare tones and noise; clap; hat metal; perc FM); the
   pad, drone and acid banks renamed and re-tuned darker (cutoffs, drive, levels); the thirty FM voices replaced; the FM gains re-measured (`tests/host/fmcal.c`).
   Drum pattern lists for pieces 8 and 9 are shifted so no two pieces of a genre share drum patterns.

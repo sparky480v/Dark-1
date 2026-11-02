@@ -8,7 +8,7 @@
  *   KALEIDO the classic media-player pattern: curves from the spectrum, mirrored four ways, trailing and turning (it replaced the tunnel)
  *   BARS    an equaliser: lows from the kick and the drone, mids from the pad and the snare, highs from the hats and the acid
  *   FLUX    the classic media-player light show: the spectrum fed back on itself, a trippy bloom
- *   DISCO   the mascot dancing on a floor that lights with the drum pattern
+ *   SIGIL   a ritual circle with a turning pentagram and a demon eye, over a floor that lights with the drum pattern
  *   LIFE    a cellular automaton that the drums feed (the kick a cluster, the snare a spray, a hat a spark)
  *   ORBIT   a harmonograph drawn from the chord's notes: it morphs with every chord
  *   AUTO    one of them, a new one on every section change and every 32 bars */
@@ -19,7 +19,7 @@
 #define VZ_ROWS (vz.h / 6)
 
 static struct {
-    int32_t floor_y;                           /* where the dancer stands */
+    int32_t floor_y;                           /* the floor's top (the eye sits above it) */
     int32_t h, y0;                             /* the picture's height (144 on the page, 240 whole screen) and, drawing the whole screen, the band's top row */
     uint8_t full, pass;                        /* the whole screen; which band (the state moves in the first) */
     float tt, ph, ph2, dt;                     /* time (tempo scaled), two phases, the frame's seconds */
@@ -34,12 +34,9 @@ static struct {
     uint8_t lcur, last_step, mode_seen, auto_cur, sec_seen, inited;
     uint32_t seed, last_ms, auto_bar, life_ms;
     uint16_t lut[64];
-    float dh, dhv, lift, lv, kprev, sprev;     /* the dancer: the head's spring (px, + up) and its speed; the hop's height and speed */
-    float conf[24][5];                         /* confetti: x, y, vx, vy, colour */
-    uint8_t dsec, dmove, dleft, dother;        /* the section last seen; the move now; two-bar units left of it; 0 jumping, else the other move */
-    uint32_t dunit;                            /* the two-bar unit last counted */
-    uint32_t blink_until, blink_next;          /* the dancer's blink: when it ends; the next one */
-    uint8_t dpos, dsince;                      /* the step last seen; steps since the last launch */
+    float dh, dhv, sprev;                      /* the eye: how open (0..1) and its pupil's width; the snare's last level */
+    uint8_t dsec, dpos;                        /* the section last seen; which way the eye looks (flips on the snare) */
+    uint32_t blink_until, blink_next;          /* the eye's blink: when it ends; the next one */
     uint32_t drop_bar;                         /* the sixteenth the drop came on */
 } vz EN_POOL;
 
@@ -297,239 +294,104 @@ static void vz_kaleido(void)
     }
 }
 
-/* THE DANCER (DISCO): the mascot at three pixels a pixel on springs. The slinky stretches as he rises, squashes as he lands and
- * wobbles a few times after; the moves change every two bars (and with the section: asleep in a breakdown, shaking in a build,
- * a big jump with confetti on the drop). Rows are grouped: the head (0..10) and three coils; each group has its own offset,
- * width and sway, so the body can stretch, twist and ripple. */
-enum { DM_BOUNCE, DM_SWAY, DM_SPIN, DM_WAVE, DM_BANG, DM_STOMP, DM_N, DM_SHAKE = DM_N, DM_SLEEP, DM_JUMP };
-static const char *const DM_NAME[DM_JUMP + 1] = {"JUMP", "SWAY", "TWIRL", "WAVE", "HEADBANG", "STOMP", "SHAKE", "SLEEPING", "BIG JUMP"};
-static const uint8_t DM_GRP[23] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4};
-
-static void vz_confetti(void)
+/* THE EYE (SIGIL, the fifth visualizer): a ritual circle with a turning pentagram and a demon eye in the middle. The sixteen dots
+ * round it are the drum pattern's steps, the playing one lit. The eye is half open in a groove, its slit pupil widening on the kick and
+ * its gaze flipping on the snare; shut in a breakdown; wide and trembling in a build; wide open with a shock ring on the drop. */
+static void vz_ring(int32_t cx, int32_t cy, float r, uint16_t col)
 {
-    const float k = vz.full ? 1.75f : 1.0f, cx = vz.full ? 104.0f : 84.0f;
     int i;
-    for (i = 0; i < 24; i++) {
-        vz.conf[i][0] = cx + (vz_rf() - 0.5f) * 40.0f * k;
-        vz.conf[i][1] = (float)vz.h - 74.0f * k;
-        vz.conf[i][2] = (vz_rf() - 0.5f) * 170.0f * k;
-        vz.conf[i][3] = (-60.0f - vz_rf() * 130.0f) * k;
-        vz.conf[i][4] = vz_rf();
+    int32_t px = cx + (int32_t)r, py = cy;
+    for (i = 1; i <= 48; i++) {
+        const float a = (float)i * (FM_TWO_PI / 48.0f);
+        const int32_t x = cx + (int32_t)(fm_cosf(a) * r), y = cy + (int32_t)(fm_sinf(a) * r);
+        cv_line(px, py, x, y, col);
+        px = x, py = y;
     }
 }
 
-static void vz_dancer(void)
+static void vz_eye(void)
 {
-    const int PX = vz.full ? 7 : 4;              /* a pixel of him: 4 on the page, 7 on the whole screen */
-    const float ks = (float)PX * 0.25f;          /* the scale of everything he does, in pixels */
-    const int CXD = vz.full ? 104 : 84;        /* his middle; the pattern is on the right */
-    const int32_t vfloor = vz.floor_y;         /* where he stands (disco's floor) */
-    const float dt = vz.dt;
-    const int playing = en_playing;
-    int g, r, c;
-    static float dx[5], sx[5], dyg[5], shear, sleepy, wide;   /* (kept for the second band of the whole screen) */
-    static int mouth, blink, mv;
-    int kedge = vz.kick > 0.6f && vz.kprev <= 0.6f;
-    const int sedge = vz.snare > 0.6f && vz.sprev <= 0.6f;
-    const float t = vz.tt;
+    const float k = vz.full ? 1.75f : 1.0f, R = 46.0f * k;
+    const int32_t cx = vz.full ? 104 : 84, cy = vz.floor_y - (int32_t)(54.0f * k);
+    const int playing = en_playing, kk = (int)(vz.kick * 5.0f);
+    static float gz;                                   /* the gaze (kept for the second band of the whole screen) */
+    const char *label = !playing ? "IDLE" : en_sec == EN_SEC_BREAK ? "ASLEEP" : en_sec == EN_SEC_BUILD ? "WIDE" : "WATCHING";
+    int i;
+    float open, hmax, w, rr = R * (1.0f + 0.05f * vz.kick), gx, ir, pw;
+    int32_t x;
     if (!vz.pass) {
-    for (g = 0; g < 5; g++)
-        dx[g] = 0.0f, sx[g] = 1.0f;
-    shear = sleepy = wide = 0.0f;
-    mouth = 0;
-    vz.kprev = vz.kick, vz.sprev = vz.snare;
-    if (playing && en_drum_pos != vz.dpos) {           /* a jump on every kick of the pattern (the glow can be missed between frames), and at least one a beat */
-        vz.dpos = en_drum_pos;
-        vz.dsince++;
-        if ((en_pats[en_pat_now][0] >> en_drum_pos & 1u) || vz.dsince >= 4u)
-            kedge = 1;
-    }
-    if (kedge)
-        vz.dsince = 0;
-    /* which move */
-    if (en_sec != vz.dsec) {
-        if (en_sec == EN_SEC_GROOVE && vz.dsec != EN_SEC_GROOVE) {      /* the drop */
-            vz.drop_bar = en_bars;
-            vz_confetti();
-        }
-        vz.dsec = en_sec;
-    }
-    if (!playing)
-        mv = DM_SWAY;
-    else if (en_sec == EN_SEC_BREAK)
-        mv = DM_SLEEP;
-    else if (en_sec == EN_SEC_BUILD)
-        mv = DM_SHAKE;
-    else if (en_bars - vz.drop_bar < 32u)
-        mv = DM_JUMP;
-    else
-    {   /* mostly jumping: the jump for 2 .. 8 bars (random), then one other move for 2 bars */
-        const uint32_t unit = en_bars / 32u;
-        if (unit != vz.dunit) {
-            vz.dunit = unit;
-            if (vz.dleft)
-                vz.dleft--;
-            if (!vz.dleft) {
-                if (vz.dother) {
-                    vz.dother = 0;
-                    vz.dleft = (uint8_t)(1u + vz_rnd() % 4u);
-                } else {
-                    vz.dother = (uint8_t)(1u + vz_rnd() % (DM_N - 1));
-                    vz.dleft = 1;
-                }
-            }
-        }
-        mv = vz.dother ? vz.dother : DM_BOUNCE;
-    }
-    vz.dmove = (uint8_t)mv;
-    /* the hop: a launch on the kick (a big one for the drop), the head's spring left behind, a squash on landing */
-    if (kedge && (vz.lift <= 0.0f || (vz.lv < 0.0f && vz.lift < 6.0f)) && (mv == DM_BOUNCE || mv == DM_JUMP || mv == DM_SWAY || mv == DM_SPIN || mv == DM_WAVE || mv == DM_BANG || mv == DM_STOMP)) {
-        const float v0 = mv == DM_JUMP ? 105.0f : mv == DM_BOUNCE ? 100.0f : 70.0f;
-        vz.lv = v0;
-        vz.lift = 0.01f;
-        vz.dhv -= v0 * 0.9f;                       /* anticipation: the head lags */
-    }
-    if (sedge && mv == DM_STOMP)
-        vz.dhv -= 170.0f;                          /* a stomp: squashed flat, then up */
-    {   /* physics, in four small steps */
-        int s;
-        for (s = 0; s < 4; s++) {
-            const float h = dt * 0.25f;
-            if (vz.lift > 0.0f || vz.lv > 0.0f) {
-                vz.lv -= 560.0f * h;
-                vz.lift += vz.lv * h;
-                if (vz.lift <= 0.0f && vz.lv < 0.0f) {
-                    vz.dhv += vz.lv * 2.3f;        /* landing: the body squashes (lv < 0) */
-                    vz.lift = 0.0f;
-                    vz.lv = 0.0f;
-                }
-            }
-            {
-                float tg = (vz.lift > 0.0f ? fm_fabsf(vz.lv) * 0.11f : 0.0f);   /* stretched by the speed */
-                if (mv == DM_SLEEP)
-                    tg = -5.0f + fm_sinf(t * 1.6f) * 1.5f;
-                else if (mv == DM_SHAKE)
-                    tg = 3.0f + fm_sinf(t * 22.0f) * 3.0f;
-                vz.dhv += (-300.0f * (vz.dh - tg) - 10.0f * vz.dhv) * h;
-                vz.dh += vz.dhv * h;
-            }
-        }
-        vz.dh = fm_clampf(vz.dh, -16.0f, 26.0f);
-    }
-    /* each move's sway / twist / ripple per group (0 head, 1..3 the coils down to the floor) */
-    for (g = 0; g < 5; g++) {
-        const float w = g == 4 ? 0.0f : g == 3 ? 0.3f : g == 2 ? 0.5f : g == 1 ? 0.75f : 1.0f;
-        dyg[g] = vz.dh * 1.3f * (float)(4 - g) * 0.25f;
-        switch (mv) {
-        case DM_SWAY: dx[g] = fm_sinf(t * 2.2f - (float)g * 0.7f) * 20.0f * w; break;
-        case DM_SPIN: sx[g] = fm_cosf(t * 3.4f + (float)g * 0.55f); break;
-        case DM_WAVE:
-            dx[g] = fm_sinf(t * 3.0f - (float)g * 1.1f) * 12.0f * (g == 4 ? 0.0f : 1.0f);
-            dyg[g] += fm_sinf(t * 5.0f - (float)g * 1.2f) * 3.0f * (float)g;
-            break;
-        case DM_BANG: dx[g] = fm_sinf(t * 6.0f) * 3.0f * w; break;
-        case DM_SHAKE: dx[g] = (vz_rf() - 0.5f) * 5.0f * w; break;
-        case DM_SLEEP: dx[g] = fm_sinf(t * 1.0f) * 2.0f * w; break;
-        default: break;
-        }
-    }
-    if (mv == DM_BANG)
-        shear = fm_sinf(t * 6.0f + 1.0f) * 2.1f * (0.5f + vz.kick);
-    if (mv == DM_SLEEP)
-        sleepy = 1.0f;
-    if (mv == DM_SHAKE || mv == DM_JUMP)
-        wide = 1.0f;
-    {   /* the face: blinks now and then; the mouth opens in a jump, on a snare, in a headbang, and sleeping he snores */
+        const int sedge = vz.snare > 0.6f && vz.sprev <= 0.6f;
+        float tg;
         const uint32_t now = plat_ms();
+        vz.sprev = vz.snare;
+        if (en_sec != vz.dsec) {
+            if (en_sec == EN_SEC_GROOVE && vz.dsec != EN_SEC_GROOVE)
+                vz.drop_bar = en_bars;                 /* the drop */
+            vz.dsec = en_sec;
+        }
+        if (sedge)
+            vz.dpos ^= 1u;
         if (now >= vz.blink_next) {
-            vz.blink_until = now + 150u;
-            vz.blink_next = now + 1800u + vz_rnd() % 3400u;
+            vz.blink_until = now + 140u;
+            vz.blink_next = now + 2200u + vz_rnd() % 3800u;
         }
-        blink = now < vz.blink_until;
-        if (mv == DM_SLEEP)
-            mouth = fm_sinf(t * 1.4f) > 0.7f ? 1 : 0;
-        else if (vz.lift > 12.0f)
-            mouth = 2;
-        else if (vz.lift > 3.0f || vz.snare > 0.4f || vz.dh < -5.0f || (mv == DM_BANG && fm_sinf(t * 12.0f) > 0.2f))
-            mouth = 1;
+        tg = !playing ? 0.3f : en_sec == EN_SEC_BREAK ? 0.04f : en_sec == EN_SEC_BUILD ? 0.95f + (vz_rf() - 0.5f) * 0.12f :
+             en_bars - vz.drop_bar < 16u ? 1.0f : 0.5f + 0.3f * vz.kick;
+        if (now < vz.blink_until && en_sec != EN_SEC_BREAK)
+            tg = 0.04f;
+        vz.dh += (tg - vz.dh) * fm_minf(vz.dt * 12.0f, 1.0f);
+        vz.dhv += ((1.0f + 3.5f * vz.kick + (en_sec == EN_SEC_BUILD ? 2.0f : 0.0f)) - vz.dhv) * fm_minf(vz.dt * 14.0f, 1.0f);
+        gz += ((vz.dpos ? 0.14f : -0.14f) - gz) * fm_minf(vz.dt * 6.0f, 1.0f);
     }
-    if (vz.dh < -3.0f)                                  /* squashed: wider */
-        for (g = 0; g < 5; g++)
-            sx[g] *= 1.0f - vz.dh * 0.028f;
-    }
-    {   /* the floor's shadow, smaller as he rises */
-        const int sw = (int)((72.0f - vz.lift * 0.9f) * ks);
-        cv_rect(CXD - sw / 2, vfloor + 1, sw, 3, K_PANEL);
-    }
-    for (g = 4; g >= 0; g--)                           /* coils first, the head last (a squash overlaps) */
-        for (r = 0; r < 23; r++) {
-            if (DM_GRP[r] != g)
-                continue;
-            {
-                const int32_t y = vfloor - 23 * PX + r * PX - (int32_t)((vz.lift + dyg[g]) * ks);
-                float rowdx = dx[g] * ks;
-                int hide = sx[g] < 0.0f;
-                if (!vz_vis(y, PX))
-                    continue;
-                if (g == 0)
-                    rowdx += shear * (float)(r - 6) * ks;
-                for (c = 0; c < 23; c++) {
-                    char ch = MASCOT[r][c];
-                    float xx;
-                    int32_t w;
-                    if (ch == '.')
-                        continue;
-                    if (ch == 'Y' && (sleepy > 0.5f || hide || blink))
-                        ch = hide ? 'R' : 'K';
-                    if (mouth && !hide && r == 8 && c >= 7 && c <= 10)      /* the mouth open: a dark hole between the fangs */
-                        ch = 'K';
-                    if (mouth == 2 && !hide && r == 9 && (c == 8 || c == 9))   /* wide: a tongue */
-                        ch = 'L';
-                    if (ch == 'T' || (c >= 17 && r >= 9))        /* the tail wags with the beat */
-                        rowdx += fm_sinf(t * 7.0f + (float)r * 0.5f) * 1.5f * (float)(r - 8) * 0.25f * ks;
-                    xx = (float)(c - 11) * (float)PX * sx[g];
-                    w = (int32_t)(fm_fabsf(sx[g]) * (float)PX + 0.99f);
-                    if (w < 1)
-                        w = 1;
-                    {   /* a coil parts along the spring's winding (down across its width), not straight across; the Synth look's imp is lit, not dark */
-                        int32_t yc = y;
-                        uint16_t col;
-                        if (g > 0 && c < 16) {
-                            const float fr = fm_clampf((float)(c - 2) * (1.0f / 13.0f), 0.0f, 1.0f);
-                            const int gn = g < 4 ? g + 1 : 4;
-                            yc = vfloor - 23 * PX + r * PX - (int32_t)((vz.lift + dyg[g] + (dyg[gn] - dyg[g]) * fr) * ks);
-                        }
-                        col = ch == 'K' || ch == 'T' ? (LOOK_SYNTH ? mascot_color('K') : RGB(27, 16, 34)) :
-                              ch == 'Y' && wide > 0.5f ? RGB(255, 255, 255) :
-                              LOOK_SYNTH && ch == 'R' ? RGB(150, 40, 120) : LOOK_SYNTH && ch == 'r' ? RGB(104, 24, 88) : mascot_color(ch);
-                        cv_rect(CXD + (int32_t)(xx + rowdx) - (sx[g] < 0.0f ? w : 0), yc, w, PX, col);
-                    }
-                }
-            }
+    open = fm_clampf(vz.dh, 0.0f, 1.0f);
+    hmax = 0.42f * R * open;
+    w = 0.66f * R;
+    gx = gz * R;
+    ir = 0.34f * R;
+    pw = vz.dhv * 0.5f * k;
+    vz_ring(cx, cy, rr, mix(K_BG, vpal(vz.ph * 2.0f), 9 + kk));
+    vz_ring(cx, cy, rr * 0.9f, mix(K_BG, K_LINE, 12));
+    {   /* the pentagram, turning (the energy turns it faster) */
+        int32_t sx[5], sy[5];
+        const float rot = vz.tt * 0.25f;
+        for (i = 0; i < 5; i++) {
+            const float a = -FM_PI * 0.5f + rot + (float)i * (FM_TWO_PI / 5.0f);
+            sx[i] = cx + (int32_t)(fm_cosf(a) * rr * 0.9f), sy[i] = cy + (int32_t)(fm_sinf(a) * rr * 0.9f);
         }
-    if (mv == DM_SLEEP) {                               /* Z z z, drifting up */
-        int k;
-        for (k = 0; k < 3; k++) {
-            const float u = (t * 0.35f + (float)k * 0.33f);
-            const float f = u - fm_floorf(u);
-            cv_text(CXD + (int32_t)((40.0f + (float)(k * 10) + f * 8.0f) * ks), vfloor - (int32_t)((50.0f + f * 50.0f) * ks), &FONT_XS, k == 0 ? "Z" : "z", mix(K_BG, K_TEXT, (int)((1.0f - f) * 16.0f)));
+        for (i = 0; i < 5; i++) {
+            const uint16_t col = mix(K_BG, vpal(vz.ph * 3.0f + (float)i * 0.07f), 7 + kk);
+            cv_line(sx[i], sy[i], sx[(i + 2) % 5], sy[(i + 2) % 5], col);
+            cv_line(sx[i] + 1, sy[i], sx[(i + 2) % 5] + 1, sy[(i + 2) % 5], col);
         }
     }
-    {   /* confetti, from the drop */
-        int k;
-        for (k = 0; k < 24; k++) {
-            float *p = vz.conf[k];
-            if (p[1] > (float)vz.h + 6.0f || p[0] < -4.0f || p[0] > 164.0f)
-                continue;
-            if (!vz.pass) {
-                p[3] += 330.0f * ks * dt;
-                p[0] += p[2] * dt;
-                p[1] += p[3] * dt;
-            }
-            cv_rect((int32_t)p[0], (int32_t)p[1], 3, 3, vpal(p[4] + vz.ph * 3.0f));
-        }
+    for (i = 0; i < 16; i++) {                         /* the pattern's sixteen steps round the circle */
+        const float a = -FM_PI * 0.5f + (float)i * (FM_TWO_PI / 16.0f);
+        const int on = playing && i == (int)en_drum_pos;
+        cv_rect(cx + (int32_t)(fm_cosf(a) * R * 1.14f) - 1, cy + (int32_t)(fm_sinf(a) * R * 1.14f) - 1, on ? 4 : 2, on ? 4 : 2, on ? K_TEXT : (i & 3) ? K_LINE : K_DIM);
     }
-    cv_text(172, 76, &FONT_XS, DM_NAME[mv], K_DIM);     /* the move, under the pattern */
+    {   /* the drop's shock ring */
+        const uint32_t age = en_bars - vz.drop_bar;
+        if (playing && vz.drop_bar && age < 16u)
+            vz_ring(cx, cy, R * (1.0f + (float)age * 0.09f), mix(K_BG, K_TEXT, 16 - (int)age));
+    }
+    for (x = -(int32_t)w; x <= (int32_t)w; x++) {     /* the eye: an almond, the iris and its slit pupil */
+        const float u = (float)x / w, hh = hmax * (1.0f - u * u), dxg = (float)x - gx;
+        const int32_t h = (int32_t)hh;
+        if (hh < 0.6f) {
+            cv_rect(cx + x, cy, 1, 1, K_TEXT);
+            continue;
+        }
+        cv_rect(cx + x, cy - h, 1, 2 * h + 1, mix(K_BG, K_TEXT, 13));
+        if (fm_fabsf(dxg) < ir) {
+            const float ih = fm_minf(hh, fm_sqrtf(ir * ir - dxg * dxg) * 1.15f);
+            cv_rect(cx + x, cy - (int32_t)ih, 1, 2 * (int32_t)ih + 1, vpal(vz.ph * 2.0f + 0.1f));
+            if (fm_fabsf(dxg) < pw)
+                cv_rect(cx + x, cy - (int32_t)ih, 1, 2 * (int32_t)ih + 1, K_BG);
+        }
+        cv_rect(cx + x, cy - h - 1, 1, 1, K_TEXT);
+        cv_rect(cx + x, cy + h + 1, 1, 1, K_TEXT);
+    }
+    cv_text(172, 76, &FONT_XS, label, K_DIM);          /* the eye's mood, under the pattern */
 }
 
 static void vz_disco(void)
@@ -577,7 +439,7 @@ static void vz_disco(void)
         const int on = (int)((hash(77u, (uint32_t)i + (uint32_t)(vz.tt * 3.0f)) >> 9) & 3u);
         cv_rect(bx + (int32_t)(fm_cosf(a) * r) - 1, by + (int32_t)(fm_sinf(a) * r * 0.8f) - 1, 3, 3, on == 0 ? K_TEXT : on == 1 ? vpal(vz.ph * 3.0f + (float)i * 0.06f) : K_DIM);
     }
-    vz_dancer();
+    vz_eye();
     {   /* the drum pattern, small, at the right (as on the home screen), the step playing lit */
         const int pos = en_drum_pos, pat = en_pat_now;
         char tt[8] = "PAT ";
@@ -680,6 +542,36 @@ static void vz_orbit(void)
         }
     }
 }
+/* VORTEX and TUNNEL (1.0.2): two more that need no state of their own. VORTEX is a spiral of arms that turns with the tempo and
+ * breathes on the kick; TUNNEL is rings rushing towards you, faster with the energy, the kick pushing them out. */
+static void vz_vortex(void)
+{
+    const int arms = 3;
+    const float cx = 120.0f, cy = (float)vz.h * 0.5f, sy = (float)vz.h * (1.0f / 144.0f), rmax = 130.0f + vz.kick * 14.0f;
+    int a, i;
+    for (a = 0; a < arms; a++) {
+        int32_t px = 0, py = 0;
+        for (i = 0; i <= 40; i++) {
+            const float f = (float)i * (1.0f / 40.0f), th = vz.tt * 0.35f + (float)a * (FM_TWO_PI / (float)arms) + f * (5.0f + vz.snare * 1.5f);
+            const float r = f * rmax;
+            const int32_t x = (int32_t)(cx + fm_cosf(th) * r), y = (int32_t)(cy + fm_sinf(th) * r * sy * 0.8f);
+            if (i)
+                cv_line(px, py, x, y, vpal(f * 0.6f + vz.ph * 3.0f + (float)a * 0.33f));
+            px = x, py = y;
+        }
+    }
+    vz_ring((int32_t)cx, (int32_t)cy, 5.0f + vz.kick * 10.0f, K_TEXT);
+}
+static void vz_tunnel(void)
+{
+    const float cx = 120.0f, cy = (float)vz.h * 0.5f;
+    int i;
+    for (i = 0; i < 12; i++) {
+        float f = (float)i * (1.0f / 12.0f) + vz.ph2 * 0.35f;
+        const float u = f - fm_floorf(f), r = 4.0f + u * u * (150.0f + vz.kick * 30.0f);
+        vz_ring((int32_t)(cx + fm_sinf(vz.tt * 0.4f) * 12.0f * (1.0f - u)), (int32_t)(cy + fm_cosf(vz.tt * 0.3f) * 6.0f * (1.0f - u)), r, vpal(u + vz.ph * 2.0f));
+    }
+}
 static void draw_viz(void)
 {
     int mode = ui.viz % VZ_N;
@@ -692,13 +584,6 @@ static void draw_viz(void)
         vz.last_ms = plat_ms();
         vz.cf[0] = 1.0f, vz.cf[1] = 1.3f, vz.cf[2] = 1.6f;
         vz.mode_seen = 255;
-        vz.dleft = (uint8_t)(1u + vz_rnd() % 4u);
-        vz.dunit = en_bars / 32u;
-        {
-            int q;
-            for (q = 0; q < 24; q++)
-                vz.conf[q][1] = 999.0f;
-        }
         vz.sec_seen = en_sec;
     }
     if (vz.h != h) {                               /* the page and the whole screen differ in size: the state starts fresh */
@@ -739,6 +624,8 @@ static void draw_viz(void)
         case VZ_FLUX: vz_flux(); break;
         case VZ_DISCO: vz_disco(); break;
         case VZ_LIFE: vz_life(); break;
+        case VZ_VORTEX: vz_vortex(); break;
+        case VZ_TUNNEL: vz_tunnel(); break;
         default: vz_orbit(); break;
         }
         cv_blit(0, full ? (uint32_t)vz.y0 : MAIN_Y);

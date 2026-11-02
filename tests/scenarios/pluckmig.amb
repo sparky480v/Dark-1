@@ -21,4 +21,4 @@ wait 500
 oldimage
 reboot
 wait 500
-expect par99 42
+expect par99 50

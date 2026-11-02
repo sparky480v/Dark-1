@@ -19,7 +19,7 @@ from make_site import product_of, strip_module  # noqa: E402
 
 ver = sys.argv[1] if len(sys.argv) > 1 else sys.exit(__doc__)
 OUT = Path(sys.argv[2] if len(sys.argv) > 2 else SRC / "build" / "site")
-REPO = "https://github.com/deamonSLINKY/PERF-1"
+REPO = "https://github.com/sparky480v/Dark-1"
 pkg = SRC / "build" / f"amb-{ver}.fwsc"
 raw = pkg.read_bytes()
 product = product_of(raw)
@@ -36,13 +36,13 @@ for d in ("install", "firmware", "img", "manual/img"):
 name = f"perf1-{ver}.fwsc"
 shutil.copy(pkg, OUT / "firmware" / name)
 shutil.copytree(SRC / "build" / "emu", OUT / "emu")
-shutil.copy(SRC / "web" / "img" / "slinky.png", OUT / "img" / "slinky.png")
+shutil.copy(SRC / "web" / "img" / "dark1.png", OUT / "img" / "dark1.png")
 shutil.copy(SRC / "web" / "img" / "favicon.png", OUT / "img" / "favicon.png")
 
 page = (SRC / "web" / "amb_installer.html").read_text(encoding="utf-8")
 lib = strip_module((SRC / "web" / "fm1pkg.js").read_text(encoding="utf-8")) + "\n" + strip_module((SRC / "web" / "fm1ota.js").read_text(encoding="utf-8")) + "\n" + strip_module((SRC / "web" / "fm1backup.js").read_text(encoding="utf-8"))
 meta = json.dumps({"version": ver, "product": product, "pkg": "../firmware/" + name})
-page = page.replace("/*LIB*/", lib).replace("/*META*/", meta).replace("<h1>Install PERF-1</h1>", f"<h1>Install PERF-1 {ver}</h1>")
+page = page.replace("/*LIB*/", lib).replace("/*META*/", meta).replace("<h1>Install DARK-1</h1>", f"<h1>Install DARK-1 {ver}</h1>")
 (OUT / "install" / "index.html").write_text(page, encoding="utf-8", newline="\n")
 
 params = SRC / "build" / "params.json"
@@ -67,7 +67,7 @@ for img in [*(SRC / "docs" / "img").glob("perf-screen-*.png"), *(SRC / "docs" / 
 (OUT / "index.html").write_text(f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PERF-1</title><link rel="icon" href="img/favicon.png">
-<meta name="description" content="PERF-1: live-performance firmware for the M-VAVE FM-1: sixteen genres of generative pieces, an auto-DJ, effects, a web editor and DX7 voices.">
+<meta name="description" content="DARK-1: dark-music firmware for the M-VAVE FM-1: sixteen dark genres of generative pieces, an auto-DJ, effects, a web editor and DX7 voices.">
 <style>
 :root{{--bg:#140e0c;--panel:#2a1e1b;--line:#4e3831;--text:#f4e8c8;--dim:#a68c7e;--acc:#ffd447;--red:#e0344f}}
 @media (prefers-color-scheme:light){{:root{{--bg:#f6efe2;--panel:#ebe0cc;--line:#cdbb9f;--text:#2a1c16;--dim:#7a6657;--acc:#a86b00;--red:#b3203a}}}}
@@ -80,18 +80,18 @@ img.logo{{width:96px;height:auto;display:block;margin:0 0 12px}}h1{{margin:0;fon
 .card:hover{{border-color:var(--acc)}}.card b{{display:block;font-size:1.05rem;color:var(--acc)}}.card span{{color:var(--dim);font-size:.92rem}}
 p.small{{color:var(--dim);font-size:.88rem}}a{{color:var(--acc)}}
 </style></head><body><main>
-<img class="logo" src="img/slinky.png" alt="the PERF-1 slinky">
-<h1>PERF<span>-1</span></h1>
-<p class="tag">Free firmware that turns the M-VAVE FM-1 into a groovebox that plays by itself. By deamonSLINKY. Version <span class="v">{ver}</span>.</p>
-<p>Switch it on and music starts: drums, bass, a pad, an acid line and a plucked melody, in sixteen styles from techno to reggae. You steer it with the buttons and keys: change the chords, break it down and drop it back in, mute parts, throw on effects, or let the auto-DJ run the show. When you want more, nearly everything can be edited and saved. New here? Start with the beginner's guide.</p>
+<img class="logo" src="img/dark1.png" alt="DARK-1">
+<h1>DARK<span>-1</span></h1>
+<p class="tag">Free firmware that turns the M-VAVE FM-1 into a groovebox that plays by itself. By Polystellarflow, a modification of PERF-1 by deamonSLINKY. Version <span class="v">{ver}</span>.</p>
+<p>Switch it on and music starts: drums, bass, a pad, an acid line and a plucked melody, in sixteen dark styles, from dark techno to ritual. You steer it with the buttons and keys: change the chords, break it down and drop it back in, mute parts, throw on effects, or let the auto-DJ run the show. When you want more, nearly everything can be edited and saved. New here? Start with the beginner's guide.</p>
 <div class="grid">
 <a class="card" href="install/"><b>Install</b><span>Install it from this website in Chrome or Edge, with the FM-1 plugged in. You can go back to the original firmware the same way.</span></a>
-<a class="card" href="emu/"><b>Try it in your browser</b><span>Play with PERF-1 on screen, with sound, before you install anything.</span></a>
+<a class="card" href="emu/"><b>Try it in your browser</b><span>Play with DARK-1 on screen, with sound, before you install anything.</span></a>
 <a class="card" href="editor/"><b>Editor</b><span>Change any setting from your computer, and make your own DX7 sounds and hear them on the FM-1.</span></a>
 <a class="card" href="manual/"><b>Manual</b><span>Starts with a beginner's guide, then explains every button and page.</span></a>
 {quick_card}
 <a class="card" href="firmware/{name}"><b>Download the firmware file</b><span>{name} ({len(raw) // 1024} KB). You only need this if you install another way than the page above.</span></a>
-<a class="card" href="{REPO}/issues/new/choose"><b>Ideas and problems</b><span>Tell me what you'd like next, or what went wrong. Most new features started as someone's idea.</span></a>
+<a class="card" href="{REPO}/issues"><b>Ideas and problems</b><span>Tell me what you'd like next, or what went wrong. Most new features started as someone's idea.</span></a>
 <a class="card" href="{REPO}"><b>Source code</b><span>Free and open source (GPL-3.0), on GitHub.</span></a>
 </div>
 <p class="small">Installing firmware is at your own risk. If something goes wrong, the installer can put the original firmware back, and an FM-1 that fails to start twice in a row starts in a safe mode the installer can reach. Section 1 of the manual explains it all.</p>

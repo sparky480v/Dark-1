@@ -545,7 +545,7 @@ static int expect(const char *what, const char *val)
     else if (!strncmp(what, "wovr", 4))           /* wovrN: sound N's override (-1 none; N: 0-3 kits, 4 pad, 5 bass, 6 acid, 7 pluck) */
         got = ui.w_ovr[atoi(what + 4) & 7];
     else if (!strncmp(what, "woff", 4))           /* woffN: knob N's offset */
-        got = ui.w_off[atoi(what + 4) % 11];
+        got = ui.w_off[atoi(what + 4) % 25];
     else if (!strncmp(what, "wtgt", 4))
         got = ui.w_tgt[atoi(what + 4) % 11];
     else if (!strncmp(what, "whist", 5))          /* the pieces it chose last (genre * 10 + piece + 1) */
@@ -915,6 +915,9 @@ int main(int argc, char **argv)
             host_seamless = atoi(a);
         } else if (!strcmp(cmd, "battery")) {        /* battery N: the divider's ADC reading (0..1023; the indicator shows from about 500) */
             host_batt = (uint32_t)strtoul(a, 0, 10);
+        } else if (!strcmp(cmd, "emb")) {            /* emb N: the home screen's middle figure (EMB_*), kept for this piece */
+            sg.emb = (uint8_t)(atoi(a) % EMB_N);
+            sg.pc_seen = (uint16_t)(proj.genre * 16u + proj.piece + 1u);
         } else if (!strcmp(cmd, "seed")) {           /* seed N: the next power-on's (reboot) */
             host_seed = (uint32_t)strtoul(a, 0, 10);
         } else if (!strcmp(cmd, "reboot")) {

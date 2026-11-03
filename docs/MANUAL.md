@@ -1,4 +1,19 @@
-> **DARK-1:** this manual is PERF-1's and its controls are unchanged. Its genre and piece tables, tempo lists and named examples describe PERF-1's factory set; DARK-1's sixteen genres and 160 pieces are described in [DARK-1.md](DARK-1.md) and in the page's preset browser.
+> **DARK-1:** this manual is PERF-1's and its controls are unchanged. Its genre and piece tables, tempo lists and named examples describe PERF-1's factory set; DARK-1's twenty-one genres and 210 pieces are described in [DARK-1.md](DARK-1.md) and in the page's preset browser. What DARK-1 1.0.3 adds to the controls is listed in the section "DARK-1 1.0.3: what is new on the controls" below.
+
+## DARK-1 1.0.3: what is new on the controls
+
+**Jam (the page after Global) is four pages.** Turn the SELECT dial to move between them: **Jam** (Voice, Keys, Octave, Answer), **Jam Sound** (Sound, Decay, Level, Hold), **Jam Arp** (Arp, Rate, Range, Gate) and **Jam Arp 2** (Swing, Ratchet, Rests, Jump). Keys now also plays 7ths, sus2, sus4, power chords and add9. Sound picks any pluck, pad, acid or bass sound for the voice you are playing; Decay is its decay or release; Level lifts the voice (Loud, Louder, Max) so it is never weak, and puts it back when you leave Jam; Hold keeps the notes ringing until your next keys.
+
+**The arpeggiator** (Jam Arp). Arp: Off, Up, Down, Up-Down, Down-Up, Up&Down, Played, Random, Walk, Converge, Diverge, Thumb, Pinky, Skip, Climb, Stairs, Chord, Octaves. Rate: 1/32 to 1/4, with triplets and a dotted eighth. Range: 1 to 4 octaves. Gate: 10% to tied. Swing, Ratchet (x1 to x4), Rests (how many steps are left out) and Jump (a note now and then an octave away) are on Jam Arp 2. It runs on the music's sixteenths while the music plays, and on the tempo when it is stopped.
+
+**Auto FX** (settings page, near the end of the dial walk: hold HOME, then turn the dial). On a bar line, every 2, 4, 8 or 16 bars, an effect that suits the section is played for a beat to two bars and let go. Amount: Gentle (washes and sweeps), Medium (adds gates, filters, repeats), Wild (adds stops, scratches, scatters). It does not run while an FX edit page is open, and it is not kept at power-off.
+
+**Drum Vary** (the last settings page). On: the drum drift is switched on over the piece's own setting (new patterns with a fill before them, shifted hits); Change sets how often (Light 16 bars, Often 8, Wild 4); Ratchets (Few, Some, Lots) puts ratchets on a few groove hits for a bar or more; Every is how often they are drawn again. Off gives the piece's own drift settings and step tricks back. It is not kept at power-off.
+
+**Wander on Wild** moves 25 knobs (the pad's attack and release, the acid's resonance and envelope, the bass's resonance and decay, the LFOs, the room size and more), further and faster, and does two to five things at once.
+
+**The new genres** are DUNGEON, WITCH, DARKWAVE, PWRNOISE and DARKAMB (dark ambient), after the first sixteen on the genre dial. **The new visualizers** are STARS, RAIN, STORM, RIPPLES, RADAR and WATERFALL. The **home-screen emblem** changes between the demon eye, a skull, a spider, a bat, a flame, a moon and a pyramid.
+
 
 # PERF-1
 

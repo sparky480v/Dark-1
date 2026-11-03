@@ -33,14 +33,14 @@
 #define EN_NTHEME 6                    /* the screen's colour themes (the UI's; kept with the settings) */
 #define EN_NSTYLE 5                    /* the old styles (before 1.0.27): a stored piece's is turned into sounds
                                         * and a kit (en_style_sounds); they were kits 0..4 */
-#define EN_NSOUND 24                   /* the sounds each of pad and drone can play */
-#define EN_NACID 31                    /* the acid's (more: supersaws, CZs, minis) */
-#define EN_NFMFACT 38                  /* the DX7 voices of fm6.inc built in */
-#define EN_NUSER 16                     /* and the ones the player loads (SysEx, en_user_voice), after them */
+#define EN_NSOUND 30                   /* the sounds each of pad and drone can play */
+#define EN_NACID 37                    /* the acid's (more: supersaws, CZs, minis) */
+#define EN_NFMFACT 48                  /* the DX7 voices of fm6.inc built in */
+#define EN_NUSER 2                      /* and the ones the player loads (SysEx, en_user_voice), after them */
 #define EN_NCMFM (EN_NFMFACT + EN_NUSER)   /* the counter-melody's six-operator FM sounds: after the plain ones */
 #define EN_NCMSND (12 + EN_NCMFM)      /* the counter-melody's sounds */
 #define EN_NCMSTYLE 6                  /* its styles */
-#define EN_NKIT 18                      /* the sounds each drum (kick, snare + clap, hats, perc) can play */
+#define EN_NKIT 22                      /* the sounds each drum (kick, snare + clap, hats, perc) can play */
 enum { EN_V_PAD, EN_V_DRONE, EN_V_ACID, EN_V_SAMPLE, EN_V_PLUCK };   /* the voices the keys can play (en_note) */
 
 /* modes: pools relative to the root (bit i: root + i semitones) */
@@ -367,7 +367,7 @@ const char *en_piece_name(int i);
 void en_piece(int i, int16_t *par, uint16_t *pool);
 /* genres: banks of ten pieces, each with its own recipes and drum patterns (the first, 0, is the original techno and acid
  * set; the others are factory sets, kept in RAM while the power is on). */
-#define EN_NGENRE 16
+#define EN_NGENRE 21
 const char *en_genre_name(int g);
 void en_genre(int g);                          /* the genre playing: its chords move in its own habits (the first bank keeps the original walk) */
 const char *en_piece_name_g(int g, int i);

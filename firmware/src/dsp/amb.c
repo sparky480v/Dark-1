@@ -127,8 +127,8 @@ static const int16_t *const DK_BASE[DK_NGENRE];   /* (defined below, after the l
 static const int16_t DKB_0[] = {DK_B_TECH, -1}, DKB_1[] = {DK_B_HORROR, -1}, DKB_2[] = {DK_B_EDM, -1}, DKB_3[] = {DK_B_INDUSTRIAL, -1},
     DKB_4[] = {DK_B_RAVE, -1}, DKB_5[] = {DK_B_CINEMA, -1}, DKB_6[] = {DK_B_ELECTRO, -1}, DKB_7[] = {DK_B_TRANCE, -1}, DKB_8[] = {DK_B_EBM, -1},
     DKB_9[] = {DK_B_DYSTOPIA, -1}, DKB_10[] = {DK_B_INDHORR, -1}, DKB_11[] = {DK_B_SYNTHWAVE, -1}, DKB_12[] = {DK_B_DNB, -1},
-    DKB_13[] = {DK_B_DUBSTEP, -1}, DKB_14[] = {DK_B_RITUAL, -1}, DKB_15[] = {DK_B_EXPERIMENTAL, -1};
-static const int16_t *const DK_BASE[DK_NGENRE] = {DKB_0, DKB_1, DKB_2, DKB_3, DKB_4, DKB_5, DKB_6, DKB_7, DKB_8, DKB_9, DKB_10, DKB_11, DKB_12, DKB_13, DKB_14, DKB_15};
+    DKB_13[] = {DK_B_DUBSTEP, -1}, DKB_14[] = {DK_B_RITUAL, -1}, DKB_15[] = {DK_B_EXPERIMENTAL, -1}, DKB_16[] = {DK_B_DUNGEON, -1}, DKB_17[] = {DK_B_WITCH, -1}, DKB_18[] = {DK_B_DARKWAVE, -1}, DKB_19[] = {DK_B_PWRNOISE, -1}, DKB_20[] = {DK_B_AMBIENT, -1};
+static const int16_t *const DK_BASE[DK_NGENRE] = {DKB_0, DKB_1, DKB_2, DKB_3, DKB_4, DKB_5, DKB_6, DKB_7, DKB_8, DKB_9, DKB_10, DKB_11, DKB_12, DKB_13, DKB_14, DKB_15, DKB_16, DKB_17, DKB_18, DKB_19, DKB_20};
 static const dk_pat_t DK_PATS[DK_NGENRE] = DK_PAT_TABLE;
 #undef LV
 #undef TU
@@ -287,15 +287,18 @@ static const char *const THEME_NAME[EN_NTHEME] = {"Crimson", "Synth", "Acid", "I
  * the kits: the old styles' drums) */
 const char *const EN_PAD_SOUND[EN_NSOUND] = {"Tomb", "Choir", "Strings", "Shards", "Cathedral", "Ember", "Stabs", "Abyss",
                                              "Dub", "Eclipse", "Poly", "Hollow", "Toll", "Hits", "Rave", "Sine",
-                                             "Wraith", "Mourn", "Mallet", "Brass", "Fat", "Pluck", "Crypt", "Ash"};
+                                             "Wraith", "Mourn", "Mallet", "Brass", "Fat", "Pluck", "Crypt", "Ash",
+                                             "Gloam", "Relic", "Frost", "Moth", "Hymn", "Rot"};
 const char *const EN_DRONE_SOUND[EN_NSOUND] = {"Saws", "Warm", "Grit", "Dirty", "Reese", "Pulse", "FM", "Organ",
                                                "Rumble", "Sub", "Square", "Hoover", "Fifths", "Metal", "Sync", "Bright",
-                                               "Wub", "Bite", "Tine", "Clang", "Gnarl", "Wide", "Power", "Void"};
+                                               "Wub", "Bite", "Tine", "Clang", "Gnarl", "Wide", "Power", "Void",
+                                               "Boil", "Marsh", "Tar", "Shiver", "Chasm", "Wail"};
 const char *const EN_ACID_SOUND[EN_NACID] = {"Saw", "Square", "Driven", "Sync", "Pluck", "PWM", "Chip", "Sub",
                                               "Eclipse", "Bleep", "Fifth", "Toll", "Organ", "Laser", "Fold", "Dusk",
                                               "Marimba", "E.Piano", "Bone", "Brass", "Gong", "Clav", "Vibes", "Digital",
-                                              "Super", "CZ", "Mini", "Hyper", "CZ Pulse", "CZ Bell", "Lead"};
-const char *const EN_KIT_NAME[EN_NKIT] = {"Pound", "Rumble", "Crush", "Anvil", "Ritual", "Coffin", "Slam", "Hangar", "Machine", "Nave", "Void", "Bone", "Neuro", "Dread", "Tomb", "Static", "Piston", "Marrow"};
+                                              "Super", "CZ", "Mini", "Hyper", "CZ Pulse", "CZ Bell", "Lead",
+                                              "Venom", "Static", "Thorn", "Dirge", "Hex", "Raze"};
+const char *const EN_KIT_NAME[EN_NKIT] = {"Pound", "Rumble", "Crush", "Anvil", "Ritual", "Coffin", "Slam", "Hangar", "Machine", "Nave", "Void", "Bone", "Neuro", "Dread", "Tomb", "Static", "Piston", "Marrow", "Glacier", "Cathode", "Cairn", "Scrap"};
 
 /* the envelopes' times, from their knobs (0..100), in seconds */
 static float pe_atk_s(int v) { return 0.05f * fm_exp2f((float)v * 0.0764f); }        /* 0.05 .. 10 s */
@@ -899,6 +902,22 @@ static const kit_t KITS[EN_NKIT] = {
     {3.0f, 0.0013f, 0.20f, 0.90f, 0.04f, 1.0f, 0.3f,
      150.0f, 240.0f, 1.0f, 0.9f, 1.0f, 380.0f, 0.9f,
      1.0f, 0.8f, 0.7f, 1.1f, 130.0f, 1.4f, 0.8f, 1.0f, 0.0f, 0.0f},
+    /* 18 Glacier (1.0.3): cold glass: a tight sub kick with a long tail, a glassy high snare, thin metal hats ringing long, a bell-like perc */
+    {4.2f, 0.0016f, 0.20f, 1.25f, 0.10f, 1.2f, 0.9f,
+     520.0f, 910.0f, 0.9f, 0.6f, 1.2f, 300.0f, 1.1f,
+     1.5f, 0.3f, 1.0f, 2.4f, 420.0f, 2.76f, 3.0f, 1.1f, 0.0f, 0.0f},
+    /* 19 Cathode (1.0.3): old screens: a long sine kick, a crisp white-noise snare, fizzy short hats, an FM tom */
+    {7.0f, 0.0026f, 0.30f, 1.40f, 0.35f, 1.0f, 0.4f,
+     200.0f, 330.0f, 1.6f, 0.3f, 0.7f, 260.0f, 0.6f,
+     0.9f, 1.0f, 0.5f, 0.9f, 170.0f, 1.5f, 1.4f, 1.2f, 0.0f, 0.15f},
+    /* 20 Cairn (1.0.3): stones: a dry thud on rock, a clack of two stones, gravel for hats, a hollow knock */
+    {2.0f, 0.0010f, 0.12f, 0.45f, 0.40f, 0.7f, 0.1f,
+     260.0f, 410.0f, 0.8f, 1.4f, 0.5f, 520.0f, 0.4f,
+     0.8f, 1.2f, 0.4f, 0.7f, 220.0f, 1.2f, 0.6f, 0.9f, 0.0f, 0.0f},
+    /* 21 Scrap (1.0.3): junk metal: a thick fuzzed kick, a pan-lid snare, a long clang for hats, a struck girder */
+    {6.0f, 0.0022f, 0.16f, 0.70f, 0.60f, 3.0f, 0.7f,
+     280.0f, 540.0f, 1.8f, 1.0f, 1.0f, 240.0f, 1.0f,
+     2.0f, 0.7f, 1.3f, 2.2f, 310.0f, 3.2f, 3.0f, 1.2f, 0.4f, 0.3f},
 };
 static const kit_t *KK = &KITS[0], *KS = &KITS[0], *KH = &KITS[0], *KP = &KITS[0];   /* kick, snare and
                                                  * clap, hats, perc: each its kit */
@@ -924,11 +943,17 @@ static const struct { uint8_t osc, stabs; float fc, g; } PAD_SOUND[EN_NSOUND] = 
     {PO_PWM, 1, 1.12f, 1.0f},                    /* Pluck: the PWM pad as short stabs */
     {PO_ORGAN, 0, 0.52f, 0.8f},                  /* Chapel: drawbars with the top closed: a church organ's */
     {PO_SINE, 0, 1.20f, 0.7f},                   /* Air: a sine, open: breath */
+    {PO_VOICES, 0, 0.30f, 0.95f},                /* Gloam (1.0.3): the voices with the top shut right down */
+    {PO_ORGAN, 1, 0.70f, 1.25f},                 /* Relic: a church organ, stabbed, dark */
+    {PO_GLASS, 0, 1.60f, 0.7f},                  /* Frost: bells held open and bright, icy */
+    {PO_PWM, 0, 0.55f, 1.0f},                    /* Moth: a warm, wavering pulse */
+    {PO_STRINGS, 0, 0.60f, 0.95f},               /* Hymn: dark strings, held */
+    {PO_SUPER, 1, 0.50f, 0.85f},                 /* Rot: a detuned supersaw, stabbed and muffled */
 };
 /* the drone's: the oscillator; the saws and sub's levels, drive, cutoff (octaves) and level */
 enum { DO_SAWS, DO_REESE, DO_PULSE, DO_FM, DO_ORGAN, DO_SINE, DO_SQUARE, DO_HOOVER, DO_FIFTHS, DO_METAL, DO_SYNC, DO_FMR };
 typedef struct { uint8_t osc; float saw, sub, drive, cut, g; } drone_snd_t;
-static const float DRONE_FR[EN_NSOUND] = {[17] = 2.0f, [18] = 3.5f, [19] = 5.19f};   /* DO_FMR's modulator ratio, by sound */
+static const float DRONE_FR[EN_NSOUND] = {[17] = 2.0f, [18] = 3.5f, [19] = 5.19f, [27] = 7.0f};   /* DO_FMR's modulator ratio, by sound */
 static const drone_snd_t DRONE_SOUND[EN_NSOUND] = {
     {DO_SAWS, 0.4f, 0.55f, 1.0f, 0.0f, 1.0f},   {DO_SAWS, 0.3f, 0.75f, 0.8f, -0.4f, 1.0f},
     {DO_SAWS, 0.45f, 0.5f, 2.2f, -0.3f, 1.0f},  {DO_SAWS, 0.3f, 0.8f, 3.0f, -0.6f, 0.9f},
@@ -950,6 +975,12 @@ static const drone_snd_t DRONE_SOUND[EN_NSOUND] = {
     {DO_HOOVER, 0.3f, 0.6f, 1.0f, 0.3f, 0.9f},  /* Wide: the hoover, softer, the sub up */
     {DO_FIFTHS, 0.45f, 0.6f, 1.8f, -0.2f, 0.9f},    /* Power: the root and its fifth, driven */
     {DO_SINE, 0.3f, 0.8f, 1.4f, -0.8f, 1.05f},  /* Void: a sub-heavy sine, the filter low */
+    {DO_REESE, 0.6f, 0.3f, 3.2f, -0.2f, 0.85f}, /* Boil (1.0.3): the reese hard driven, the sub light */
+    {DO_SQUARE, 0.3f, 0.7f, 1.8f, -0.6f, 0.9f}, /* Marsh: a hollow square, murky */
+    {DO_SAWS, 0.2f, 0.9f, 3.0f, -0.9f, 0.9f},   /* Tar: slow, thick saws under a heavy sub */
+    {DO_FMR, 0.45f, 0.4f, 1.5f, 0.3f, 0.9f},    /* Shiver: FM at 7, thin and cold */
+    {DO_FIFTHS, 0.3f, 0.8f, 2.2f, -0.7f, 0.9f}, /* Chasm: a dark fifth over a deep sub */
+    {DO_SYNC, 0.5f, 0.4f, 1.6f, 0.6f, 0.8f},    /* Wail: a synced saw, the envelope sweeping it */
 };
 /* the acid's: the oscillator, its drive and level */
 enum { AO_SAW, AO_SQUARE, AO_SYNC, AO_PLUCK, AO_PWM, AO_CHIP, AO_SUB, AO_TRANCE, AO_BLEEP, AO_FIFTH, AO_BELL, AO_ORGAN,
@@ -957,7 +988,8 @@ enum { AO_SAW, AO_SQUARE, AO_SYNC, AO_PLUCK, AO_PWM, AO_CHIP, AO_SUB, AO_TRANCE,
 typedef struct { uint8_t osc; float drive, g; } acid_snd_t;
 static const struct { float fr, i0, i1; uint8_t rise; } ACID_FM[EN_NACID] = {   /* AO_FMR: the modulator's ratio, the index (i0 + i1 * the envelope, or its opposite if rise) */
     [16] = {4.0f, 0.05f, 1.3f, 0},   [17] = {1.0f, 0.25f, 0.9f, 0},  [18] = {5.4f, 0.04f, 0.8f, 0},  [19] = {1.0f, 0.4f, 2.0f, 1},
-    [20] = {2.76f, 0.2f, 1.8f, 0},   [21] = {3.0f, 0.5f, 1.2f, 0},   [22] = {4.01f, 0.05f, 0.5f, 0}, [23] = {1.5f, 0.35f, 1.6f, 0}};
+    [20] = {2.76f, 0.2f, 1.8f, 0},   [21] = {3.0f, 0.5f, 1.2f, 0},   [22] = {4.01f, 0.05f, 0.5f, 0}, [23] = {1.5f, 0.35f, 1.6f, 0},
+    [33] = {2.0f, 0.1f, 2.4f, 0}};
 static const acid_snd_t ACID_SOUND[EN_NACID] = {
     {AO_SAW, 1.0f, 1.0f}, {AO_SQUARE, 1.0f, 1.0f}, {AO_SAW, 1.5f, 1.45f}, {AO_SYNC, 1.1f, 0.85f},
     {AO_PLUCK, 1.0f, 1.15f}, {AO_PWM, 1.0f, 1.0f}, {AO_CHIP, 1.2f, 0.7f}, {AO_SUB, 1.1f, 0.95f},
@@ -984,6 +1016,12 @@ static const acid_snd_t ACID_SOUND[EN_NACID] = {
     {AO_CZP, 1.0f, 1.0f},      /* CZ Pulse: phase distortion toward a square: the knee squeezes as the envelope falls, a hollow to a buzz */
     {AO_CZB, 0.9f, 0.95f},     /* CZ Bell: the cosine and a resonance at 3.5 times its pitch, ringing out with the envelope */
     {AO_LEAD, 1.2f, 0.8f},     /* Lead: two saws seven cents apart and a pulse whose width wanders: a monosynth lead's thickness */
+    {AO_FOLD, 1.6f, 1.15f},    /* Venom (1.0.3): a sine folded hard */
+    {AO_CHIP, 1.8f, 0.8f},     /* Static: a chip pulse driven into grit */
+    {AO_FMR, 1.4f, 0.95f},     /* Thorn: FM at 2, the index high and falling */
+    {AO_SOFT, 1.3f, 0.9f},     /* Dirge: a driven triangle, round and sad */
+    {AO_CZP, 1.6f, 0.9f},      /* Hex: phase distortion squeezed and driven */
+    {AO_HYPER, 1.5f, 0.85f},   /* Raze: the five-saw wall, pushed */
 };
 
 static int pad_snd(void) { return (unsigned)par[P_PADTONE] < EN_NSOUND ? par[P_PADTONE] : 0; }
@@ -2278,8 +2316,8 @@ static const cm_snd_t CM_SOUND[CM_NPLAIN] = {
 const char *EN_CM_SOUND[EN_NCMSND] = {"Pluck", "Marimba", "E.Piano", "Kalimba", "Bell", "Vibes", "Gong", "Clav", "Digital", "Brass", "Bleep", "Glass",
     "DK TINE EP", "GLASS TOLL", "SUB PULSE", "DREAD BRSS", "GHOST PAD", "LOG SKIN", "COLD ORGAN", "BONE PICK", "BLACK BRSS", "IRON BASS", "CATHEDRAL", "HOLLOW WD", "CLAV BITE", "FUNERAL ST", "SHARD PAD", "WRAITH LD", "DIRGE HARP", "DEAD KALIM", "BREATH FLT", "RUST PANS", "REESE BASS", "DOOM TUBUL", "SLIDE MOAN", "WIRE GTR", "DEAD MUTE", "DRIVE GTR", "ROT SLAP", "SIREN BRSS", "COLD SAX", "MUTE HORN",
     "ASH PIANO", "VOID BELL", "GRAVE VOX", "TAR STAB", "HEX BASS", "MOLD WIND", "CRYPT HARP", "NEON KNELL",
-    "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)",
-    "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)", "(empty)"};
+    "TOMB GONG", "COLD HARPSI", "RAVEN CALL", "ACID RAIN", "COAL DRUM", "WIDOW FLUTE", "GRIM STRNG", "HOLLOW BELL", "SLAG LEAD", "DUSK CHOIR",
+    "(empty)", "(empty)"};
 const char *const EN_CM_STYLE[EN_NCMSTYLE] = {"Up", "Down", "Up-down", "Random", "Skip", "Thirds"};
 const char *const EN_CM_RATE[4] = {"1/4", "3/16", "1/8", "1/16"};   /* slowest to fastest */
 #include "fm6.inc"
@@ -2287,7 +2325,7 @@ const char *const EN_CM_RATE[4] = {"1/4", "3/16", "1/8", "1/16"};   /* slowest t
 #define FM_OUT 0.22f                            /* the DX voices' level against the plain sounds; FM_GAIN: each patch's, to level them */
 /* fmcal levels each voice's peak to the plain sounds'; the ear hears loudness, and a voice that sustains sits 30-40 dB above a plain pluck 0.3 s into
  * a note (audit M-65), so the sustaining ones are taken down 8 dB (x0.40; x0.42 nylon and harp, x0.55 steel drum) and the percussive ones stay */
-static const float FM_GAIN[EN_NCMFM] = {0.98f, 1.51f, 0.91f, 1.81f, 4.08f, 3.75f, 1.12f, 6.00f, 1.92f, 0.91f, 1.47f, 3.66f, 6.00f, 6.00f, 1.89f, 1.12f, 2.52f, 6.00f, 2.30f, 1.59f, 0.44f, 1.16f, 2.69f, 3.02f, 6.00f, 1.10f, 5.92f, 2.23f, 1.83f, 3.16f, 1.0f, 1.70f, 1.86f, 1.40f, 0.24f, 1.02f, 2.78f, 1.46f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f};   /* DARK-1: tests/host/fmcal on the dark voices (capped at 6); loaded voices 0.5 */   /* (the loaded voices: not measured, a sustaining voice's -6 dB) */
+static const float FM_GAIN[EN_NCMFM] = {0.98f, 1.51f, 0.91f, 1.81f, 4.08f, 3.75f, 1.12f, 6.00f, 1.92f, 0.91f, 1.47f, 3.66f, 6.00f, 6.00f, 1.89f, 1.12f, 2.52f, 6.00f, 2.30f, 1.59f, 0.44f, 1.16f, 2.69f, 3.02f, 6.00f, 1.10f, 5.92f, 2.23f, 1.83f, 3.16f, 1.0f, 1.70f, 1.86f, 1.40f, 0.24f, 1.02f, 2.78f, 1.46f, 2.90f, 6.00f, 6.00f, 6.00f, 6.00f, 5.41f, 6.00f, 3.64f, 3.04f, 6.00f, 0.5f, 0.5f};   /* DARK-1: tests/host/fmcal on the dark voices (capped at 6); loaded voices 0.5 */   /* (the loaded voices: not measured, a sustaining voice's -6 dB) */
 /* the DX voices are rendered by the other core, a chunk ahead: its job renders this chunk's samples into a ring, and the first core plays the ones from
  * FM_D samples before (a chunk), so it never waits for them; the cost is that they sound 5.8 ms late */
 #define FM_R 512

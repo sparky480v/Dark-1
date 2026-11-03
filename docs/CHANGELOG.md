@@ -1,5 +1,18 @@
 # DARK-1 changelog
 
+## 1.0.3
+
+* **Five new genres, appended after the old sixteen** (so every stored piece and factory piece stays where it was): DUNGEON (dungeon synth), WITCH (witch house), DARKWAVE, PWRNOISE (power noise) and DARKAMB (dark ambient: vast drones, bells, scrapes and rumbles, almost no drums). 21 genres, 210 pieces.
+* **New sounds:** ten FM plucks (58 in all), four drum kits (22), six new pad sounds, six bass sounds and six acid sounds (30 / 30 / 37).
+* **Jam is four pages** (turn the dial): Jam (voice, keys, octave, answer), Sound (a Sound knob for every voice, Decay, Level, Hold), Arp and Arp 2. Level lifts a hand-played voice to a floor so it is never weak. More chord types (triad, 7th, sus2, sus4, power, add9). An arpeggiator: 17 patterns, rate 1/32 to 1/4 with triplets, 1 to 4 octaves, gate, swing, ratchet, rests and octave jumps. A pitch-trail picture.
+* **Auto FX** (a settings page): every 2 to 16 bars an effect that fits the section is played for a beat to two bars, then let go. Gentle, medium or wild.
+* **Drum Vary** (a settings page): the drum drift is switched on over the piece's own setting (new patterns with a fill, shifted hits), with automatic ratchets. The piece's own settings return when it is off.
+* **Wander on Wild changes far more:** 25 knobs (envelopes, filter resonance, LFOs, the room), wider swings, quicker glides, two to five changes at once.
+* **Six new visualizers:** STARS, RAIN, STORM, RIPPLES, RADAR, WATERFALL. The saved visualizer keeps its old numbers.
+* **The home-screen emblem changes** between the demon eye, a skull, a spider, a bat, a flame, a moon and a pyramid.
+* Load-your-own-sounds slots reduced from 16 to 2 (frees pool memory).
+* Tests updated for 21 genres and 210 pieces.
+
 ## DARK-1 (a modification of PERF-1)
 
 Music and engine content only; the instrument, its UI and its saving are PERF-1's. See [DARK-1.md](DARK-1.md) for the full list.

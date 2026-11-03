@@ -2,8 +2,8 @@
 
 **Dark-music firmware for the M-VAVE FM-1: a modification of [PERF-1](https://github.com/deamonSLINKY/PERF-1) by deamonSLINKY (GPL-3.0-only).**
 The instrument is PERF-1's (plus the Wander pages): its pages and screens, buttons and knobs, sequencer and tracks, Auto-DJ, effects and project saving. The music is new:
-sixteen dark genres (dark techno, horror electronic, dark EDM, industrial, dark rave, dark cinematic, dark electro, dark trance, EBM, dystopian techno,
-industrial horror, dark synthwave, dark drum and bass, dark dubstep, ritual, experimental) with ten factory pieces each, and the engine behind them (drum
+twenty-one dark genres (dark techno, horror electronic, dark EDM, industrial, dark rave, dark cinematic, dark electro, dark trance, EBM, dystopian techno,
+industrial horror, dark synthwave, dark drum and bass, dark dubstep, ritual, experimental, dungeon synth, witch house, darkwave, power noise, dark ambient) with ten factory pieces each, and the engine behind them (drum
 kits and patterns, bass, FM voices, chord habits, scales, builds and breakdowns, latched effects) rewritten per genre.
 
 * **Play it in your browser:** <https://sparky480v.github.io/Dark-1/play/> (or open `DARK-1.html` from the release in Chrome). It is the real engine compiled to WebAssembly, with a preset browser above the panel.

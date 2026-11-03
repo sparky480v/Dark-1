@@ -33,9 +33,14 @@
     DK_GENRE(12, "DARKDNB", 'D', "dark drum and bass: neuro reese bass, tight two-step breaks, 168-176 BPM") \
     DK_GENRE(13, "DARKSTEP", 'U', "dark dubstep: half-time weight, sub kick, wobbling bass, 138-146 BPM") \
     DK_GENRE(14, "RITUAL", 'A', "ritual: tribal toms against polymeter, drones, chants, 60-110 BPM") \
-    DK_GENRE(15, "EXPERIM", 'X', "experimental electronic: odd lane lengths, whole-tone FM, glitch, 70-140 BPM")
+    DK_GENRE(15, "EXPERIM", 'X', "experimental electronic: odd lane lengths, whole-tone FM, glitch, 70-140 BPM") \
+    DK_GENRE(16, "DUNGEON", 'G', "dungeon synth: slow minor harps, organs and choirs, almost no drums, torchlit and cold, 58-92 BPM") \
+    DK_GENRE(17, "WITCH", 'W', "witch house: slow half-time drag, rolling trap hats, tolling bells and a crushing sub, 60-76 BPM") \
+    DK_GENRE(18, "DARKWAVE", 'V', "darkwave: post-punk drive, chorused guitars and a running bass, gothic minor chords, 106-132 BPM") \
+    DK_GENRE(19, "PWRNOISE", 'P', "power noise: rhythmic noise, distorted kicks and a relentless clanking pulse, 128-160 BPM") \
+    DK_GENRE(20, "DARKAMB", 'M', "dark ambient: vast slow drones, deep reverb, tolling bells, scrapes, rumbles and whispers, 40-58 BPM")
 
-#define DK_NGENRE 16
+#define DK_NGENRE 21
 #define DK_NPIECE 10
 
 static const char *const DK_GENRE_NAME[DK_NGENRE] = {
@@ -272,6 +277,71 @@ static const dk_row_t DK_ROWS[DK_NGENRE][DK_NPIECE] = {
     R(88, 3, 12, 7,   23, 6, 22, FMV(18),     11, 10, 11, 10,  0,   46, 36, 72,   28, 58, 56,   34, 42, 50),   /* X09 Memory Leak */
     R(104, 10, 8, 9,  3, 13, 16, FMV(29),     10, 11, 10, 10,  11,  44, 44, 68,   46, 46, 50,   42, 38, 64),   /* X10 Last Packet */
 },
+/* 16 DUNGEON: almost no drums; harps, organs and choirs; slow minor chords; long shimmer reverb; kits Tomb / Marrow */
+{
+    R(72, 9, 5, 1,    28, 7, 22, FMV(36),     20, 17, 20, 17,  0,   62, 38, 54,   18, 72, 36,   18, 55, 45),   /* G01 Torchlight: A aeolian, crypt harp */
+    R(62, 2, 2, 4,    24, 12, 12, FMV(43),      20, 20, 14, 17,  0,   68, 36, 56,   14, 78, 40,   14, 48, 50),   /* G02 Oubliette: D phrygian, sus chords, cold organ */
+    R(80, 7, 1, 1,    26, 1, 34, FMV(39),      18, 17, 14, 20,  0,   64, 42, 52,   22, 68, 34,   24, 60, 42),   /* G03 Crypt Stair: G dorian, dirge harp */
+    R(58, 0, 9, 2,    28, 12, 22, FMV(18),     14, 14, 14, 14,  0,   72, 34, 50,   10, 82, 30,   12, 44, 55),   /* G04 Frost Keep: C harmonic minor, breath flute */
+    R(88, 4, 14, 1,   25, 7, 12, FMV(44),     20, 17, 18, 17,  0,   58, 46, 58,   26, 64, 38,   30, 62, 40),   /* G05 Raven Hall: E hungarian minor */
+    R(66, 11, 15, 4,  24, 8, 34, FMV(13),      14, 20, 14, 17,  0,   70, 32, 58,   12, 76, 42,   10, 40, 58),   /* G06 Sunken Gate: B neapolitan minor, funeral strings */
+    R(92, 5, 5, 6,    28, 12, 16, FMV(40),     20, 17, 20, 20,  0,   60, 44, 54,   28, 66, 32,   34, 66, 38),   /* G07 Wyrm Song: F aeolian, fourths, dead kalimba */
+    R(60, 9, 2, 1,    26, 23, 12, FMV(30),    18, 14, 14, 17,  0,   68, 34, 60,   12, 84, 36,   10, 42, 52),   /* G08 Ash Throne: A phrygian, ash piano */
+    R(76, 2, 1, 4,    24, 7, 22, FMV(47),      20, 17, 14, 17,  0,   74, 36, 52,   16, 74, 40,   16, 50, 48),   /* G09 Bone Choir: D dorian, cathedral voice */
+    R(68, 6, 9, 1,    28, 12, 34, FMV(36),    14, 14, 20, 17,  0,   64, 40, 56,   14, 80, 34,   20, 58, 46),   /* G10 Last Candle: F# harmonic minor */
+},
+/* 17 WITCH: half time; a heavy snare on three; trap hats; bells and a crushing sub; a long drag of tape and reverb */
+{
+    R(64, 2, 2, 5,    24, 26, 29, FMV(31),      13, 13, 18, 15,  1,   30, 36, 90,   62, 70, 52,   34, 46, 55),   /* W01 Black Candle: C# phrygian, void bell */
+    R(70, 4, 8, 5,    26, 25, 35, FMV(45),     13, 14, 15, 18,  1,   34, 32, 92,   66, 66, 50,   30, 52, 60),   /* W02 Salt Circle: E locrian, glass toll */
+    R(62, 7, 9, 5,    29, 24, 31, FMV(32),      14, 13, 18, 15,  2,   28, 38, 88,   60, 74, 56,   38, 44, 52),   /* W03 Hex Drag: G harmonic minor, grave voice */
+    R(74, 9, 14, 6,   24, 9, 11, FMV(38),      13, 13, 15, 15,  1,   36, 30, 94,   68, 64, 46,   28, 56, 62),   /* W04 Ghost Lights: A hungarian minor, ghost pad */
+    R(60, 11, 2, 5,   26, 26, 22, FMV(37),     13, 14, 18, 10,   2,   32, 40, 90,   64, 72, 54,   40, 48, 56),   /* W05 Coven Tape: B phrygian, neon knell */
+    R(68, 0, 11, 5,   29, 25, 31, FMV(31),     14, 13, 15, 15,  1,   26, 34, 92,   70, 68, 48,   32, 50, 64),   /* W06 Moon Rot: C double harmonic */
+    R(66, 5, 8, 4,    7, 24, 35, FMV(1),       13, 13, 18, 20,  1,   34, 36, 96,   62, 76, 58,   36, 42, 50),   /* W07 Cold Altar: F locrian, sus chords */
+    R(76, 8, 2, 5,    26, 26, 29, FMV(32),    13, 14, 15, 15,  2,   30, 42, 90,   72, 62, 44,   44, 54, 66),   /* W08 Drowned Bell: Ab phrygian */
+    R(72, 3, 15, 5,   24, 25, 14, FMV(45),      14, 13, 18, 10,  1,   28, 32, 92,   66, 70, 50,   30, 48, 58),   /* W09 Raven Rite: Eb neapolitan minor */
+    R(62, 10, 9, 5,   29, 24, 31, FMV(37),      13, 13, 15, 18,  2,   32, 38, 94,   68, 78, 52,   36, 46, 54),   /* W10 Sigil: Bb harmonic minor */
+},
+/* 18 DARKWAVE: post-punk: a dry drum machine, a running bass, chorused guitars, gothic minor chords */
+{
+    R(118, 4, 5, 1,   28, 5, 17, FMV(23),      0, 8, 19, 11,    3,   30, 40, 84,   40, 36, 34,   26, 44, 40),   /* V01 Wet Pavement: E aeolian, wire guitar */
+    R(108, 9, 1, 2,   10, 0, 26, FMV(25),     19, 8, 19, 4,     3,   34, 36, 82,   36, 40, 38,   30, 40, 44),   /* V02 Cold Cathedral: A dorian, drive guitar */
+    R(124, 2, 9, 1,   5, 5, 25, FMV(24),      0, 19, 17, 11,    5,   28, 44, 86,   44, 32, 30,   22, 48, 38),   /* V03 Bauhaus Stair: D harmonic minor, dead mute */
+    R(112, 7, 5, 4,   17, 1, 34, FMV(0),      8, 8, 11, 17,    3,   36, 34, 80,   32, 44, 40,   28, 46, 48),   /* V04 Night Platform: G aeolian, sus chords, tine EP */
+    R(126, 0, 2, 1,   2, 15, 5, FMV(23),      0, 8, 19, 4,     6,   26, 46, 88,   46, 30, 28,   34, 38, 42),   /* V05 Paper Moon: C phrygian, riff bass */
+    R(106, 5, 7, 1,   28, 18, 33, FMV(26),    19, 17, 19, 11,   3,   32, 38, 82,   34, 42, 42,   24, 50, 36),   /* V06 Ivory Veil: F minor pentatonic, rot slap */
+    R(132, 11, 5, 2,  10, 5, 25, FMV(25),      0, 8, 17, 8,     3,   30, 42, 90,   50, 28, 26,   36, 36, 46),   /* V07 Candle Wire: B aeolian, 7th chords */
+    R(114, 3, 9, 1,   5, 0, 17, FMV(23),      8, 19, 19, 4,     5,   34, 36, 84,   38, 38, 36,   26, 44, 40),   /* V08 Grey Parade: Eb harmonic minor */
+    R(110, 10, 1, 4,  17, 1, 26, FMV(0),      0, 17, 19, 17,   3,   38, 32, 80,   30, 46, 44,   30, 48, 52),   /* V09 Velvet Static: Bb dorian */
+    R(122, 1, 5, 1,   28, 18, 34, FMV(24),     19, 8, 11, 11,    6,   28, 44, 86,   42, 34, 32,   32, 40, 46),   /* V10 Mourning Dance: C# aeolian */
+},
+/* 19 PWRNOISE: rhythmic noise: distorted kicks, a hammering sixteenth pulse, clanging metal, harsh FM; kits Crush / Piston / Static */
+{
+    R(140, 4, 2, 6,   29, 24, 31, FMV(9),      15, 21, 15, 16,    4,   20, 52, 90,   82, 24, 14,   52, 28, 70),   /* P01 Red Static: E phrygian, fourths, iron bass */
+    R(148, 9, 8, 9,   6, 28, 36, FMV(12),     16, 15, 21, 21,   1,   18, 56, 92,   86, 20, 12,   58, 24, 74),   /* P02 Furnace Floor: A locrian, clusters */
+    R(134, 2, 10, 6,  3, 29, 35, FMV(19),     21, 21, 16, 3,     4,   22, 50, 88,   80, 26, 16,   48, 30, 66),   /* P03 Wirebite: D phrygian dominant */
+    R(156, 7, 16, 7,  13, 27, 32, FMV(26),    7, 21, 15, 16,  4,   16, 58, 94,   90, 18, 10,   62, 22, 78),   /* P04 Scrap Choir: G dim whole-half, dim7 chords */
+    R(130, 0, 11, 4,  29, 13, 2, FMV(14),      15, 21, 2, 21,     1,   24, 48, 86,   78, 28, 18,   46, 32, 62),   /* P05 Tin Cathedral: C double harmonic, sus chords */
+    R(152, 5, 2, 6,   6, 24, 31, FMV(9),      16, 16, 21, 3,    4,   18, 54, 92,   88, 22, 12,   56, 26, 72),   /* P06 Shock Bunker: F phrygian */
+    R(144, 11, 8, 9,  3, 28, 36, FMV(12),    21, 15, 15, 21,   2,   20, 52, 90,   84, 24, 14,   50, 28, 68),   /* P07 Rust Cycle: B locrian */
+    R(160, 3, 10, 6,  13, 29, 35, FMV(19),     16, 21, 16, 16,    4,   14, 60, 96,   92, 16, 8,    64, 20, 80),   /* P08 Blast Door: Eb phrygian dominant */
+    R(136, 8, 16, 7,  29, 27, 32, FMV(26),     15, 16, 21, 21,  1,   22, 50, 88,   80, 26, 16,   50, 30, 64),   /* P09 Ash Foundry: Ab dim whole-half */
+    R(128, 10, 2, 6,  6, 19, 14, FMV(14),     7, 21, 15, 15,     2,   26, 46, 84,   76, 30, 20,   44, 34, 60),   /* P10 Hard Reset: Bb phrygian */
+},
+/* 20 DARKAMB: dark ambient: no beat, only a distant thud and a scrape; huge slow pads and drones, bells, gongs and voices as sound effects; kits Void / Cairn / Glacier */
+{
+    R(48, 9, 5, 4,    7, 23, 11, FMV(31),     10, 14, 18, 20,  0,   78, 26, 66,   10, 86, 40,   8, 22, 60),   /* M01 Sunless Sea: A aeolian, sus chords, abyss, void bell */
+    R(44, 2, 2, 1,    24, 28, 20, FMV(38),    14, 14, 18, 20,  0,   74, 30, 70,   10, 90, 36,   10, 18, 66),   /* M02 Cellar Breath: D phrygian, gloam, chasm, tomb gong */
+    R(52, 7, 9, 2,    16, 25, 29, FMV(40),    10, 14, 14, 20,  0,   72, 34, 64,   14, 84, 44,   12, 26, 58),   /* M03 Dead Frequency: G harmonic minor, wraith, raven call */
+    R(46, 0, 11, 6,   22, 26, 34, FMV(35),    20, 14, 18, 17,  0,   80, 22, 62,   8, 92, 50,    8, 20, 70),   /* M04 Iron Fog: C double harmonic, crypt, mold wind */
+    R(42, 4, 1, 4,    0, 9, 8, FMV(45),       14, 20, 10, 20,  0,   76, 28, 72,   10, 88, 42,   10, 16, 64),   /* M05 Hollow Earth: E dorian, sus chords, hollow bell */
+    R(56, 11, 2, 5,   27, 29, 15, FMV(41),    18, 14, 18, 17,  0,   70, 36, 60,   14, 82, 46,   14, 28, 56),   /* M06 Black Lantern: B phrygian, moth, wail, acid rain */
+    R(50, 5, 15, 1,   26, 23, 22, FMV(32),    10, 20, 14, 20,  0,   78, 24, 68,   8, 90, 38,    8, 24, 62),   /* M07 Pale Static: F neapolitan, frost, grave voice */
+    R(40, 3, 5, 2,    1, 28, 18, FMV(10),     14, 14, 18, 20,  0,   82, 20, 66,   10, 94, 48,    6, 18, 72),   /* M08 Glacier Tomb: Eb aeolian, choir, cathedral */
+    R(58, 10, 8, 9,   4, 24, 11, FMV(21),     20, 10, 14, 20,  0,   68, 38, 70,   16, 86, 52,   14, 30, 54),   /* M09 Void Cathedral: Bb locrian, doom tubular */
+    R(45, 8, 14, 6,   28, 27, 20, FMV(18),    14, 20, 18, 17,  0,   74, 30, 64,   12, 90, 44,   10, 22, 68),   /* M10 Nameless Hour: Ab hungarian minor, hymn, breath flute */
+},
 };
 
 /* ------------------------------------------------------------------------------- the genres' base lists --- */
@@ -364,6 +434,29 @@ static const dk_row_t DK_ROWS[DK_NGENRE][DK_NPIECE] = {
     P_MC_RATIO, 3, P_MC_THR, 48, P_MC_MAKE, 30, P_LLEN, 16, P_LLEN1, 7, P_LLEN2, 5, P_LLEN3, 11, P_LLEN4, 13, P_LLEN5, 9, \
     LV(0), 88, LV(1), 60, LV(2), 50, LV(3), 56, LV(4), 50, LV(5), 78
 
+#define DK_B_DUNGEON \
+    P_CH_LOOP, 0, P_BL_LEN, 100, P_BL_MOVE, 3, P_BL_GLIDE, 40, P_BASSOCT, -2, P_PULSE, 35, P_SWING, 0, P_NOISE, 6, P_NZ_COLOR, 3, P_GHOST, 0, P_HUMAN, 45, P_BRIGHT, 44, P_DETUNE, 40, \
+    P_PE_ATK, 88, P_PE_HOLD, 60, P_PE_REL, 94, P_PE_REST, 20, P_PL_RATE, 1, P_PL_DEPTH, 30, P_PL_CHO, 70, P_DR_CUT, 30, P_DR_RES, 35, P_AC_CUT, 32, P_AC_RES, 45, P_AC_ENV, 40, P_AC_DEC, 85, \
+    P_AC_LEN, 8, P_AC_RANGE, 2, P_AC_MUT, 30, P_AC_OCT, 0, P_ECHO, 28, P_ETIME, 4, P_RV_TYPE, 1, P_RV_X, 50, P_RV_DAMP, 50, P_RV_PRE, 85, P_MOTION, 60, P_EVOLVE, 45, \
+    P_CM_LVL, 64, P_CM_OCT, 0, P_CM_DEC, 85, P_CM_VU, 30, P_MC_RATIO, 2, P_MC_THR, 55, P_MC_MAKE, 44, P_PAD_COMP, 1, P_VOICING, 1, \
+    LV(0), 55, LV(1), 30, LV(2), 20, LV(3), 18, LV(4), 20, LV(5), 55
+#define DK_B_WITCH \
+    P_CH_LOOP, 1, P_BL_LEN, 85, P_BL_MOVE, 3, P_BL_GLIDE, 40, P_BASSOCT, -2, P_PULSE, 85, P_SWING, 0, P_NOISE, 3, P_NZ_COLOR, 2, P_GHOST, 10, P_HUMAN, 20, P_BRIGHT, 40, P_DETUNE, 55, \
+    P_PE_ATK, 70, P_PE_HOLD, 40, P_PE_REL, 82, P_PL_RATE, 1, P_PL_DEPTH, 40, P_PL_CHO, 50, P_DR_CUT, 28, P_DR_RES, 60, P_DL_RATE, 1, P_DL_DEPTH, 60, P_DL_SHAPE, 0, P_DL_DEST, 0, \
+    P_AC_CUT, 30, P_AC_RES, 62, P_AC_ENV, 55, P_AC_DEC, 70, P_AC_LEN, 8, P_AC_RANGE, 2, P_AC_MUT, 24, P_AC_OCT, 0, P_ECHO, 50, P_ETIME, 4, P_RV_TYPE, 1, P_RV_X, 60, P_RV_DAMP, 70, P_RV_PRE, 80, \
+    P_MOTION, 55, P_EVOLVE, 50, P_CM_LVL, 58, P_CM_OCT, 1, P_CM_DEC, 80, P_CM_VU, 20, P_MC_RATIO, 4, P_MC_THR, 40, P_MC_MAKE, 40, \
+    LV(0), 96, LV(1), 84, LV(2), 74, LV(3), 70, LV(4), 50, LV(5), 70
+#define DK_B_DARKWAVE \
+    P_CH_LOOP, 2, P_BL_LEN, 50, P_BL_MOVE, 8, P_BL_GLIDE, 0, P_BASSOCT, -1, P_PULSE, 80, P_SWING, 0, P_NOISE, 2, P_GHOST, 0, P_HUMAN, 8, P_BRIGHT, 40, P_DETUNE, 40, \
+    P_PE_ATK, 40, P_PE_REL, 58, P_PL_RATE, 3, P_PL_DEPTH, 30, P_PL_CHO, 90, P_DR_CUT, 44, P_DR_RES, 50, P_AC_CUT, 44, P_AC_RES, 56, P_AC_ENV, 46, P_AC_DEC, 40, P_AC_LEN, 16, P_AC_RANGE, 2, \
+    P_AC_MUT, 16, P_AC_OCT, 0, P_ECHO, 36, P_ETIME, 3, P_RV_DAMP, 45, P_RV_PRE, 40, P_MOTION, 45, P_EVOLVE, 44, P_CM_LVL, 36, P_CM_OCT, 0, P_CM_DEC, 40, \
+    P_MC_RATIO, 3, P_MC_THR, 44, P_MC_MAKE, 34, P_PAD_COMP, 0, LV(0), 90, LV(1), 78, LV(2), 30, LV(3), 50, LV(4), 40, LV(5), 60
+#define DK_B_PWRNOISE \
+    P_CH_LOOP, 1, P_BL_LEN, 34, P_BL_MOVE, 6, P_BL_GLIDE, 0, P_BASSOCT, -1, P_PULSE, 98, P_SWING, 0, P_NOISE, 42, P_NZ_COLOR, 7, P_GHOST, 0, P_HUMAN, 0, P_BRIGHT, 72, P_DETUNE, 78, \
+    P_PE_ATK, 10, P_PE_REL, 26, P_PL_RATE, 5, P_PL_DEPTH, 60, P_PL_SHAPE, 3, P_DR_CUT, 74, P_DR_RES, 76, P_AC_CUT, 72, P_AC_RES, 74, P_AC_ENV, 78, P_AC_DEC, 20, P_AC_LEN, 16, \
+    P_AC_RANGE, 1, P_AC_MUT, 10, P_AC_OCT, 0, P_ECHO, 10, P_ETIME, 2, P_RV_DAMP, 18, P_RV_PRE, 20, P_RV_TYPE, 2, P_RV_X, 60, P_MOTION, 35, P_EVOLVE, 44, P_CM_LVL, 28, P_CM_OCT, 0, P_CM_DEC, 20, \
+    P_MC_RATIO, 6, P_MC_THR, 30, P_MC_MAKE, 48, P_VOICING, 1, P_PAD_COMP, 5, LV(0), 100, LV(1), 78, LV(2), 74, LV(3), 88, LV(4), 80, LV(5), 92
+
 /* ---------------------------------------------------------------------------------- per-genre engine tables --- */
 typedef struct { uint8_t from, to, w; } dk_edge_t;
 typedef struct { uint8_t tonic, cad_every, cad_to, back, hr, dom; dk_edge_t e[8]; } dk_cht_t;
@@ -372,6 +465,13 @@ typedef struct { uint16_t mask; int8_t iv[4]; } dk_riff_t;
 typedef struct { uint16_t k[8], s[4], c[4], h[8], o[4], p[8]; } dk_pat_t;
 
 /* chord habits on a 7-note scale: degrees 0..6 = i, ii, III, IV, V, VI, VII (see CHT in amb.c for what each field does) */
+#define DK_B_AMBIENT \
+    P_CH_LOOP, 0, P_BL_LEN, 100, P_BL_MOVE, 2, P_BL_GLIDE, 60, P_BASSOCT, -2, P_PULSE, 24, P_SWING, 0, P_NOISE, 16, P_NZ_COLOR, 4, P_GHOST, 0, P_HUMAN, 60, P_BRIGHT, 20, P_DETUNE, 58, \
+    P_PE_ATK, 96, P_PE_HOLD, 75, P_PE_REL, 98, P_PE_REST, 30, P_PL_RATE, 0, P_PL_DEPTH, 50, P_PL_SHAPE, 4, P_PL_DEST, 3, P_PL_CHO, 60, P_DR_CUT, 22, P_DR_RES, 40, \
+    P_DL_RATE, 0, P_DL_DEPTH, 60, P_DL_SHAPE, 5, P_DL_DEST, 1, P_AC_CUT, 28, P_AC_RES, 50, P_AC_ENV, 45, P_AC_DEC, 90, P_AC_LEN, 4, P_AC_RANGE, 2, P_AC_MUT, 40, P_AC_OCT, 0, \
+    P_ECHO, 48, P_ETIME, 5, P_RV_TYPE, 1, P_RV_X, 65, P_RV_DAMP, 72, P_RV_PRE, 95, P_MOTION, 80, P_EVOLVE, 60, \
+    P_CM_LVL, 52, P_CM_OCT, 0, P_CM_DEC, 98, P_CM_VU, 15, P_CM_RANGE, 3, P_MC_RATIO, 2, P_MC_THR, 60, P_MC_MAKE, 40, P_PAD_COMP, 1, P_VOICING, 1, \
+    LV(0), 40, LV(1), 0, LV(2), 0, LV(3), 0, LV(4), 0, LV(5), 38
 #define DK_CHT_TABLE { \
     /* 0 DARKTECH:  i, bVI, bVII, iv: slow (eight bars), home pulls strongly */ \
     {6, 8, 5, 1, 8, 0, {{0,5,3},{0,6,3},{5,0,6},{6,0,6},{0,3,2},{3,0,5},{0,0,0},{0,0,0}}}, \
@@ -405,24 +505,36 @@ typedef struct { uint16_t k[8], s[4], c[4], h[8], o[4], p[8]; } dk_pat_t;
     {4, 8, 4, 1, 0, 0, {{0,4,6},{4,0,8},{0,3,3},{3,0,3},{0,0,0},{0,0,0},{0,0,0},{0,0,0}}}, \
     /* 15 EXPERIM:  every move about equal (the walk of the original genre, but with the whole-tone and blues pools) */ \
     {1, 8, 4, 0, 0, 0, {{0,3,4},{0,5,4},{0,2,4},{0,6,4},{3,6,4},{2,5,4},{4,1,4},{6,2,4}}}, \
+    /* 16 DUNGEON:  i-VI-III-VII and the iv; slow, a chord for eight bars */ \
+    {4, 8, 4, 0, 4, 1, {{0,5,7},{5,2,6},{2,6,6},{6,0,8},{0,3,5},{3,0,5},{5,4,3},{4,0,4}}}, \
+    /* 17 WITCH:  i, bVI and the flat second, a long drag */ \
+    {5, 8, 1, 1, 8, 0, {{0,1,7},{1,0,6},{0,5,5},{5,0,6},{0,3,3},{3,1,4},{0,0,0},{0,0,0}}}, \
+    /* 18 DARKWAVE:  i-VII-VI-VII, two bars */ \
+    {4, 4, 6, 0, 2, 0, {{0,6,9},{6,5,8},{5,6,8},{6,0,9},{0,3,4},{3,0,5},{0,0,0},{0,0,0}}}, \
+    /* 19 PWRNOISE:  one chord and its flat second, eight bars, a hammer */ \
+    {7, 8, 1, 1, 8, 0, {{0,1,6},{1,0,6},{0,6,4},{6,0,4},{0,4,2},{0,0,0},{0,0,0},{0,0,0}}}, \
+    /* 20 DARKAMB:  i-VI-III-VII and the iv; a chord for a very long time (Drift's clock) */ \
+    {4, 8, 4, 0, 0, 1, {{0,5,8},{5,2,7},{2,6,7},{6,0,8},{0,3,5},{3,0,5},{5,4,3},{4,0,4}}}, \
 }
 /* what a breakdown keeps (kick, hats), the build's bars, how far the pad rises (percent), whether the kick returns for the build's last bar */
 #define DK_SECT_TABLE { \
     {1,0,8,60,1}, {0,0,4,125,0}, {0,0,8,90,1}, {1,1,4,40,0}, {0,0,4,70,1}, {0,0,8,130,0}, {1,1,4,70,0}, {0,0,8,100,1}, \
-    {1,0,4,40,1}, {1,0,4,70,0}, {0,0,2,100,0}, {0,0,4,90,1}, {0,1,4,90,0}, {0,0,2,80,0}, {0,0,4,110,0}, {0,1,2,100,0} }
+    {1,0,4,40,1}, {1,0,4,70,0}, {0,0,2,100,0}, {0,0,4,90,1}, {0,1,4,90,0}, {0,0,2,80,0}, {0,0,4,110,0}, {0,1,2,100,0}, \
+    {0,0,8,110,0}, {0,1,4,80,0}, {1,1,4,80,1}, {1,1,2,50,1}, {0,0,8,120,0} }
 /* the bass line: the root on the genre's rhythm (mode 1), and the genre's riff (mode 6) */
-#define DK_BL_ROOT_TABLE { 0x6666, 0x0001, 0x4444, 0x5555, 0x4444, 0x0001, 0x0509, 0x6666, 0x5555, 0x4401, 0x0101, 0x5555, 0x0441, 0x0401, 0x0001, 0x2105 }
+#define DK_BL_ROOT_TABLE { 0x6666, 0x0001, 0x4444, 0x5555, 0x4444, 0x0001, 0x0509, 0x6666, 0x5555, 0x4401, 0x0101, 0x5555, 0x0441, 0x0401, 0x0001, 0x2105, 0x0001, 0x0401, 0x5555, 0x5757, 0x0001 }
 #define DK_BL_RIFF_TABLE { \
     {0x6666, {0, 0, 12, 0}}, {0x0201, {0, -1, 6, 1}}, {0x4444, {0, 0, 12, 7}}, {0x5555, {0, 0, 7, 0}}, {0x4A4A, {0, 12, 0, 7}}, {0x0101, {0, 7, 5, 0}}, \
     {0x0509, {0, 0, 12, 7}}, {0x6666, {0, 0, 0, 12}}, {0x5757, {0, 0, 12, 0}}, {0x0449, {0, 7, 0, 12}}, {0x0201, {0, 1, 0, 6}}, {0x5555, {0, 0, 12, 0}}, \
-    {0x0441, {0, 0, 12, 7}}, {0x0401, {0, 0, -2, 0}}, {0x0549, {0, 7, 5, 0}}, {0x4A25, {0, 6, 1, 13}} }
+    {0x0441, {0, 0, 12, 7}}, {0x0401, {0, 0, -2, 0}}, {0x0549, {0, 7, 5, 0}}, {0x4A25, {0, 6, 1, 13}}, \
+    {0x0001, {0, 0, 7, 0}}, {0x0401, {0, 0, -2, 0}}, {0x5757, {0, 7, 0, 12}}, {0xDDDD, {0, 12, 0, 1}}, {0x0001, {0, 0, 7, 0}} }
 /* the pad's own stab rhythm when its sound stabs (Comp: Auto) */
-#define DK_COMP_TABLE { 0x0404, 0x0001, 0x4444, 0x0A0A, 0x4949, 0x0001, 0x2448, 0x4444, 0x1111, 0x0401, 0x0001, 0x2222, 0x0408, 0x0401, 0x0001, 0x2105 }
+#define DK_COMP_TABLE { 0x0404, 0x0001, 0x4444, 0x0A0A, 0x4949, 0x0001, 0x2448, 0x4444, 0x1111, 0x0401, 0x0001, 0x2222, 0x0408, 0x0401, 0x0001, 0x2105, 0x0001, 0x0401, 0x4444, 0x1111, 0x0001 }
 /* the genre's ghost notes: snare and kick steps where a soft hit may sound that the pattern lacks */
-#define DK_GHOST_SN_TABLE { 0, 0, 0, 0, 0x0200, 0, 0x8480, 0, 0, 0x0200, 0, 0, 0xC288, 0, 0x0220, 0x8A12 }
-#define DK_GHOST_KK_TABLE { 0x0400, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0x4400, 0, 0, 0x2200, 0, 0, 0x0810 }
+#define DK_GHOST_SN_TABLE { 0, 0, 0, 0, 0x0200, 0, 0x8480, 0, 0, 0x0200, 0, 0, 0xC288, 0, 0x0220, 0x8A12, 0, 0x0210, 0, 0x2200, 0 }
+#define DK_GHOST_KK_TABLE { 0x0400, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0x4400, 0, 0, 0x2200, 0, 0, 0x0810, 0, 0x0400, 0, 0x4400, 0 }
 /* the pluck's rate by genre: 1/4 (0), 3/16 (1), 1/8 (2), 1/16 (3) */
-#define DK_PLUCK_RATE_TABLE { 3, 0, 2, 3, 3, 0, 3, 3, 3, 2, 0, 2, 2, 0, 0, 1 }
+#define DK_PLUCK_RATE_TABLE { 3, 0, 2, 3, 3, 0, 3, 3, 3, 2, 0, 2, 2, 0, 0, 1, 0, 1, 2, 3, 0 }
 
 /* The genre's step tricks (en_mod, a byte a lane step: ratchet | push << 3 | level << 6).  Flags per genre: */
 enum { DKM_SOFT_OFFHAT = 1, DKM_ACCENT_BACKBEAT = 2, DKM_ACCENT_ONE = 4, DKM_LATE_SNARE = 8, DKM_HAT_ROLL = 16, DKM_GHOST_HATS = 32, DKM_FLAM_PERC = 64, DKM_ACCENT_OFFHAT = 128 };
@@ -430,7 +542,8 @@ enum { DKM_SOFT_OFFHAT = 1, DKM_ACCENT_BACKBEAT = 2, DKM_ACCENT_ONE = 4, DKM_LAT
     DKM_SOFT_OFFHAT | DKM_ACCENT_ONE, DKM_FLAM_PERC | DKM_LATE_SNARE, DKM_ACCENT_ONE | DKM_ACCENT_BACKBEAT | DKM_HAT_ROLL, DKM_ACCENT_BACKBEAT | DKM_FLAM_PERC, \
     DKM_ACCENT_ONE | DKM_ACCENT_OFFHAT, DKM_ACCENT_ONE | DKM_FLAM_PERC | DKM_LATE_SNARE, DKM_ACCENT_BACKBEAT | DKM_SOFT_OFFHAT, DKM_ACCENT_OFFHAT | DKM_HAT_ROLL, \
     DKM_ACCENT_BACKBEAT | DKM_ACCENT_ONE, DKM_SOFT_OFFHAT | DKM_LATE_SNARE, DKM_FLAM_PERC | DKM_LATE_SNARE | DKM_GHOST_HATS, DKM_ACCENT_BACKBEAT | DKM_SOFT_OFFHAT, \
-    DKM_ACCENT_BACKBEAT | DKM_GHOST_HATS, DKM_ACCENT_BACKBEAT | DKM_LATE_SNARE, DKM_FLAM_PERC | DKM_GHOST_HATS, DKM_GHOST_HATS | DKM_HAT_ROLL }
+    DKM_ACCENT_BACKBEAT | DKM_GHOST_HATS, DKM_ACCENT_BACKBEAT | DKM_LATE_SNARE, DKM_FLAM_PERC | DKM_GHOST_HATS, DKM_GHOST_HATS | DKM_HAT_ROLL, \
+    DKM_FLAM_PERC, DKM_HAT_ROLL | DKM_LATE_SNARE | DKM_GHOST_HATS, DKM_ACCENT_BACKBEAT | DKM_SOFT_OFFHAT, DKM_ACCENT_ONE | DKM_ACCENT_OFFHAT | DKM_HAT_ROLL, DKM_SOFT_OFFHAT | DKM_FLAM_PERC }
 
 /* The genres' latched effects (ui.c genre_fx): tape wow, flutter, drive, dull; vinyl level, crackle, hiss, tone; pump depth, release, every, target
  * (255: the engine's default), and what is latched on (1 vinyl, 2 tape, 4 pump, 8 phaser). */
@@ -442,8 +555,11 @@ enum { DKM_SOFT_OFFHAT = 1, DKM_ACCENT_BACKBEAT = 2, DKM_ACCENT_ONE = 4, DKM_LAT
     {6, 4, 65, 22, 255, 255, 255, 255, 255, 255, 255, 255}, {24, 22, 30, 50, 34, 30, 40, 34, 255, 255, 255, 255}, \
     {40, 36, 55, 55, 36, 34, 50, 28, 255, 255, 255, 255}, {255, 255, 255, 255, 255, 255, 255, 255, 30, 45, 1, 0x70}, \
     {255, 255, 255, 255, 255, 255, 255, 255, 34, 32, 1, 0xF0}, {255, 255, 255, 255, 255, 255, 255, 255, 50, 58, 0, 0x50}, \
-    {28, 30, 22, 52, 22, 28, 40, 30, 255, 255, 255, 255}, {20, 18, 60, 40, 255, 255, 255, 255, 255, 255, 255, 255} }
-#define DK_FX_LOCK_TABLE { 2, 3, 4, 10, 4, 0, 8, 4, 2, 3, 11, 4, 4, 4, 3, 10 }
+    {28, 30, 22, 52, 22, 28, 40, 30, 255, 255, 255, 255}, {20, 18, 60, 40, 255, 255, 255, 255, 255, 255, 255, 255}, \
+    {30, 34, 18, 55, 28, 30, 40, 30, 255, 255, 255, 255}, {40, 36, 40, 60, 36, 34, 50, 30, 255, 255, 255, 255}, \
+    {12, 14, 30, 40, 255, 255, 255, 255, 255, 255, 255, 255}, {6, 4, 70, 20, 255, 255, 255, 255, 255, 255, 255, 255}, \
+    {34, 30, 18, 58, 26, 28, 44, 30, 255, 255, 255, 255} }
+#define DK_FX_LOCK_TABLE { 2, 3, 4, 10, 4, 0, 8, 4, 2, 3, 11, 4, 4, 4, 3, 10, 3, 3, 4, 10, 3 }
 
 /* ------------------------------------------------------------------------------------------ drum patterns --- */
 /* Each genre owns a bank of masks per lane (bit s = a hit on sixteenth s).  A piece's six patterns take their masks from the banks by
@@ -496,4 +612,19 @@ enum { DKM_SOFT_OFFHAT = 1, DKM_ACCENT_BACKBEAT = 2, DKM_ACCENT_ONE = 4, DKM_LAT
    {0x2492,0x4925,0x1249,0x0A52,0x5555,0x2222,0x0000,0x4444}, {0x0000,0x0000,0x0200,0x2000}, {0x2492,0x4925,0x1249,0x0924,0x5249,0x2924,0x0A52,0x4A4A} }, \
 /* 15 EXPERIM: off-grid kicks, snares, hats; lane lengths in the base list make them drift against each other */ \
  { {0x4801,0x0245,0x1021,0x2085,0x0803,0x4204,0x1181,0x8421}, {0x0210,0x4004,0x0A00,0x1081}, {0x0000,0x0802,0x4010,0x0000}, \
-   {0xA5A5,0x6969,0xD2D2,0x3C3C,0x5A5A,0xF00F,0x0FF0,0x9696}, {0x0000,0x0404,0x2020,0x8080}, {0x3C3C,0x0F0F,0x5959,0xA00A,0x6C36,0x1B1B,0x7007,0x8E31} } }
+   {0xA5A5,0x6969,0xD2D2,0x3C3C,0x5A5A,0xF00F,0x0FF0,0x9696}, {0x0000,0x0404,0x2020,0x8080}, {0x3C3C,0x0F0F,0x5959,0xA00A,0x6C36,0x1B1B,0x7007,0x8E31} }, \
+/* 16 DUNGEON: nearly silent: a distant soft thud, a hand-drum tap, a few ticks */ \
+ { {0x0001,0x0000,0x0001,0x0101,0x0001,0x0010,0x0001,0x0100}, {0x0000,0x0000,0x0100,0x0000}, {0x0000,0x0000,0x0000,0x0000}, \
+   {0x0000,0x1010,0x0000,0x0000,0x4040,0x0000,0x0000,0x0808}, {0x0000,0x0000,0x0000,0x0000}, {0x0001,0x0100,0x0010,0x1001,0x0000,0x0102,0x0400,0x0021} }, \
+/* 17 WITCH: half time; a heavy snare on three; rolling trap hats; irregular perc */ \
+ { {0x0001,0x0003,0x0801,0x0011,0x0005,0x0201,0x0809,0x2001}, {0x0100,0x0100,0x0108,0x0100}, {0x0100,0x0000,0x0100,0x0900}, \
+   {0xFFFF,0x7777,0xFEFE,0x5555,0x77DD,0xFFFF,0x5F5F,0x7F7F}, {0x4000,0x0040,0x4040,0x0400}, {0x0404,0x2020,0x8008,0x0042,0x1010,0x0A00,0x4200,0x0480} }, \
+/* 18 DARKWAVE: a dry drum machine; the kick on the beat and a push; the snare on 2 and 4; eighth hats; toms */ \
+ { {0x1111,0x1141,0x1111,0x1311,0x1111,0x1181,0x1111,0x5111}, {0x1010,0x1010,0x1018,0x1010}, {0x0000,0x1010,0x0000,0x0000}, \
+   {0x5555,0x5555,0x5557,0x5D5D,0x5555,0x7575,0x5555,0x5555}, {0x4444,0x0000,0x4040,0x4444}, {0x0400,0x0A00,0x2420,0x0808,0x4242,0x0024,0x2200,0x0820} }, \
+/* 19 PWRNOISE: a hammering kick, a snare and clap together, sixteenth hats, clanking perc */ \
+ { {0x1111,0x9191,0x1515,0x5555,0x1111,0x1119,0x3131,0x7171}, {0x1010,0x5050,0x1818,0x7070}, {0x1010,0x1010,0x9090,0x5050}, \
+   {0xFFFF,0xEEEE,0xFFFF,0xDDDD,0xFFFF,0xBBBB,0xFFFF,0xF7F7}, {0x4444,0x2222,0x4949,0xAAAA}, {0x4949,0x2525,0x9292,0xA5A5,0x6666,0x8421,0x3C3C,0x7777} }, \
+/* 20 DARKAMB: almost nothing: a far-off thud, a rare scrape of metal, no snare, no hats */ \
+ { {0x0001,0x0100,0x0001,0x0101,0x0000,0x0010,0x0200,0x0401}, {0x0000,0x0000,0x0000,0x0000}, {0x0000,0x0000,0x0000,0x0000}, \
+   {0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000}, {0x0000,0x0000,0x0000,0x0000}, {0x0000,0x0100,0x0010,0x0801,0x4000,0x0204,0x0800,0x0020} } }

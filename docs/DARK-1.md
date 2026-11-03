@@ -2,7 +2,7 @@
 
 DARK-1 is a modification of **PERF-1** (by deamonSLINKY, GPL-3.0-only; itself a fork of HYP-1 by RedtailWorks and AMB-1 by Charles Vestal) for the
 M-VAVE FM-1. The instrument is unchanged: every page, screen, button, knob, the sequencer and its tracks, the Auto-DJ, the effects, the workflow, the
-navigation and the project saving are PERF-1's. What changed is the music: the sixteen genres, the 160 factory pieces, and everything in the engine that
+navigation and the project saving are PERF-1's. What changed is the music: the twenty-one genres, the 210 factory pieces, and everything in the engine that
 makes one genre sound unlike another.
 
 Licence and attribution are kept: `LICENSE` (GPL-3.0), `LICENSING.md` (the full chain of credit, with DARK-1 added to it) and the SPDX headers.
@@ -43,7 +43,7 @@ UI genre dial / the page's preset list
   -> the voices: KITS, PAD_SOUND, DRONE_SOUND, ACID_SOUND, CM_SOUND + FM6_DK (fm6_dark.h)
 ```
 
-**One source of truth:** `firmware/src/dsp/dark_presets.h` defines the genre names (`DK_GENRES`), the 160 piece rows (`DK_ROWS`), each genre's base
+**One source of truth:** `firmware/src/dsp/dark_presets.h` defines the genre names (`DK_GENRES`), the 210 piece rows (`DK_ROWS`), each genre's base
 parameters (`DK_B_*`) and every per-genre engine table (`DK_CHT_TABLE`, `DK_SECT_TABLE`, `DK_BL_*`, `DK_COMP_TABLE`, `DK_GHOST_*`, `DK_PLUCK_RATE_TABLE`,
 `DK_MOD_TABLE`, `DK_FX_TABLE`, `DK_PAT_TABLE`). The firmware, the host simulator, the wasm build and the page all read it through `amb.c`; the page has no list
 of names of its own (it asks the engine: `web_genre_name`, `web_piece_name`).
@@ -75,7 +75,7 @@ original, and every one of the 160 recipes is different from every other and fro
 * `firmware/src/app/ui.c`: genre names and latched effects come from the engine; `ui_select_preset` (the page's entry).
 * `firmware/src/app/project.c`: image magic "DRK1", no legacy bank loading; the PERF-1 power-on nudge of a start piece's knobs removed, so a factory piece is
   exactly its recipe.
-* `web/emu/`: DARK-1 page text and manual; its own storage keys; a preset browser (16 genres x 10 pieces) that talks to the engine; new wasm exports
+* `web/emu/`: DARK-1 page text and manual; its own storage keys; a preset browser (21 genres x 10 pieces) that talks to the engine; new wasm exports
   (`web_genre_name`, `web_piece_name`, `web_select`, `web_cur_*`, `web_par`, `web_recipe_par`, `web_preset_hash`, ...); the worklet retries a selection that the firmware
   refuses while it is storing.
 * `tools/make_standalone.py`: one self-contained HTML (wasm embedded, worklet from a data URL: a Blob URL fails on `file://`).

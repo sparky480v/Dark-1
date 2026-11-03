@@ -9,19 +9,19 @@ fails = []
 def check(c, msg):
     if not c: fails.append(msg)
 def h(r): return hashlib.sha256(json.dumps([r['par'], r['pool'], r['pats'], r['mod']]).encode()).hexdigest()[:16]
-check(len(R) == 160, f'{len(R)} recipes, expected 160')
-check({(r['g'], r['i']) for r in R} == {(g, i) for g in range(16) for i in range(10)}, 'every genre x piece present')
+check(len(R) == 210, f'{len(R)} recipes, expected 210')
+check({(r['g'], r['i']) for r in R} == {(g, i) for g in range(21) for i in range(10)}, 'every genre x piece present')
 # 1. none of the PERF-1 recipes survives
 old = {l.strip() for l in open(os.path.join(here, 'perf1_recipe_hashes.txt')) if not l.startswith('#') and l.strip()}
 same = [(r['g'], r['i']) for r in R if h(r) in old]
 check(not same, f'recipes identical to a PERF-1 factory recipe: {same}')
 # 2. names are the DARK-1 ones, and unique
 OLD_NAMES = {'HYPNO', 'LOFI', 'HOUSE', 'DUBSTEP', 'DUB', 'DNB', 'BREAKS', 'GARAGE', 'ELECTRO', 'TRAP', 'DISCO', 'FUNK', 'REGGAE', 'SYNTHWAV', 'AMAPIANO', 'TRIPHOP'}
-gn = [next(r['gname'] for r in R if r['g'] == g) for g in range(16)]
-check(len(set(gn)) == 16, 'sixteen distinct genre names')
+gn = [next(r['gname'] for r in R if r['g'] == g) for g in range(21)]
+check(len(set(gn)) == 21, 'twenty-one distinct genre names')
 check(not (set(gn) & OLD_NAMES), f'old genre names present: {set(gn) & OLD_NAMES}')
 pn = [(r['gname'], r['pname']) for r in R]
-check(len(set(pn)) == 160, '160 distinct piece names')
+check(len(set(pn)) == 210, '210 distinct piece names')
 # 3. every preset is its own: pairwise they differ in many parameters (not a rename of one recipe)
 V = {(r['g'], r['i']): r['par'] + [r['pool']] + list(r['pats']) for r in R}   # parameters, note pool, every drum pattern
 close = []
@@ -37,7 +37,7 @@ P = {}
 for n in names:
     if n not in P: P[n] = len(P)
 # (the dump has one value per parameter in enum order; the index of the tempo etc. is read from the engine by the dumper's header when present)
-for g in range(16):
+for g in range(21):
     gr = [r for r in R if r['g'] == g]
     tempos = sorted(r['par'][0] for r in gr)
     pats = {tuple(map(tuple, [r['pats'][:6]])) .__hash__() for r in gr}

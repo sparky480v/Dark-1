@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# DARK-1: generates firmware/src/dsp/fm6_dark.h: thirty-eight original six-operator FM voices as 128-byte packed DX7 records.
+# DARK-1: generates firmware/src/dsp/fm6_dark.h: forty-eight original six-operator FM voices as 128-byte packed DX7 records.
 # Written for DARK-1 (no third-party patch data).  Operators are given as op1..op6; the record stores op6 first.
 import sys, os
 ENV = {  # (rates R1-R4, levels L1-L4)
@@ -82,10 +82,20 @@ V.append(rec('HEX BASS', 21, 6, [op(1,0,99,'sus'), op(2,0,80,'mod_hold'), op(1,0
 V.append(rec('MOLD WIND', 4, 3, [op(1,0,88,'bow'), op(2,0,52,'mod_hold'), op(1,0,0), op(1,0,0), op(1,0,0), op(1,0,0)]))
 V.append(rec('CRYPT HARP', 4, 2, [op(1,0,94,'pluck'), op(3,0,66,'mod_fall'), op(1,0,84,'tail'), op(2,0,56,'mod_fall'), op(1,0,0), op(1,0,0)]))
 V.append(rec('NEON KNELL', 4, 1, [op(1,0,92,'bell'), op(14,0,72,'mod_fall'), op(1,2,80,'bell'), op(9,0,60,'mod_fall'), op(1,0,0), op(1,0,0)]))
-assert len(V) == 38
+V.append(rec('TOMB GONG', 4, 0, [op(1,0,92,'bell'), op(1,41,72,'mod_fall'), op(2,76,66,'bell'), op(3,0,56,'mod_fall'), op(1,0,0), op(1,0,0)], tr=12))
+V.append(rec('COLD HARPSI', 4, 4, [op(1,0,94,'pluck'), op(3,0,74,'mod_fall'), op(1,0,86,'pluck'), op(7,0,66,'mod_fall'), op(1,0,0), op(1,0,0)]))
+V.append(rec('RAVEN CALL', 31, 6, [op(1,0,76,'swell',det=4), op(3,0,64,'swell',det=10), op(5,0,52,'swell',det=6), op(1,0,70,'swell',det=9), op(2,0,44,'swell'), op(1,0,60,'swell',det=3)]))
+V.append(rec('ACID RAIN', 4, 3, [op(1,0,90,'pluck'), op(9,0,70,'mod_fall'), op(2,0,76,'pluck'), op(13,0,62,'mod_fall'), op(1,0,0), op(1,0,0)]))
+V.append(rec('COAL DRUM', 4, 7, [op(0,50,96,'perc'), op(0,30,74,'mod_fall'), op(1,0,66,'perc'), op(2,50,52,'mod_fall'), op(1,0,0), op(1,0,0)], tr=0))
+V.append(rec('WIDOW FLUTE', 4, 1, [op(1,0,88,'bow'), op(2,0,44,'mod_hold'), op(1,0,0), op(1,0,0), op(1,0,0), op(1,0,0)]))
+V.append(rec('GRIM STRNG', 31, 3, [op(1,0,80,'bow',det=5), op(1,0,72,'bow',det=9), op(2,0,54,'bow',det=6), op(1,0,68,'bow',det=10), op(1,0,56,'bow',det=3), op(3,0,40,'bow')]))
+V.append(rec('HOLLOW BELL', 4, 2, [op(1,0,90,'bell'), op(2,76,70,'mod_fall'), op(3,0,74,'bell'), op(5,10,58,'mod_fall'), op(1,0,0), op(1,0,0)]))
+V.append(rec('SLAG LEAD', 22, 7, [op(1,0,92,'bow'), op(1,0,80,'mod_hold'), op(2,0,60,'mod_hold'), op(1,0,0), op(1,0,0), op(1,2,72,'mod_hold')]))
+V.append(rec('DUSK CHOIR', 31, 5, [op(1,0,74,'swell',det=3), op(2,0,62,'swell',det=11), op(3,0,52,'swell',det=7), op(1,0,66,'swell',det=12), op(4,0,40,'swell',det=5), op(1,0,56,'swell',det=2)]))
+assert len(V) == 48
 out = ['/* SPDX-License-Identifier: GPL-3.0-only */',
-       '/* DARK-1: thirty-eight original six-operator FM voices (tools/gen_dark_fm.py): 128-byte packed DX7 records, op6 first. Generated: do not edit. */',
-       '#pragma once', '#include <stdint.h>', '#define FM6_NDK 38',
+       '/* DARK-1: forty-eight original six-operator FM voices (tools/gen_dark_fm.py): 128-byte packed DX7 records, op6 first. Generated: do not edit. */',
+       '#pragma once', '#include <stdint.h>', '#define FM6_NDK 48',
        'static const char *const FM6_DK_NAME[FM6_NDK] = {' + ', '.join('"%s"' % n for n, _ in V) + '};',
        'static const uint8_t FM6_DK[FM6_NDK][128] = {']
 for i, (n, b) in enumerate(V):

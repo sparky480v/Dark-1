@@ -42,8 +42,8 @@ enum { V_TEMPO, V_PAD, V_PADENV, V_PADLFO, V_CHORDS, V_DRONE, V_DRENV, V_DRLFO, 
 static const char *const VIEW_NAME[NVIEWS] = {"Tempo", "Pad", "Pad env", "Pad LFO", "Chords", "Bass", "Bass env",
                                               "Bass LFO", "Bass line", "Acid", "Acid env", "Acid line", "Acid answer", "Acid steps", "Pluck", "Pluck 2", "Deja vu", "Pluck steps", "Drums", "Links", "Kit", "Drum drift", "Groove", "Steps", "Feel", "Phrase", "Space", "Reverb", "Comp/Limit", "Mixer", "Global", "Jam",
                                               "Sequencer", "Perform", "Visual"};
-enum { VZ_PLASMA, VZ_KALEIDO, VZ_BARS, VZ_FLUX, VZ_DISCO, VZ_LIFE, VZ_ORBIT, VZ_VORTEX, VZ_TUNNEL, VZ_AUTO, VZ_N };   /* the visualizers (viz.c) */
-static const char *const VZ_NAME[VZ_N] = {"PLASMA", "KALEIDO", "BARS", "FLUX", "SIGIL", "LIFE", "ORBIT", "VORTEX", "TUNNEL", "AUTO"};
+enum { VZ_PLASMA, VZ_KALEIDO, VZ_BARS, VZ_FLUX, VZ_DISCO, VZ_LIFE, VZ_ORBIT, VZ_VORTEX, VZ_TUNNEL, VZ_STARS, VZ_RAIN, VZ_STORM, VZ_RIPPLES, VZ_RADAR, VZ_WATER, VZ_AUTO, VZ_N };   /* the visualizers (viz.c) */
+static const char *const VZ_NAME[VZ_N] = {"PLASMA", "KALEIDO", "BARS", "FLUX", "SIGIL", "LIFE", "ORBIT", "VORTEX", "TUNNEL", "STARS", "RAIN", "STORM", "RIPPLES", "RADAR", "WATERFALL", "AUTO"};
 /* the knobs of each page: a parameter, or one of these (the sequencer's: the lane's) */
 enum { K_LVL = 200, K_TUNE, K_DEC, K_MXT, K_MXL, K_MXP, K_MXS, K_GRT, K_GRD, K_GRS, K_GRA, K_ACT, K_ACD, K_STR, K_STP, K_STV, K_PCOND, K_ASTY, K_ASNO, K_ASOC, K_PSNO, K_PSLV, K_GENRE, K_NONE, K_FXF, K_FXC, K_FXT, K_FXW };   /* K_GENRE: the genre on Global; K_FX*: the FX menu's own knobs */
 static const char *const FXK_LABEL[4] = {"Filter", "Crush", "Throw", "Wash"};
@@ -52,8 +52,9 @@ static const char *const FXK_LABEL[4] = {"Filter", "Crush", "Throw", "Wash"};
  * the four knobs, the effect itself held on while the page is up, so it is heard as it is edited. K_FXP + 4 *
  * page + knob. The gate's pattern is on the white keys, as the sequencer's steps. */
 enum { K_FXP = 230 };
-enum { KN_PLAIN, KN_PRESET, KN_LEN, KN_TGT, KN_PTGT, KN_NAME, KN_SEC, KN_RANGE, KN_PAR, KN_NONE };   /* KN_RANGE: 2 .. n; KN_PAR: an engine parameter (idx), the dial pages' knob code; KN_NONE: no knob */
-#define NFXP 28
+enum { KN_PLAIN, KN_PRESET, KN_LEN, KN_TGT, KN_PTGT, KN_NAME, KN_SEC, KN_RANGE, KN_PAR, KN_NONE, KN_JSND };   /* KN_RANGE: 2 .. n; KN_PAR: an engine parameter (idx), the dial pages' knob code; KN_NONE: no knob */
+#define NFXP 33
+#define NJP 4                          /* the JAM pages: the last four of the FXP table (DARK-1 1.0.3) */
 static const char *const RATE_NAME[7] = {"1/2", "1/4", "1/6", "1/8", "1/16", "1/32", "1/64"};          /* the roll's rates */
 static const char *const RTIME_NAME[4] = {"1/2 BEAT", "1 BEAT", "2 BEATS", "4 BEATS"};         /* beats at each rate */
 static const char *const PRATE_NAME[5] = {"1/2", "1/4", "1/8", "1/16", "KICK"};                        /* the pump's period, in notes */
@@ -75,7 +76,7 @@ static const char *const SMN_NAME[3] = {"DRY", "SOME", "LOTS"};                 
 static const char *const FXQ_NAME[3] = {"OFF", "BEAT", "BAR"};                                   /* Flex Beat: when it starts */
 static const char *const FXM_NAME[2] = {"ONE SHOT", "LOOP"};
 static const char *const JV_NAME[4];
-static const char *const JM_NAME[3];
+static const char *const JM_NAME[8];
 static const char *const JO_NAME[5];
 static const char *const SAVER_NAME[4] = {"OFF", "1 MIN", "3 MIN", "10 MIN"};                  /* the screensaver: left alone this long while playing */
 static const char *const LIGHTS_NAME[2] = {"OFF", "SHOW"};                                       /* the keys' lights on the visualizers */
@@ -100,6 +101,21 @@ static const char *const WON_NAME[3] = {"OFF", "ON", "ON+KEEP"};   /* DARK-1: Wa
 static const char *const WEVERY_NAME[5] = {"4 BARS", "8 BARS", "16 BARS", "32 BARS", "64 BARS"};
 static const char *const WAMT_NAME[3] = {"SUBTLE", "MEDIUM", "WILD"};
 static const char *const WPIECE_NAME[3] = {"STAY", "GENRE", "ANY"};
+static const char *const JLV_NAME[4] = {"PIECE", "LOUD", "LOUDER", "MAX"};   /* the JAM page's Level: the voice's level is lifted to at least 0, 70, 85 or 100 while you play it */
+static const char *const ARP_NAME[18] = {"OFF", "UP", "DOWN", "UP-DOWN", "DOWN-UP", "UP&DOWN", "PLAYED", "RANDOM", "WALK", "CONVERGE", "DIVERGE", "THUMB", "PINKY", "SKIP", "CLIMB", "STAIRS", "CHORD", "OCTAVES"};
+static const char *const ARPR_NAME[8] = {"1/32", "1/16T", "1/16", "1/8T", "1/8", "1/8.", "1/4T", "1/4"};
+static const char *const ARPG_NAME[6] = {"10%", "25%", "50%", "75%", "90%", "TIE"};
+static const char *const ARPRG_NAME[4] = {"1 OCT", "2 OCT", "3 OCT", "4 OCT"};
+static const char *const ARPSW_NAME[5] = {"OFF", "LIGHT", "MEDIUM", "TRIPLET", "HEAVY"};
+static const char *const ARPRA_NAME[4] = {"X1", "X2", "X3", "X4"};
+static const char *const ARPRS_NAME[4] = {"OFF", "FEW", "SOME", "MANY"};
+static const char *const ARPJ_NAME[3] = {"OFF", "SOME", "OFTEN"};
+static const char *const DVCH_NAME[3] = {"LIGHT", "OFTEN", "WILD"};   /* DRUM VARY: how often the patterns change (16, 8, 4 bars) */
+static const char *const DVRAT_NAME[4] = {"OFF", "FEW", "SOME", "LOTS"};
+static const char *const DVEV_NAME[3] = {"1 BAR", "2 BARS", "4 BARS"};
+static const char *const AFEV_NAME[4] = {"2 BARS", "4 BARS", "8 BARS", "16 BARS"};
+static const char *const AFAMT_NAME[3] = {"GENTLE", "MEDIUM", "WILD"};
+static const char *const AFLEN_NAME[4] = {"1 BEAT", "1/2 BAR", "1 BAR", "2 BARS"};
 static const struct {
     const char *name;
     uint8_t bit;                        /* the effect (FX_*) held on while the page is up */
@@ -163,7 +179,12 @@ static const struct {
     {"SET", 63, 0, {{"Rounds", KN_NAME, 15, ROUNDS_NAME, 4}, {"Ramp", KN_NAME, 16, RAMP_NAME, 5}, {"Intro", KN_NAME, 17, INTRO_NAME, 5}, {"", KN_NONE, 0, 0, 0}}},   /* the set: rounds a piece, the tempo's climb, the intro */
     {"WANDER", 63, 0, {{"Wander", KN_NAME, 18, WON_NAME, 3}, {"Every", KN_NAME, 19, WEVERY_NAME, 5}, {"Amount", KN_NAME, 20, WAMT_NAME, 3}, {"Pieces", KN_NAME, 21, WPIECE_NAME, 3}}},   /* DARK-1: the music changes on its own (the first page) */
     {"WANDER 2", 63, 0, {{"Kits", KN_NAME, 22, ONOFF_NAME, 2}, {"Sounds", KN_NAME, 23, ONOFF_NAME, 2}, {"Knobs", KN_NAME, 24, ONOFF_NAME, 2}, {"Layers", KN_NAME, 25, ONOFF_NAME, 2}}},   /* and what it may change */
-    {"JAM", 63, 0, {{"Voice", KN_NAME, 7, JV_NAME, 4}, {"Keys", KN_NAME, 8, JM_NAME, 3}, {"Octave", KN_NAME, 9, JO_NAME, 5}, {"Answer", KN_NAME, 10, ONOFF_NAME, 2}}},   /* (the last: ui_knob_param counts on it) */
+    {"AUTO FX", 63, 0, {{"Auto FX", KN_NAME, 36, ONOFF_NAME, 2}, {"Every", KN_NAME, 37, AFEV_NAME, 4}, {"Amount", KN_NAME, 38, AFAMT_NAME, 3}, {"Length", KN_NAME, 39, AFLEN_NAME, 4}}},
+    {"DRUM VARY", 63, 0, {{"Vary", KN_NAME, 40, ONOFF_NAME, 2}, {"Change", KN_NAME, 41, DVCH_NAME, 3}, {"Ratchets", KN_NAME, 42, DVRAT_NAME, 4}, {"Every", KN_NAME, 43, DVEV_NAME, 3}}},
+    {"JAM", 63, 0, {{"Voice", KN_NAME, 7, JV_NAME, 4}, {"Keys", KN_NAME, 8, JM_NAME, 8}, {"Octave", KN_NAME, 9, JO_NAME, 5}, {"Answer", KN_NAME, 10, ONOFF_NAME, 2}}},   /* (the last four: the JAM pages, ui_knob_param counts on it) */
+    {"JAM SOUND", 63, 0, {{"Sound", KN_JSND, 0, 0, 0}, {"Decay", KN_JSND, 1, 0, 0}, {"Level", KN_NAME, 27, JLV_NAME, 4}, {"Hold", KN_NAME, 26, ONOFF_NAME, 2}}},
+    {"JAM ARP", 63, 0, {{"Arp", KN_NAME, 28, ARP_NAME, 18}, {"Rate", KN_NAME, 29, ARPR_NAME, 8}, {"Range", KN_NAME, 30, ARPRG_NAME, 4}, {"Gate", KN_NAME, 31, ARPG_NAME, 6}}},
+    {"JAM ARP 2", 63, 0, {{"Swing", KN_NAME, 32, ARPSW_NAME, 5}, {"Ratchet", KN_NAME, 33, ARPRA_NAME, 4}, {"Rests", KN_NAME, 34, ARPRS_NAME, 4}, {"Jump", KN_NAME, 35, ARPJ_NAME, 3}}},
 };
 /* the gate's patterns (the loop's length in sixteenths; a pattern of 12 or 10 against the bar of 16 is a polymeter),
  * the last "CUSTOM": the keys' own. euc: a Euclidean pattern of that many hits instead of pat. And its targets. */
@@ -447,7 +468,7 @@ static struct {
     uint32_t w_rng, w_t;               /* its dice; the glide's clock */
     uint8_t w_dice;                    /* 1.0.2 Dice (SEL + PLAY): what the dice rolled stays on the piece, as Wander's changes do, until another piece or Wander off */
     uint8_t w_hist[4];                 /* the last four pieces it chose (genre * 10 + piece + 1): not chosen again */
-    int8_t w_off[11], w_tgt[11];       /* each wandering knob: the offset now, and where it is going (W_KNOB) */
+    int8_t w_off[25], w_tgt[25];       /* each wandering knob: the offset now, and where it is going (W_KNOB) */
     int16_t w_ovr[8];                  /* each wandering sound: the one playing instead of the piece's (-1: the piece's own) (W_SND) */
     uint8_t scene_quant, scene_q;      /* a scene waits for the next bar (1) or comes at once (0); the one waiting: slot + 1 */
     uint8_t key_set, key_on, sec_last; /* the drop's key change (0 same, 1 +2, 2 +3, 3 +5, 4 +7); it is on; the section last seen */
@@ -478,6 +499,19 @@ static struct {
     uint8_t jam_man;                   /* the voice the JAM page has taken off its line (1 + voice), 0 none */
     uint8_t jam_voice, jam_mode, jam_oct, jam_ans;   /* the JAM page: the voice (pluck, pad, acid, drone), the keys (scale, chords, harp), the octave (0..4: -2..+2), the answer */
     uint8_t jam_n[NKEYS], jam_vc[NKEYS], jam_note[NKEYS][4];   /* what each key is sounding, to let go */
+    uint8_t jam_pg, jam_hold, jam_lvl;   /* the JAM pages (1.0.3): the page (0..3), Hold (the keys let go ring on until the next ones), Level (0 piece .. 3 max) */
+    uint8_t arp_mode, arp_rate, arp_range, arp_gate, arp_swing, arp_ratch, arp_rest, arp_jump;   /* the arp (pattern; rate; range -1; gate; swing; ratchet -1; rests; octave jumps) */
+    uint8_t ap_n, ap_note[8], ap_on_n, ap_on[4], ap_cur_n, ap_cur[4], ap_vc, ap_pos, ap_pend;   /* the arp's notes (as played), what sounds now, the step's notes */
+    int32_t ap_tick, ap_base;
+    uint32_t ap_t0, ap_bar_ms, ap_bar_seen, ap_rng;
+    uint8_t lt_n, lt_note[8], lt_vc[8];   /* Hold: the notes ringing on */
+    uint8_t jv_tr[32], jv_w;              /* the JAM page's trail: the last 32 notes played (the pitch), by hand or by the arp */
+    uint8_t jam_key;                      /* what the JAM overrides last set (voice | level), to apply them again on a change */
+    uint8_t dv_on, dv_chg, dv_rat, dv_ev, dv_key, dv_n, dv_lane[8], dv_step[8], dv_orig[8];   /* DRUM VARY (1.0.3): on; how often the patterns change; ratchets; how often they are drawn again; the steps it has marked (to put back) */
+    uint32_t dv_seen, dv_rng;
+    uint8_t af_on, af_every, af_amt, af_len, af_last;   /* AUTO FX (1.0.3): on; every 2, 4, 8, 16 bars; gentle, medium, wild; how long it stays */
+    uint64_t af_mask;
+    uint32_t af_end, af_rng, af_seen;
     uint8_t ans_note[8], ans_dt[8], ans_cnt, ans_playing, ans_i;   /* the answer's memory: notes, the sixteenths between them; playing, at which */
     uint32_t ans_last, ans_t;
     uint16_t cap_t[32];                          /* Capture's memory (SEL + REC on Jam): the last 32 keys played: the sixteenth (en_bars), the note heard, the key and voice, how long it was held (sixteenths; 0: still down) */
@@ -752,13 +786,16 @@ static const struct {
  * drifting (slowly, a step at a time) to new places; or it mutes a few layers for a while. Nothing it does touches the stored
  * piece: its sounds and knob offsets sit on top of the piece, like Mood, and a new piece starts clean. It leaves the player's
  * own mutes alone (a layer the player muted stays muted), and a piece is not chosen again for four changes. */
-#define NWK 11
+#define NWK 25                                  /* the first 11 are every setting's; the other 14 (the envelopes, the tone, the LFOs, the room) only on Wild (1.0.3) */
+#define WK_TEMPO 10
+#define WK_BASIC 11
 #define NWS 8
-static const uint16_t W_KNOB[NWK] = {P_AC_CUT, P_AC_DENS, P_BRIGHT, P_DR_CUT, P_CM_DENS, P_DRIVE, P_REVERB, P_ECHO, P_EVOLVE, P_DETUNE, P_TEMPO};
+static const uint16_t W_KNOB[NWK] = {P_AC_CUT, P_AC_DENS, P_BRIGHT, P_DR_CUT, P_CM_DENS, P_DRIVE, P_REVERB, P_ECHO, P_EVOLVE, P_DETUNE, P_TEMPO,
+                                   P_PE_ATK, P_PE_REL, P_PE_HOLD, P_AC_RES, P_AC_ENV, P_AC_DEC, P_AC_SLIDE, P_DR_RES, P_DE_DEC, P_PL_DEPTH, P_PL_RATE, P_SIZE, P_CM_DEC, P_MOTION};
 static const uint16_t W_SND[NWS] = {P_KIT_KICK, P_KIT_SNARE, P_KIT_HAT, P_KIT_PERC, P_PADTONE, P_DR_INST, P_AC_WAVE, P_CM_SND};
 static const uint8_t W_EVERY[5] = {4, 8, 16, 32, 64};
-static const uint8_t W_SPAN[3] = {12, 24, 40};         /* how far a knob may wander from the piece's own value (the tempo: W_TSPAN) */
-static const uint8_t W_TSPAN[3] = {2, 5, 9};
+static const uint8_t W_SPAN[3] = {12, 24, 56};         /* how far a knob may wander from the piece's own value (the tempo: W_TSPAN) */
+static const uint8_t W_TSPAN[3] = {2, 5, 12};
 static const uint8_t W_PIECE_PCT[3] = {15, 30, 50};    /* the chance that a change is a new piece */
 static uint32_t w_rnd(void)
 {
@@ -875,7 +912,7 @@ static void wander_piece(void)                   /* another piece, this genre or
 static void wander_fire(void)                    /* one change: one to three things, by how much it is told to do */
 {
     const int amt = ui.w_amt % 3, cats = w_cat();
-    int acts = 1 + (amt > 0 ? (int)(w_rnd() >> 9 & 1u) : 0) + (amt > 1 ? (int)(w_rnd() >> 9 & 1u) : 0), a;
+    int acts = 1 + (amt > 0 ? (int)(w_rnd() >> 9 & 1u) : 0) + (amt > 1 ? (int)(w_rnd() >> 9 & 1u) + 1 + (int)(w_rnd() >> 9 & 1u) : 0), a;   /* (wild: two to five things at once) */
     if (ui.w_piece && (int)(w_rnd() >> 8) % 100 < W_PIECE_PCT[amt]) {
         wander_piece();
         return;
@@ -908,9 +945,9 @@ static void wander_fire(void)                    /* one change: one to three thi
                 say(k == 0 ? "WANDER KIT" : "WANDER SOUND", W_SND[s] == P_PADTONE ? EN_PAD_SOUND[v] : W_SND[s] == P_DR_INST ? EN_DRONE_SOUND[v] : W_SND[s] == P_AC_WAVE ? EN_ACID_SOUND[v] :
                                                            W_SND[s] == P_CM_SND ? EN_CM_SOUND[v] : EN_KIT_NAME[v]);
         } else if (k == 2) {                     /* some knobs set off for new places (they glide there: wander_tick) */
-            int j, cnt = 2 + amt + (int)(w_rnd() >> 8) % 2;
+            int j, cnt = 2 + amt + (int)(w_rnd() >> 8) % 2 + (amt == 2 ? 3 : 0);   /* (wild: five or six knobs, the whole panel) */
             for (j = 0; j < cnt; j++) {
-                const int i = (int)(w_rnd() >> 8) % NWK, span = i == NWK - 1 ? W_TSPAN[amt] : W_SPAN[amt];
+                const int i = (int)(w_rnd() >> 8) % (amt == 2 ? NWK : WK_BASIC), span = i == WK_TEMPO ? W_TSPAN[amt] : W_SPAN[amt];
                 ui.w_tgt[i] = (int8_t)((int)(w_rnd() >> 8) % 3 == 0 ? 0 : (int)(w_rnd() >> 8) % (2 * span + 1) - span);   /* (one in three: back home) */
             }
             say("WANDER", "KNOBS");
@@ -984,8 +1021,9 @@ static void wander_tick(void)                    /* each frame: on and off, a ca
         return;
     ui.w_t = now;
     for (i = 0; i < NWK; i++)
-        if (ui.w_off[i] != ui.w_tgt[i] && (i != NWK - 1 || (now >> 8 & 3u) == 0)) {   /* (the tempo creeps at a quarter of the pace) */
-            ui.w_off[i] = (int8_t)(ui.w_off[i] + (ui.w_tgt[i] > ui.w_off[i] ? 1 : -1));
+        if (ui.w_off[i] != ui.w_tgt[i] && (i != WK_TEMPO || (now >> 8 & 3u) == 0)) {   /* (the tempo creeps at a quarter of the pace) */
+            const int d = ui.w_tgt[i] - ui.w_off[i], stp = ui.w_amt == 2 && i != WK_TEMPO && (d > 1 || d < -1) ? 2 : 1;   /* (wild: two steps a tick) */
+            ui.w_off[i] = (int8_t)(ui.w_off[i] + (d > 0 ? stp : -stp));
             wander_send(W_KNOB[i]);
         }
 }
@@ -1003,6 +1041,133 @@ static int mood_val(int p, int v)
         }
     return v;
 }
+/* AUTO FX (1.0.3): on a bar line, every 2, 4, 8 or 16 bars, an effect that suits the section is played for a beat to two bars, then let go. Gentle keeps to
+ * the washes and sweeps, medium adds gates, filters and repeats, wild the stops, scratches and scatters. Held with the same bit the keys use. */
+static const struct {
+    uint8_t fx, lvl, sec, len;                   /* the effect; the amount it first appears at; the sections it fits (1 groove, 2 breakdown, 4 build); the longest it stays (0 a beat .. 3 two bars) */
+} AFX[] = {
+    {FX_PHASER, 0, 3, 3}, {FX_FLANGER, 0, 3, 3}, {FX_TAPE, 0, 7, 3}, {FX_WAH, 0, 1, 3}, {FX_TALK, 0, 1, 3}, {FX_SWEEP, 0, 5, 3}, {FX_THROW, 0, 3, 0},
+    {FX_RVSWELL, 0, 2, 3}, {FX_RISER, 0, 4, 3}, {FX_FILL, 0, 5, 0},
+    {FX_GATE8, 1, 1, 2}, {FX_GATE16, 1, 1, 2}, {FX_PUMP, 1, 1, 3}, {FX_LP, 1, 3, 2}, {FX_HP, 1, 5, 2}, {FX_RING, 1, 1, 1}, {FX_RPT8, 1, 1, 0},
+    {FX_RPT16, 1, 1, 0}, {FX_ROLL, 1, 4, 2}, {FX_FREEZE, 1, 3, 1}, {FX_HATROLL, 1, 1, 1},
+    {FX_SCATTER, 2, 1, 1}, {FX_REV, 2, 1, 0}, {FX_STOP, 2, 1, 0}, {FX_BRAKE, 2, 3, 0}, {FX_SPIN, 2, 1, 0}, {FX_HALF, 2, 1, 2}, {FX_SCRATCH, 2, 1, 1},
+    {FX_DBLKICK, 2, 1, 1}, {FX_SNROLL, 2, 4, 1}};
+static void autofx_tick(void)
+{
+    static const uint8_t LEN16[4] = {4, 8, 16, 32}, EV[4] = {2, 4, 8, 16};
+    static uint8_t prev;
+    uint8_t cand[40];
+    int n = 0, i, pick, len;
+    if (!!ui.af_on != prev) {
+        prev = !!ui.af_on;
+        say("AUTO FX", prev ? "ON" : "OFF");
+        ui.af_mask = 0;
+        ui.af_rng = plat_ms() * 2654435761u + 7u;
+    }
+    if (!ui.af_on || !en_playing || ui.fx_menu || en_intro_k < 1.0f) {
+        ui.af_mask = 0;
+        return;
+    }
+    if (ui.af_mask && (int32_t)(en_bars - ui.af_end) >= 0)
+        ui.af_mask = 0;
+    if (en_bars == ui.af_seen)
+        return;
+    ui.af_seen = en_bars;
+    if (ui.af_mask || (en_bars & 15u) || ((en_bars >> 4) % EV[ui.af_every & 3]))
+        return;
+    ui.af_rng ^= ui.af_rng << 13;
+    ui.af_rng ^= ui.af_rng >> 17;
+    ui.af_rng ^= ui.af_rng << 5;
+    if (ui.af_rng % 100u >= 80u)                 /* (now and then a bar is left alone) */
+        return;
+    for (i = 0; i < (int)(sizeof AFX / sizeof AFX[0]); i++)
+        if (AFX[i].lvl <= (ui.af_amt % 3) && (AFX[i].sec >> en_sec & 1u) && AFX[i].fx != ui.af_last)
+            cand[n++] = (uint8_t)i;
+    if (!n)
+        return;
+    ui.af_rng ^= ui.af_rng << 13;
+    ui.af_rng ^= ui.af_rng >> 17;
+    ui.af_rng ^= ui.af_rng << 5;
+    pick = cand[(ui.af_rng >> 8) % (uint32_t)n];
+    len = ui.af_len & 3;
+    if (len > AFX[pick].len)
+        len = AFX[pick].len;
+    ui.af_last = AFX[pick].fx;
+    ui.af_mask = FXB(AFX[pick].fx);
+    ui.af_end = en_bars + LEN16[len];
+    say("AUTO FX", EN_FX_NAME[AFX[pick].fx]);
+}
+/* DRUM VARY (1.0.3): the drum drift (Change: random, Mutate) is switched on over the piece's own setting, at a pace of Light, Often or Wild, and now and then a
+ * few hits of the groove get a ratchet (x2, x3, x4, x6, a flam, a swell), for a bar or more, then put back. The piece's own drift settings and step tricks are
+ * what is left when it goes off; a step the piece already gives a trick is never touched. */
+static void dv_restore(void)
+{
+    int k;
+    for (k = 0; k < ui.dv_n; k++)
+        en_mod[ui.dv_lane[k] % EN_NLANE][ui.dv_step[k] & 15] = ui.dv_orig[k];
+    ui.dv_n = 0;
+}
+static void drumvary_tick(void)
+{
+    static const uint8_t CNT[4] = {0, 1, 2, 4}, EVB[3] = {1, 2, 4};
+    static const uint8_t KEY_[3] = {3, 2, 1};   /* the drift's Every: 16, 8, 4 bars */
+    const uint8_t key = (uint8_t)(ui.dv_on ? 1 | (ui.dv_chg % 3) << 1 : 0);
+    if (key != ui.dv_key) {
+        ui.dv_key = key;
+        if (ui.dv_on) {
+            const int c = ui.dv_chg % 3;
+            en_set(P_DD_CHANGE, 2);
+            en_set(P_DD_EVERY, KEY_[c]);
+            en_set(P_DD_POOL, EN_NPAT);
+            en_set(P_DD_MUTATE, c == 0 ? 1 : 2);
+            say("DRUM VARY", "ON");
+        } else {
+            en_set(P_DD_CHANGE, proj.par[P_DD_CHANGE]);
+            en_set(P_DD_EVERY, proj.par[P_DD_EVERY]);
+            en_set(P_DD_POOL, proj.par[P_DD_POOL]);
+            en_set(P_DD_MUTATE, proj.par[P_DD_MUTATE]);
+            dv_restore();
+            say("DRUM VARY", "OFF");
+        }
+        ui.dv_rng = plat_ms() * 2654435761u + 3u;
+    }
+    if (!ui.dv_on || !en_playing) {
+        if (ui.dv_n)
+            dv_restore();
+        return;
+    }
+    if (en_bars == ui.dv_seen)
+        return;
+    ui.dv_seen = en_bars;
+    if ((en_bars & 15u) || ((en_bars >> 4) % EVB[ui.dv_ev % 3]))
+        return;
+    dv_restore();                                /* a new bar line: the last marks go back, new ones are drawn */
+    {
+        const int want = CNT[ui.dv_rat & 3], pat = en_pat_now % EN_NPAT;
+        int tries;
+        for (tries = 0; tries < 24 && ui.dv_n < want; tries++) {
+            int lane, step, r;
+            ui.dv_rng ^= ui.dv_rng << 13;
+            ui.dv_rng ^= ui.dv_rng >> 17;
+            ui.dv_rng ^= ui.dv_rng << 5;
+            lane = 1 + (int)((ui.dv_rng >> 4) % 5u);
+            step = (int)((ui.dv_rng >> 12) & 15u);
+            if (!(en_pats[pat][lane] >> step & 1u) || en_mod[lane][step])
+                continue;
+            r = (int)((ui.dv_rng >> 18) % 4u);
+            if (lane == 3 || lane == 4)
+                r = r == 3 ? 4 : 1 + r % 3;      /* hats: x2, x3, x4 (now and then x6) */
+            else if (lane == 1 || lane == 2)
+                r = r == 0 ? 5 : r == 1 ? 6 : r == 2 ? 1 : 7;   /* snare and clap: a flam, swells, x2 */
+            else
+                r = r == 0 ? 5 : r == 1 ? 1 : r == 2 ? 2 : 6;   /* perc */
+            ui.dv_lane[ui.dv_n] = (uint8_t)lane;
+            ui.dv_step[ui.dv_n] = (uint8_t)step;
+            ui.dv_orig[ui.dv_n++] = en_mod[lane][step];
+            en_mod[lane][step] = (uint8_t)r;
+        }
+    }
+}
 static void mood_apply(void)
 {
     int i;
@@ -1014,7 +1179,7 @@ static void mood_apply(void)
 static int view_knob(int i)
 {
     if (ui.view == V_JAM && !ui.fx_menu)
-        return K_FXP + 4 * (NFXP - 1) + i;      /* the JAM page: the last of the FXP table's pages */
+        return K_FXP + 4 * (NFXP - NJP + (ui.jam_pg & 3)) + i;      /* the JAM pages: the last four of the FXP table's */
     if (ui.fx_menu) {
         if (ui.fx_page && FXP[ui.fx_page - 1].c[i].kind == KN_NONE)
             return K_NONE;
@@ -1025,7 +1190,7 @@ static int view_knob(int i)
 static const char *view_label(int i)
 {
     if (ui.view == V_JAM && !ui.fx_menu)
-        return FXP[NFXP - 1].c[i].label;
+        return FXP[NFXP - NJP + (ui.jam_pg & 3)].c[i].label;
     if (ui.fx_menu)
         return ui.fx_page ? FXP[ui.fx_page - 1].c[i].label : FXK_LABEL[i];
     return KNOB_LABEL[ui.view][i];
@@ -1055,13 +1220,33 @@ static uint8_t *uiv(int i)                     /* the PERFORM page's settings (t
            i == 5 ? &ui.saver : i == 6 ? &ui.lights : i == 7 ? &ui.jam_voice : i == 8 ? &ui.jam_mode : i == 9 ? &ui.jam_oct : i == 10 ? &ui.jam_ans :
            i == 12 ? &ui.usb_fixed : i == 13 ? &ui.fm_dy : i == 14 ? &ui.scan : i == 15 ? &ui.dj_rounds : i == 16 ? &ui.dj_ramp : i == 17 ? &ui.intro :
            i == 18 ? &ui.w_on : i == 19 ? &ui.w_every : i == 20 ? &ui.w_amt : i == 21 ? &ui.w_piece : i == 22 ? &ui.w_kits : i == 23 ? &ui.w_voices : i == 24 ? &ui.w_knobs : i == 25 ? &ui.w_layers :
+           i == 26 ? &ui.jam_hold : i == 27 ? &ui.jam_lvl : i == 28 ? &ui.arp_mode : i == 29 ? &ui.arp_rate : i == 30 ? &ui.arp_range : i == 31 ? &ui.arp_gate :
+           i == 32 ? &ui.arp_swing : i == 33 ? &ui.arp_ratch : i == 34 ? &ui.arp_rest : i == 35 ? &ui.arp_jump : i == 36 ? &ui.af_on : i == 37 ? &ui.af_every : i == 38 ? &ui.af_amt : i == 39 ? &ui.af_len : i == 40 ? &ui.dv_on : i == 41 ? &ui.dv_chg : i == 42 ? &ui.dv_rat : i == 43 ? &ui.dv_ev :
            &proj.genre;                         /* 11: the genre (proj's own); 12: the USB audio's level, 13: the voice set, 14: scanlines, 15-17 the SET page (kept in set_t.usb) */
 }
 #define FXP_UI(k) (FXP[((k) - K_FXP) / 4].bit == 63)   /* the PERFORM page: no effect, the UI's own settings */
+static const uint8_t JSND_PAR[4] = {P_CM_SND, P_PADTONE, P_AC_WAVE, P_DR_INST};   /* the JAM page's Sound and Decay: the voice's own (pluck, pad, acid, drone) */
+static const uint8_t JDEC_PAR[4] = {P_CM_DEC, P_PE_REL, P_AC_DEC, P_DE_DEC};
+static const char *jsnd_name(int v)
+{
+    switch (ui.jam_voice & 3) {
+    case 0: return EN_CM_SOUND[v];
+    case 1: return EN_PAD_SOUND[v];
+    case 2: return EN_ACID_SOUND[v];
+    default: return EN_DRONE_SOUND[v];
+    }
+}
+static int jsnd_n(void)
+{
+    static const uint8_t N[4] = {EN_NCMSND - EN_NUSER, EN_NSOUND, EN_NACID, EN_NSOUND};
+    return N[ui.jam_voice & 3];
+}
+#define JSND_P(k) (FXP_CTL(k).idx == 0 ? JSND_PAR[ui.jam_voice & 3] : JDEC_PAR[ui.jam_voice & 3])
 static int fxp_get(int k)
 {
     switch (FXP_CTL(k).kind) {
     case KN_PAR: return knob_get(FXP_CTL(k).idx);
+    case KN_JSND: return knob_get(JSND_P(k));
     case KN_PRESET: return ui.gx_preset;
     case KN_TGT: return ui.gx_tgt;
     case KN_PTGT: return ui.pm_tgt;
@@ -1075,6 +1260,15 @@ static void fxp_range(int k, int *lo, int *hi)
         knob_range(FXP_CTL(k).idx, lo, hi);
         return;
     }
+    if (kind == KN_JSND) {
+        if (FXP_CTL(k).idx == 0) {
+            *lo = 0;
+            *hi = jsnd_n() - 1;
+        } else {
+            knob_range(JSND_P(k), lo, hi);
+        }
+        return;
+    }
     *lo = kind == KN_LEN || kind == KN_RANGE ? 2 : 0;
     *hi = kind == KN_PRESET ? NGXP - 1 : kind == KN_LEN ? 16 : kind == KN_TGT || kind == KN_PTGT ? NTGT - 1 :
           kind == KN_NAME ? FXP_CTL(k).n - 1 : kind == KN_RANGE ? FXP_CTL(k).n : 100;
@@ -1085,11 +1279,14 @@ static void fxp_set(int k, int v)
     int lo, hi;
     fxp_range(k, &lo, &hi);
     v = v < lo ? lo : v > hi ? hi : v;
-    if (v != fxp_get(k) && FXP_CTL(k).kind != KN_PAR && !(FXP_UI(k) && FXP_CTL(k).idx == 18 && v != 2 && fxp_get(k) != 2))
+    if (v != fxp_get(k) && FXP_CTL(k).kind != KN_PAR && FXP_CTL(k).kind != KN_JSND && !(FXP_UI(k) && (FXP_CTL(k).idx >= 26 || (FXP_CTL(k).idx == 18 && v != 2 && fxp_get(k) != 2))))
         ui.set_dirty = 1;                        /* a setting changed: written when it has been left alone a moment (settings_save); Wander's are kept since 1.0.2 (on and off alone is not: only "on+keep") */
     switch (FXP_CTL(k).kind) {
     case KN_PAR:                                 /* an engine parameter: the project's, the dial pages' way */
         knob_set(FXP_CTL(k).idx, v);
+        break;
+    case KN_JSND:                                /* the JAM page's voice: its sound, its decay */
+        knob_set(JSND_P(k), v);
         break;
     case KN_PRESET:
         if (v != ui.gx_preset && v < NGXP - 1)
@@ -1139,7 +1336,14 @@ static void fxp_text(int k, char *b)
         knob_text(FXP_CTL(k).idx, b);
         return;
     }
-    if (FXP_CTL(k).kind == KN_PRESET)
+    if (FXP_CTL(k).kind == KN_JSND) {
+        if (FXP_CTL(k).idx == 0 && v < jsnd_n())
+            s = jsnd_name(v);
+        else {
+            knob_text(JSND_P(k), b);
+            return;
+        }
+    } else if (FXP_CTL(k).kind == KN_PRESET)
         s = GX_PRE[v].name;
     else if (FXP_CTL(k).kind == KN_TGT || FXP_CTL(k).kind == KN_PTGT)
         s = GX_TGT[v].name;
@@ -2199,11 +2403,11 @@ static void pat_name(int i, char *t)            /* "PATTERN 3" */
 }
 
 /* the order the dial and SEL + FX walk the settings pages in (their numbers stay: the scopes and the keys use them): Talk and Wah beside the phaser and flanger */
-static const uint8_t FX_ORDER[NFXP - 1] = {1, 2, 3, 21, 22, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 17, 18, 24, 25, 26, 27, 19, 20};   /* (23: the Repeat page, with the beat effects; 24: USB & MIDI, with the settings; 25: SET) */
+static const uint8_t FX_ORDER[NFXP - NJP] = {1, 2, 3, 21, 22, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 17, 18, 24, 25, 26, 27, 19, 20, 28, 29};   /* (23: the Repeat page, with the beat effects; 24: USB & MIDI, with the settings; 25: SET) */
 static int fx_pos(int pg)                       /* where a page is in the walk (0 ..), -1: none */
 {
     int i;
-    for (i = 0; i < NFXP - 1; i++)
+    for (i = 0; i < NFXP - NJP; i++)
         if (FX_ORDER[i] == pg)
             return i;
     return -1;
@@ -2771,7 +2975,7 @@ static void input(void)
             if (i == B_FX && (btn >> B_SEL & 1u)) {   /* shift: the effects' edit pages, one by one, then the keys again */
                 {   /* (the walk's order, then the keys again) */
                     const int nx = ui.fx_menu ? fx_pos(ui.fx_page) + 1 : 0;
-                    ui.fx_page = (uint8_t)(nx >= 0 && nx < NFXP - 1 ? FX_ORDER[nx] : 0);
+                    ui.fx_page = (uint8_t)(nx >= 0 && nx < NFXP - NJP ? FX_ORDER[nx] : 0);
                 }
                 ui.fx_menu = 1;
                 ui.lock_mode = 0;
@@ -2973,6 +3177,7 @@ static void input(void)
             if (en_sec == EN_SEC_BUILD)
                 m |= FXB(FX_RISER);
         }
+        m |= ui.af_mask;                           /* Auto FX's, held for a few beats */
         if (m != ui.fx_mask) {
             ui.fx_mask = m;
             en_fx(m);
@@ -3052,12 +3257,15 @@ static void input(void)
         set_view(V_SEQ);
     }
     if ((e = plat_enc(EN_SELECT)) != 0) {        /* SELECT: the pages (the steps); with HOME held, the tempo */
-        if (!(btn >> B_HOME & 1u) && ui.fx_menu && !ui.fx_page) {   /* the FX keys: the dial is the bank (the effects, the beat effects) (HOME held: the tempo) */
+        if (ui.view == V_JAM && !ui.fx_menu && !(btn >> B_HOME & 1u) && ((e > 0 && ui.jam_pg < NJP - 1) || (e < 0 && ui.jam_pg > 0))) {   /* the JAM pages: Jam, Sound, Arp, Arp 2 */
+            ui.jam_pg = (uint8_t)(ui.jam_pg + (e > 0 ? 1 : -1));
+            say(FXP[NFXP - NJP + ui.jam_pg].name, "PAGE");
+        } else if (!(btn >> B_HOME & 1u) && ui.fx_menu && !ui.fx_page) {   /* the FX keys: the dial is the bank (the effects, the beat effects) (HOME held: the tempo) */
             fx_bank = (uint8_t)(e > 0 ? (fx_bank < 3 ? fx_bank + 1 : 3) : (fx_bank > 0 ? fx_bank - 1 : 0));
             say(fx_bank == 3 ? "DJ SNIPS" : fx_bank == 2 ? "FLEX BEAT" : fx_bank ? "BEAT FX" : "FX", "HOLD A KEY");
         } else if (!(btn >> B_HOME & 1u) && ui.fx_menu && ui.fx_page) {   /* the FX edit pages: the dial walks them */
             const int pos = fx_pos(ui.fx_page) + (e > 0 ? 1 : -1);
-            if (pos >= 0 && pos < NFXP - 1) {         /* (the JAM page's, the last, is not an FX page) */
+            if (pos >= 0 && pos < NFXP - NJP) {         /* (the JAM page's, the last, is not an FX page) */
                 ui.fx_page = FX_ORDER[pos];
                 say(FXP[ui.fx_page - 1].name, "EDIT");
             }
@@ -3488,7 +3696,24 @@ static struct {
     int8_t gaze;
     uint8_t sn_hi, last_sec, cm_seen, rn_i;
     struct { uint8_t pc, kind; uint32_t t; } rn[5];
-} sg = {0.0f, 0, 0, 2, 0, 0, 0, 0, {{0, 0, 0}}};
+    uint8_t emb;                                 /* the figure in the middle (EMB_*): changes with each new piece and now and then at a drop */
+    uint16_t pc_seen;                            /* the genre and piece it was last drawn for (+1) */
+    uint32_t rng;
+} sg = {0.0f, 0, 0, 2, 0, 0, 0, 0, {{0, 0, 0}}, 0, 0, 0};
+enum { EMB_EYE, EMB_SCAN, EMB_SKULL, EMB_SPIDER, EMB_BAT, EMB_FLAME, EMB_MOON, EMB_PYRAMID, EMB_N };   /* 1.0.3: the middle of the home screen */
+static uint32_t sg_rand(void)
+{
+    if (!sg.rng)
+        sg.rng = plat_ms() * 2654435761u + 12345u;
+    sg.rng ^= sg.rng << 13;
+    sg.rng ^= sg.rng >> 17;
+    sg.rng ^= sg.rng << 5;
+    return sg.rng;
+}
+static void sg_next_emblem(void)                 /* another figure than the one showing */
+{
+    sg.emb = (uint8_t)((sg.emb + 1u + (sg_rand() >> 8) % (EMB_N - 1u)) % EMB_N);
+}
 static void sg_pt(float r, float a, int32_t *x, int32_t *y)
 {
     const float sx = fm_sinf(a) * r, sy = fm_cosf(a) * r;
@@ -3504,6 +3729,121 @@ static void sg_line2(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint16_t c)
 static const uint8_t RUNE[8][5] = {              /* 5 x 5, a row a byte (bit 4 the left) */
     {0x04, 0x0E, 0x15, 0x04, 0x04}, {0x11, 0x0A, 0x04, 0x0A, 0x11}, {0x1C, 0x12, 0x1C, 0x12, 0x1C}, {0x04, 0x06, 0x05, 0x04, 0x04},
     {0x11, 0x1B, 0x15, 0x11, 0x11}, {0x0E, 0x11, 0x04, 0x11, 0x0E}, {0x10, 0x18, 0x14, 0x12, 0x11}, {0x04, 0x0A, 0x11, 0x0A, 0x04}};
+/* THE EMBLEMS (1.0.3): the middle of the sigil is one of eight figures, drawn from rectangles, discs and lines: the demon eye (above), the scanner,
+ * a skull whose sockets flare on the kick and whose jaw drops on the snare, a spider whose legs walk, a bat whose wings beat, a flame that
+ * flickers, a crescent moon with twinkling stars, and an eye in a pyramid. Each is dim and still when the music is stopped or in a breakdown,
+ * trembles in a build and flashes white on the drop, like the eye. */
+static void sg_shock(uint32_t dage)
+{
+    const float r = 20.0f + (float)dage * (40.0f / 450.0f);
+    const uint16_t c = mix(K_TEXT, K_BG, (int)(dage * 16u / 450u));
+    int j;
+    for (j = 0; j < 48; j++) {
+        int32_t x, y;
+        sg_pt(r, (float)j * (FM_TWO_PI / 48.0f), &x, &y);
+        cv_rect(x, y, 2, 2, c);
+    }
+}
+static void sg_emblem(int kind, int32_t ex, int play, int flash, uint32_t now)
+{
+    static const uint8_t SK_CR[10] = {3, 5, 6, 7, 7, 7, 7, 7, 6, 5};          /* the skull's cranium: half widths, top down */
+    static const uint8_t FL_W[13] = {3, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1, 1, 0};   /* the flame's half widths, bottom up */
+    const int awake = play && en_sec != EN_SEC_BREAK;
+    const float kick = fm_clampf(en_drum_glow[0], 0.0f, 1.0f), snare = fm_clampf(en_drum_glow[1], 0.0f, 1.0f);
+    const uint16_t fg = flash ? K_TEXT : awake ? K_TEXT : K_DIM, red = RGB(255, 60, 40);
+    int j, i;
+    cv_rect(ex - 14, CY - 13, 29, 27, K_BG);     /* a dark surround, so the figure never runs through it */
+    if (kind == EMB_SKULL) {
+        const int jaw = awake && snare > 0.4f ? 2 : 0, glow = awake ? 1 + (int)(kick * 2.0f) : 0;
+        for (j = 0; j < 10; j++)
+            cv_rect(ex - SK_CR[j], CY - 12 + j, 2 * SK_CR[j] + 1, 1, fg);
+        cv_rect(ex - 6, CY - 2, 13, 3, fg);       /* the cheeks */
+        cv_rect(ex - 5, CY + 1, 11, 1, fg);
+        cv_disc(ex - 4, CY - 4, 3, K_BG);         /* the sockets */
+        cv_disc(ex + 4, CY - 4, 3, K_BG);
+        if (glow && !flash) {
+            cv_disc(ex - 4, CY - 4, glow, K_ACC);
+            cv_disc(ex + 4, CY - 4, glow, K_ACC);
+        }
+        cv_rect(ex - 1, CY - 1, 1, 2, K_BG);      /* the nose */
+        cv_rect(ex + 1, CY - 1, 1, 2, K_BG);
+        cv_rect(ex - 4, CY + 2, 9, 2, fg);        /* the teeth, and the jaw under them */
+        cv_rect(ex - 4, CY + 4 + jaw, 9, 3, fg);
+        for (i = -3; i <= 3; i += 2) {
+            cv_rect(ex + i, CY + 3, 1, 1, K_BG);
+            cv_rect(ex + i, CY + 5 + jaw, 1, 2, K_BG);
+        }
+    } else if (kind == EMB_SPIDER) {
+        const int dim = !awake;
+        cv_disc(ex, CY + 3, 5, fg);               /* the body */
+        cv_disc(ex, CY - 4, 3, fg);               /* the head */
+        cv_rect(ex - 2, CY - 5, 1, 1, red);
+        cv_rect(ex + 1, CY - 5, 1, 1, red);
+        cv_rect(ex - 1, CY + 1, 3, 1, K_BG);      /* a marking on the back */
+        cv_rect(ex, CY + 2, 1, 3, K_BG);
+        for (i = 0; i < 4; i++)
+            for (j = -1; j <= 1; j += 2) {
+                const int by = CY - 4 + i * 3, wig = dim ? 0 : (int)(((now >> 7) + (uint32_t)i + (j > 0 ? 2u : 0u)) & 3u) - 1;
+                const int kx = ex + j * 9, ky = by - 5, fx = ex + j * 13, fy = by + 4 + wig;
+                cv_line(ex + j * 3, by + 1, kx, ky, fg);
+                cv_line(kx, ky, fx, fy, fg);
+            }
+    } else if (kind == EMB_BAT) {
+        const int up = awake ? (int)(now >> 8 & 1u) : 0, ty = up ? CY - 11 : CY + 5;
+        for (j = -1; j <= 1; j += 2) {
+            cv_line(ex + j * 3, CY - 1, ex + j * 13, ty, fg);                 /* the wing's arm */
+            cv_line(ex + j * 13, ty, ex + j * 10, CY + 4 + (up ? 0 : 1), fg);   /* its scallops */
+            cv_line(ex + j * 10, CY + 4 + (up ? 0 : 1), ex + j * 7, CY + 1, fg);
+            cv_line(ex + j * 7, CY + 1, ex + j * 5, CY + 5, fg);
+            cv_line(ex + j * 5, CY + 5, ex + j * 3, CY + 2, fg);
+            cv_rect(ex + j * 2 - (j < 0 ? 0 : 0), CY - 9, 1, 3, fg);              /* an ear */
+        }
+        cv_disc(ex, CY, 4, fg);                   /* the body, the head over it */
+        cv_disc(ex, CY - 5, 3, fg);
+        cv_rect(ex - 2, CY - 6, 1, 1, red);
+        cv_rect(ex + 1, CY - 6, 1, 1, red);
+        cv_rect(ex - 2, CY - 9, 1, 3, fg);
+        cv_rect(ex + 2, CY - 9, 1, 3, fg);
+    } else if (kind == EMB_FLAME) {
+        const int hgt = awake ? 11 + (int)(kick * 2.0f) : 3;
+        const uint16_t outer = flash ? K_TEXT : awake ? mix(K_BG, RGB(255, 70, 30), 14) : K_DIM;
+        for (j = 0; j <= hgt && j < 13; j++) {
+            const uint32_t h = ((now >> 6) + (uint32_t)j * 7u) * 2654435761u;
+            const int fl = awake && j > 5 ? (int)(h >> 29) % 3 - 1 : 0, w = FL_W[j * 12 / (hgt > 0 ? hgt : 1)];
+            cv_rect(ex + fl - w, CY + 11 - j, 2 * w + 1, 1, outer);
+            if (awake && !flash && j < hgt - 3 && w > 1)
+                cv_rect(ex + fl - (w - 2), CY + 11 - j, 2 * (w - 2) + 1, 1, K_ACC);
+        }
+        cv_rect(ex - 6, CY + 12, 13, 1, K_DIM);   /* the wick's dish */
+    } else if (kind == EMB_MOON) {
+        cv_disc(ex - 1, CY, 6, fg);
+        cv_disc(ex + 3, CY - 1, 5, K_BG);          /* a crescent */
+        for (i = 0; i < 2; i++) {
+            const int sx = i ? ex - 9 : ex + 8, sy = i ? CY + 8 : CY - 8;
+            const uint16_t c = awake && (((now >> 7) + (uint32_t)i * 3u) & 3u) ? K_ACC : K_DIM;
+            cv_rect(sx, sy - 1, 1, 3, c);
+            cv_rect(sx - 1, sy, 3, 1, c);
+        }
+        if (awake && kick > 0.5f)
+            cv_rect(ex + 5, CY + 6, 2, 2, K_ACC);
+    } else {                                      /* the eye in a pyramid */
+        cv_line(ex, CY - 12, ex - 13, CY + 11, fg);
+        cv_line(ex, CY - 12, ex + 13, CY + 11, fg);
+        cv_line(ex - 13, CY + 11, ex + 13, CY + 11, fg);
+        if (!awake) {
+            cv_rect(ex - 4, CY + 2, 9, 1, K_DIM);
+        } else {
+            static const uint8_t AW[3] = {5, 4, 2};
+            for (j = -2; j <= 2; j++) {
+                const int a = j < 0 ? -j : j;
+                cv_rect(ex - AW[a], CY + 2 + j, 2 * AW[a] + 1, 1, flash ? K_TEXT : mix(K_BG, RGB(255, 60, 40), 6));
+            }
+            cv_disc(ex, CY + 2, 1 + (int)(kick * 1.5f), flash ? K_BG : K_ACC);
+            for (j = -1; j <= 1; j++)              /* rays above the apex */
+                cv_line(ex + j * 4, CY - 14, ex + j * 2, CY - 12 - (int)(kick * 2.0f), K_DIM);
+        }
+    }
+}
 static void draw_sigil(void)
 {
     static const uint8_t EYE[9] = {12, 12, 11, 11, 10, 9, 7, 5, 2};   /* the eye's half-width, from its middle row out (scaled to its opening) */
@@ -3529,9 +3869,20 @@ static void draw_sigil(void)
             sg.rot += FM_TWO_PI;
         sg.t = now;
     }
-    if (play && en_sec == EN_SEC_GROOVE && sg.last_sec != EN_SEC_GROOVE)
+    if (play && en_sec == EN_SEC_GROOVE && sg.last_sec != EN_SEC_GROOVE) {
         sg.drop_t = now;                         /* the drop */
+        if ((sg_rand() >> 8 & 3u) == 0)
+            sg_next_emblem();                    /* and now and then a new figure */
+    }
     sg.last_sec = en_sec;
+    {   /* a new piece: a new figure */
+        const uint16_t pcs = (uint16_t)(proj.genre * 16u + proj.piece + 1u);
+        if (pcs != sg.pc_seen) {
+            if (sg.pc_seen)
+                sg_next_emblem();
+            sg.pc_seen = pcs;
+        }
+    }
     {   /* the gaze flips on each snare */
         const int hi = en_drum_glow[1] > 0.5f;
         if (hi && !sg.sn_hi)
@@ -3623,7 +3974,7 @@ static void draw_sigil(void)
                     if (RUNE[sg.rn[i].kind][r] >> (4 - c) & 1u)
                         cv_pset(x - 2 + c, y - 2 + r, mix(K_BG, K_ACC, 16 - (int)(age * 16u / 700u)));
         }
-    if (LOOK_SYNTH) {                     /* the scanner (the Synth look): a slit whose opening follows the section, a light sweeping across it once in two beats */
+    if (sg.emb == EMB_SCAN) {             /* the scanner (a slit whose opening follows the section, a light sweeping across it once in two beats */
         const uint32_t dage = now - sg.drop_t;
         const int flash = play && sg.drop_t && dage < 450u;
         const int open = flash ? 12 : !play ? 3 : en_sec == EN_SEC_BREAK ? 1 : en_sec == EN_SEC_BUILD ? 8 : 5;
@@ -3655,6 +4006,13 @@ static void draw_sigil(void)
                 cv_rect(x, y, 2, 2, c);
             }
         }
+    } else if (sg.emb != EMB_EYE) {              /* a figure: skull, spider, bat, flame, moon, pyramid */
+        const uint32_t dage = now - sg.drop_t;
+        const int flash = play && sg.drop_t && dage < 450u;
+        const int32_t ex = CX + (play && en_sec == EN_SEC_BUILD ? (int32_t)(ui.frame & 1u) * 2 - 1 : 0);
+        sg_emblem(sg.emb, ex, play, flash, now);
+        if (flash)
+            sg_shock(dage);
     } else {                                     /* the eye */
         const uint32_t dage = now - sg.drop_t;
         const int flash = sg.drop_t && dage < 450u;
@@ -4000,6 +4358,20 @@ static void draw_fxedit(void)
             cv_text(4, 50, &FONT_XS, p == 16 ? "THE AUTO-DJ AND SCENES: NO EFFECT HERE." : p == 17 ? "THE UNIT'S SETTINGS: NO EFFECT HERE." :
                                      FXP[p].hold ? "HOLD ANY KEY TO HEAR IT." : "THE EFFECT IS ON WHILE YOU EDIT.", K_DIM);
             cv_text(4, 64, &FONT_XS, p == 16 || p == 17 ? "THE KNOBS SET THEM. DIAL: NEXT PAGE." : "THE KNOBS SET IT. DIAL: NEXT PAGE.", K_DIM);
+            if (p == 28) {                        /* DARK-1 DRUM VARY: what it does */
+                cv_rect(0, 46, 240, 60, K_BG);
+                cv_text(4, 50, &FONT_XS, "DRUM VARY KEEPS THE DRUMS MOVING:", K_DIM);
+                cv_text(4, 64, &FONT_XS, "NEW PATTERNS, FILLS BEFORE THEM,", K_DIM);
+                cv_text(4, 78, &FONT_XS, "SHIFTED HITS, AND SOME RATCHETS.", K_DIM);
+                cv_text(4, 92, &FONT_XS, "OFF: THE PIECE'S OWN COME BACK.", K_DIM);
+            }
+            if (p == 27) {                        /* DARK-1 AUTO FX: what it does */
+                cv_rect(0, 46, 240, 60, K_BG);
+                cv_text(4, 50, &FONT_XS, "AUTO FX PLAYS AN EFFECT THAT FITS THE", K_DIM);
+                cv_text(4, 64, &FONT_XS, "SECTION, ON A BAR, THEN LETS IT GO.", K_DIM);
+                cv_text(4, 78, &FONT_XS, "GENTLE: WASHES AND SWEEPS. WILD: STOPS,", K_DIM);
+                cv_text(4, 92, &FONT_XS, "SCRATCHES, SCATTERS. DIAL: NEXT PAGE.", K_DIM);
+            }
             if (p == 25 || p == 26) {             /* DARK-1 WANDER: what it does (the generic lines above are for effects) */
                 cv_rect(0, 46, 240, 40, K_BG);
                 cv_text(4, 50, &FONT_XS, p == 25 ? "WANDER CHANGES THE MUSIC BY ITSELF:" : "WHAT WANDER MAY CHANGE: THE DRUM KITS,", K_DIM);
@@ -5160,6 +5532,7 @@ static void draw_main(void)
     if (ui.view == V_JAM) {                      /* the JAM page: the keyboard, its scale, what is held */
         h = hash(hash(0x4A414D31u, ui.keys | (uint32_t)ui.jam_voice << 27 | (uint32_t)ui.theme << 29), pool_abs() | (uint32_t)ui.jam_mode << 12 | (uint32_t)ui.jam_oct << 14 |
                                                                                                         (uint32_t)ui.jam_ans << 17 | (uint32_t)ui.ans_cnt << 18 | (uint32_t)ui.ans_playing << 22 | (uint32_t)ui.ans_i << 23);
+        h = hash(h, (uint32_t)ui.arp_mode | (uint32_t)ui.arp_rate << 5 | (uint32_t)ui.arp_range << 8 | (uint32_t)ui.ap_n << 10 | (uint32_t)ui.ap_on_n << 14 | (uint32_t)ui.jam_hold << 17 | (uint32_t)ui.jam_lvl << 18 | (uint32_t)ui.jv_w << 20);
         if (h != ui.sig[1]) {
             ui.sig[1] = h;
             cv_begin(240, MAIN_H, K_BG);
@@ -5271,7 +5644,7 @@ static void draw_main(void)
                     (uint32_t)q16(en_acid_level) << 18);
     for (i = 0; i < 5; i++)
         h = hash(h, (uint32_t)proj.par[i]);
-    h = hash(h, (en_playing ? plat_ms() / 66u : 0u) | (uint32_t)en_sec << 28 | (uint32_t)en_shed_level << 26);   /* the sigil moves: 15 frames a second while playing */
+    h = hash(h, (en_playing ? plat_ms() / 66u : 0u) | (uint32_t)en_sec << 28 | (uint32_t)en_shed_level << 26 | (uint32_t)sg.emb << 22);   /* the sigil moves: 15 frames a second while playing */
     if (h == ui.sig[1])
         return;
     ui.sig[1] = h;
@@ -5351,7 +5724,7 @@ static void draw_knobs(void)
     int now_touch = plat_ms() < ui.touch_until;
     for (i = 0; i < 4; i++)
         h = hash(h, (uint32_t)knob_get(view_knob((int)i)) + 100u);
-    h = hash(h, (uint32_t)now_touch | (uint32_t)ui.fx_menu << 1 | (uint32_t)ui.fx_page << 2 | (uint32_t)fx_bank << 10 | (uint32_t)(ui.btn >> B_SEL & 1u) << 20);
+    h = hash(h, (uint32_t)now_touch | (uint32_t)ui.fx_menu << 1 | (uint32_t)ui.fx_page << 2 | (uint32_t)fx_bank << 10 | (uint32_t)(ui.btn >> B_SEL & 1u) << 20 | (uint32_t)ui.jam_pg << 24);
     if (h == ui.sig[2])
         return;
     ui.sig[2] = h;
@@ -5359,7 +5732,7 @@ static void draw_knobs(void)
     {   /* the rule; at its right end, where you are: the page, then the dots */
         char t[24];
         int k;
-        const int ndots = ui.fx_menu ? (ui.fx_page ? NFXP - 1 : 4) : NDIAL;   /* the dots: the pages; in the FX menu the banks, in an effect's settings the edit pages */
+        const int ndots = ui.fx_menu ? (ui.fx_page ? NFXP - NJP : 4) : NDIAL;   /* the dots: the pages; in the FX menu the banks, in an effect's settings the edit pages */
         int32_t xd = 237 - ndots * 5, xt;
         if (ui.view == V_SEQ) {
             char u[24] = "SEQ: ";
@@ -5367,6 +5740,8 @@ static void draw_knobs(void)
             caps(t, u, sizeof t);
         } else if (ui.fx_menu) {
             caps(t, ui.fx_page ? FXP[ui.fx_page - 1].name : "FX", sizeof t);
+        } else if (ui.view == V_JAM) {
+            caps(t, FXP[NFXP - NJP + (ui.jam_pg & 3)].name, sizeof t);
         } else {
             caps(t, VIEW_NAME[ui.view], sizeof t);
         }
@@ -5630,7 +6005,7 @@ static void glide_tick(void)
  * keys are the scale's tones, one a key, up from the root). OCTAVE. ANSWER: when you stop (after at least two notes), the pluck plays your phrase
  * back an octave up on the next bar, once, and waits for the next. The scale is still the page's own: this page never edits it. */
 static const char *const JV_NAME[4] = {"PLUCK", "PAD", "ACID", "BASS"};
-static const char *const JM_NAME[3] = {"SCALE", "CHORDS", "HARP"};
+static const char *const JM_NAME[8] = {"SCALE", "CHORDS", "HARP", "7THS", "SUS2", "SUS4", "POWER", "ADD9"};
 static const char *const JO_NAME[5] = {"-2", "-1", "0", "+1", "+2"};
 static int jam_snap(int m, uint32_t pool)       /* the note, or the scale tone below it */
 {
@@ -5644,7 +6019,7 @@ static int jam_notes(int i, uint8_t *out)       /* the notes of key i: 1 (scale,
 {
     const uint32_t pool = pool_abs();
     const int oct = 12 * ((int)ui.jam_oct - 2), base = 53 + i + oct;
-    int m, r, n = 0, cnt = 0, t[5];
+    int m, r, n = 0, cnt = 0, t[8];
     if (ui.jam_mode == 2) {                      /* harp: the i-th tone of the scale up from the root, from C3 */
         for (m = 48 + sound_root(); m < 128; m++)
             if (pool >> (m % 12) & 1u) {
@@ -5662,13 +6037,25 @@ static int jam_notes(int i, uint8_t *out)       /* the notes of key i: 1 (scale,
     if (r < 0)
         r = 0;
     out[n++] = (uint8_t)(r > 127 ? 127 : r);
-    if (ui.jam_mode == 1) {                      /* a triad of the scale: its third and fifth (the 2nd and 4th tones above) */
-        for (m = r + 1, cnt = 0; m < r + 25 && cnt < 5; m++)
+    if (ui.jam_mode == 6) {                      /* power: the fifth (the 4th tone above) and the octave */
+        for (m = r + 1, cnt = 0; m < r + 25 && cnt < 4; m++)
             if (pool >> (m % 12) & 1u)
                 t[cnt++] = m;
-        if (cnt >= 4) {
-            out[n++] = (uint8_t)(t[1] > 127 ? 127 : t[1]);
+        if (cnt >= 4)
             out[n++] = (uint8_t)(t[3] > 127 ? 127 : t[3]);
+        out[n++] = (uint8_t)(r + 12 > 127 ? 127 : r + 12);
+        return n;
+    }
+    if (ui.jam_mode == 1 || ui.jam_mode >= 3) {  /* a triad of the scale: its third and fifth (the 2nd and 4th tones above); 7ths, sus2, sus4, add9 from the same tones */
+        static const int8_t PICK[8][3] = {{0, 0, 0}, {1, 3, -1}, {0, 0, 0}, {1, 3, 5}, {0, 3, -1}, {2, 3, -1}, {0, 0, 0}, {1, 3, 7}};
+        int k;
+        for (m = r + 1, cnt = 0; m < r + 36 && cnt < 8; m++)
+            if (pool >> (m % 12) & 1u)
+                t[cnt++] = m;
+        for (k = 0; k < 3; k++) {
+            const int pi = PICK[ui.jam_mode & 7][k];
+            if (pi >= 0 && pi < cnt && cnt >= 4 && (pi < 6 || cnt >= 8))
+                out[n++] = (uint8_t)(t[pi] > 127 ? 127 : t[pi]);
         }
     }
     return n;
@@ -5687,21 +6074,250 @@ static void jam_rec(int note)                    /* the ANSWER's memory: the not
     ui.ans_note[ui.ans_cnt++] = (uint8_t)note;
     ui.ans_last = now;
 }
+/* THE ARP (1.0.3): the keys held (or kept by Hold) are played one after another, on the sixteenths of the music, or of the tempo when it is stopped */
+static const uint8_t JVC[4] = {EN_V_PLUCK, EN_V_PAD, EN_V_ACID, EN_V_DRONE};
+static const uint8_t AP_PER[8] = {12, 16, 24, 32, 48, 72, 64, 96};   /* a step, in 96ths of a beat: 1/32, 1/16 triplet, 1/16, 1/8 triplet, 1/8, dotted 1/8, 1/4 triplet, 1/4 */
+static const uint8_t AP_GATE[6] = {10, 25, 50, 75, 90, 100};
+static const uint8_t AP_SW[5] = {50, 55, 60, 67, 72};
+static const uint8_t AP_REST[4] = {0, 12, 25, 45};
+static const uint8_t AP_JUMP[3] = {0, 15, 35};
+static void jam_trail(int note)
+{
+    ui.jv_tr[ui.jv_w & 31] = (uint8_t)(note < 0 ? 0 : note > 127 ? 127 : note);
+    ui.jv_w++;
+}
+static uint32_t ap_rand(void)
+{
+    ui.ap_rng ^= ui.ap_rng << 13;
+    ui.ap_rng ^= ui.ap_rng >> 17;
+    ui.ap_rng ^= ui.ap_rng << 5;
+    return ui.ap_rng;
+}
+static void arp_release(void)
+{
+    int k;
+    for (k = 0; k < ui.ap_on_n; k++)
+        en_note(ui.ap_vc, ui.ap_on[k], 0);
+    ui.ap_on_n = 0;
+}
+static void arp_clear(void)
+{
+    arp_release();
+    ui.ap_n = 0;
+    ui.ap_pend = 0;
+}
+static void arp_add(int note)
+{
+    int k;
+    if (!ui.ap_n) {
+        ui.ap_pend = 1;                          /* the first note of a pattern: it starts on the next step */
+        ui.ap_t0 = plat_ms();
+        ui.ap_pos = 0;
+        if (!ui.ap_rng)
+            ui.ap_rng = plat_ms() | 1u;
+    }
+    for (k = 0; k < ui.ap_n; k++)
+        if (ui.ap_note[k] == note)
+            return;
+    if (ui.ap_n == 8) {
+        for (k = 0; k < 7; k++)
+            ui.ap_note[k] = ui.ap_note[k + 1];
+        ui.ap_n = 7;
+    }
+    ui.ap_note[ui.ap_n++] = (uint8_t)note;
+}
+static void arp_del(int note)
+{
+    int k;
+    for (k = 0; k < ui.ap_n; k++)
+        if (ui.ap_note[k] == note) {
+            for (; k + 1 < ui.ap_n; k++)
+                ui.ap_note[k] = ui.ap_note[k + 1];
+            ui.ap_n--;
+            return;
+        }
+}
+static int arp_pick(int s, uint8_t *out)         /* the notes of step s (1, or the whole chord) */
+{
+    uint8_t E[32], b[8];
+    const int n = ui.ap_n, rg = (ui.arp_range & 3) + 1, mode = ui.arp_mode;
+    int M = 0, i, j, o, idx = 0, p;
+    if (!n)
+        return 0;
+    for (i = 0; i < n; i++)
+        b[i] = ui.ap_note[i];
+    if (mode != 6)
+        for (i = 1; i < n; i++) {                /* low to high */
+            const uint8_t v = b[i];
+            for (j = i - 1; j >= 0 && b[j] > v; j--)
+                b[j + 1] = b[j];
+            b[j + 1] = v;
+        }
+    if (mode == 6) {                             /* the order they were played in */
+        o = (s / n) % rg;
+        p = b[s % n] + 12 * o;
+        out[0] = (uint8_t)(p > 127 ? 127 : p);
+        return 1;
+    }
+    if (mode == 16) {                            /* the notes together, every step */
+        for (i = 0; i < n && i < 4; i++)
+            out[i] = b[i];
+        return n < 4 ? n : 4;
+    }
+    for (o = 0; o < rg; o++)
+        for (i = 0; i < n && M < 32; i++) {
+            p = b[i] + 12 * o;
+            E[M++] = (uint8_t)(p > 127 ? 127 : p);
+        }
+    switch (mode) {
+    case 2: idx = M - 1 - s % M; break;
+    case 3: p = M < 2 ? 0 : s % (2 * M - 2); idx = p < M ? p : 2 * M - 2 - p; break;
+    case 4: p = M < 2 ? 0 : s % (2 * M - 2); idx = M - 1 - (p < M ? p : 2 * M - 2 - p); break;
+    case 5: p = s % (2 * M); idx = p < M ? p : 2 * M - 1 - p; break;
+    case 7: idx = (int)(ap_rand() % (uint32_t)M); break;
+    case 8:                                      /* a walk: a step up or down */
+        p = ui.ap_pos + ((ap_rand() & 1u) ? 1 : -1);
+        ui.ap_pos = (uint8_t)(p < 0 ? 1 : p >= M ? M - 2 : p);
+        if (M < 2)
+            ui.ap_pos = 0;
+        idx = ui.ap_pos;
+        break;
+    case 9: j = s % M; idx = (j & 1) ? M - 1 - j / 2 : j / 2; break;   /* lowest, highest, next lowest, .. */
+    case 10: j = s % M; idx = (M / 2 + ((j & 1) ? (j + 1) / 2 : -(j / 2)) + 4 * M) % M; break;   /* from the middle outward */
+    case 11: idx = (s & 1) ? (M > 1 ? 1 + (s / 2) % (M - 1) : 0) : 0; break;   /* the lowest between each */
+    case 12: idx = (s & 1) ? (M > 1 ? (s / 2) % (M - 1) : 0) : M - 1; break;   /* the highest between each */
+    case 13: idx = (2 * s + 2 * s / M) % M; break;
+    case 14: idx = (s / 2 + ((s & 1) ? 2 : 0)) % M; break;   /* two up, one back */
+    case 15: idx = (s / 2) % M; break;                       /* each twice */
+    case 17:                                     /* the lowest note up and down the octaves */
+        p = s % (2 * rg);
+        o = p < rg ? p : 2 * rg - 1 - p;
+        idx = 0;
+        p = b[0] + 12 * o;
+        out[0] = (uint8_t)(p > 127 ? 127 : p);
+        return 1;
+    default: idx = s % M; break;
+    }
+    out[0] = E[idx < 0 ? 0 : idx >= M ? M - 1 : idx];
+    return 1;
+}
+static void arp_tick(void)                       /* each frame */
+{
+    const uint32_t now = plat_ms();
+    float pulse, x, f, b, xs, sub, fr, ppm;
+    int per, R, tick, step, k, n;
+    if (ui.view != V_JAM || !ui.arp_mode) {
+        if (ui.ap_n || ui.ap_on_n)
+            arp_clear();
+        return;
+    }
+    if (!ui.ap_n) {
+        arp_release();
+        return;
+    }
+    ppm = (float)proj.par[P_TEMPO] * 96.0f / 60000.0f;
+    per = AP_PER[ui.arp_rate & 7];
+    R = 1 + (ui.arp_ratch & 3);
+    if (en_playing) {                            /* locked to the music's sixteenths (24 pulses each), the tempo between them */
+        if (en_bars != ui.ap_bar_seen) {
+            ui.ap_bar_seen = en_bars;
+            ui.ap_bar_ms = now;
+        }
+        fr = (float)(now - ui.ap_bar_ms) * ppm;
+        pulse = (float)en_bars * 24.0f + (fr > 23.0f ? 23.0f : fr);
+    } else {
+        pulse = (float)(now - ui.ap_t0) * ppm;
+    }
+    x = pulse / (float)per;
+    f = x / 2.0f - (float)(int)(x / 2.0f);       /* swing: the second step of each pair comes later */
+    b = (float)AP_SW[ui.arp_swing % 5] / 100.0f;
+    xs = 2.0f * (float)(int)(x / 2.0f) + (f < b ? f / b : 1.0f + (f - b) / (1.0f - b));
+    sub = xs * (float)R;
+    tick = (int)sub;
+    fr = sub - (float)tick;
+    if (ui.ap_pend) {
+        ui.ap_pend = 0;
+        if (en_playing) {
+            ui.ap_tick = tick;                   /* waits for the next step */
+            ui.ap_base = tick + 1;
+        } else {
+            ui.ap_tick = -1000000;               /* stopped: the first note now */
+            ui.ap_base = tick;
+        }
+    }
+    if (ui.ap_on_n && AP_GATE[ui.arp_gate % 6] < 100 && fr >= (float)AP_GATE[ui.arp_gate % 6] / 100.0f)
+        arp_release();                           /* the gate closes */
+    if (tick == ui.ap_tick)
+        return;
+    ui.ap_tick = tick;
+    step = tick - ui.ap_base;
+    if (step < 0) {
+        ui.ap_base = tick;
+        step = 0;
+    }
+    arp_release();
+    if (step % R == 0) {                         /* a new note (the ratchet repeats it) */
+        ui.ap_cur_n = 0;
+        if ((int)(ap_rand() % 100u) >= AP_REST[ui.arp_rest & 3]) {
+            uint8_t o[4];
+            n = arp_pick(step / R, o);
+            for (k = 0; k < n; k++) {
+                int v = o[k];
+                if ((int)(ap_rand() % 100u) < AP_JUMP[ui.arp_jump % 3])
+                    v += (ap_rand() & 1u) ? 12 : -12;
+                ui.ap_cur[k] = (uint8_t)(v < 0 ? 0 : v > 127 ? 127 : v);
+            }
+            ui.ap_cur_n = (uint8_t)n;
+        }
+    }
+    if (ui.ap_cur_n) {
+        ui.ap_vc = JVC[ui.jam_voice & 3];
+        for (k = 0; k < ui.ap_cur_n; k++) {
+            ui.ap_on[k] = ui.ap_cur[k];
+            en_note(ui.ap_vc, ui.ap_cur[k], 1);
+            jam_trail(ui.ap_cur[k]);
+        }
+        ui.ap_on_n = ui.ap_cur_n;
+    }
+}
+static void lt_release(void)                     /* Hold: the notes ringing on, let go */
+{
+    int k;
+    for (k = 0; k < ui.lt_n; k++)
+        en_note(ui.lt_vc[k], ui.lt_note[k], 0);
+    ui.lt_n = 0;
+}
 static void jam_down(int i)
 {
-    static const uint8_t VC[4] = {EN_V_PLUCK, EN_V_PAD, EN_V_ACID, EN_V_DRONE};
     static const int8_t OFS[4] = {0, 0, 12, 24};   /* the engine plays the acid an octave and the drone two below the key */
     uint8_t nn[4];
     const int n = jam_notes(i, nn), vc = ui.jam_voice & 3;
-    int k;
+    int k, others = 0;
+    for (k = 0; k < NKEYS; k++)
+        if (k != i)
+            others |= ui.jam_n[k];
+    if (!others) {                               /* a new hand: what Hold kept goes */
+        lt_release();
+        if (ui.arp_mode && ui.jam_hold)
+            arp_clear();
+    }
     if (vc == 0 && proj.par[P_CM_LVL] < 15)
         knob_set(P_CM_LVL, 40);                  /* the pluck has to be audible to be played */
     ui.jam_n[i] = (uint8_t)n;
-    ui.jam_vc[i] = VC[vc];
+    ui.jam_vc[i] = JVC[vc];
+    if (ui.arp_mode) {                           /* the arp takes the notes */
+        for (k = 0; k < n; k++) {
+            const int key = nn[k] + OFS[vc];
+            ui.jam_note[i][k] = (uint8_t)(key > 127 ? 127 : key);
+            arp_add(ui.jam_note[i][k]);
+        }
+        return;
+    }
     for (k = 0; k < n; k++) {
         const int key = nn[k] + OFS[vc];
         ui.jam_note[i][k] = (uint8_t)(key > 127 ? 127 : key);
-        en_note(VC[vc], ui.jam_note[i][k], 1);
+        en_note(JVC[vc], ui.jam_note[i][k], 1);
+        jam_trail(ui.jam_note[i][k]);
     }
     jam_rec(nn[0]);
     if (en_playing) {                            /* Capture's memory: the note as heard, when, on which key and voice */
@@ -5716,8 +6332,21 @@ static void jam_down(int i)
 static void jam_up(int i)
 {
     int k;
-    for (k = 0; k < ui.jam_n[i]; k++)
-        en_note(ui.jam_vc[i], ui.jam_note[i][k], 0);
+    if (ui.arp_mode) {                           /* the arp: the note leaves it, unless Hold keeps it */
+        if (!ui.jam_hold)
+            for (k = 0; k < ui.jam_n[i]; k++)
+                arp_del(ui.jam_note[i][k]);
+        ui.jam_n[i] = 0;
+        return;
+    }
+    for (k = 0; k < ui.jam_n[i]; k++) {
+        if (ui.jam_hold && ui.lt_n < 8) {        /* Hold: it rings on until the next keys */
+            ui.lt_note[ui.lt_n] = ui.jam_note[i][k];
+            ui.lt_vc[ui.lt_n++] = ui.jam_vc[i];
+        } else {
+            en_note(ui.jam_vc[i], ui.jam_note[i][k], 0);
+        }
+    }
     ui.jam_n[i] = 0;
     for (k = 1; k <= 32; k++) {                  /* Capture's memory: how long the key was held (the latest event of this key still open) */
         const int w = (ui.cap_w - k) & 31;
@@ -5824,6 +6453,15 @@ static void draw_jam(void)
     const uint32_t pool = pool_abs();
     int w, j;
     char t[16];
+    {   /* the trail: the notes just played, newest on the right, taller the higher */
+        int q;
+        for (q = 0; q < 32; q++) {
+            const int idx = (ui.jv_w - 32 + q) & 31, v = ui.jv_tr[idx];
+            if ((int)ui.jv_w - 32 + q < 0 || !v)
+                continue;
+            cv_rect(112 + q * 4, 26 - ((v % 36) * 20 / 36), 3, 2 + (v % 36) * 20 / 36 / 4, mix(K_PANEL, q == 31 ? K_TEXT : KC_MOVE, 3 + q / 2));
+        }
+    }
     cv_text(6, 2, &FONT_B, JV_NAME[ui.jam_voice & 3], KC_MOVE);
     cv_text(6 + text_w(&FONT_B, JV_NAME[ui.jam_voice & 3]) + 8, 6, &FONT_XS, JM_NAME[ui.jam_mode % 3], K_DIM);
     for (w = 0; w < 16; w++) {                   /* the keyboard: the white keys, then the black keys over them; the scale lit, the keys held bright */
@@ -5848,8 +6486,21 @@ static void draw_jam(void)
         for (j = 0; j < ui.ans_cnt && j < 8; j++)
             cv_disc(176 + j * 7, 108, 2, ui.ans_playing && j < ui.ans_i ? K_ACC : KC_MOVE);
     }
+    if (ui.arp_mode) {                           /* the arp: its pattern, rate and range, and the notes it holds */
+        char u[24] = "ARP ";
+        int n = 4;
+        const char *q = ARP_NAME[ui.arp_mode % 18];
+        while (*q && n < 20)
+            u[n++] = *q++;
+        u[n] = 0;
+        cv_text(6, 114, &FONT_XS, u, K_ACC);
+        cv_text(100, 114, &FONT_XS, ARPR_NAME[ui.arp_rate & 7], K_TEXT);
+        cv_text(130, 114, &FONT_XS, ARPRG_NAME[ui.arp_range & 3], K_TEXT);
+        for (j = 0; j < ui.ap_n; j++)
+            cv_disc(176 + j * 7, 118, 2, KC_MOVE);
+    }
     itoa_u((uint32_t)(proj.par[P_CM_LVL]), t);
-    cv_text(6, 124, &FONT_XS, "THE KEYS PLAY ONLY THE SCALE'S NOTES", K_DIM);
+    cv_text(6, 124, &FONT_XS, ui.arp_mode ? "HOLD KEYS: THE ARP PLAYS THEM" : "THE KEYS PLAY ONLY THE SCALE'S NOTES", K_DIM);
 }
 
 /* the screensaver (STAGE page): left alone while playing, the visualizers take the screen (the auto one); any key, button or dial turn brings the
@@ -5989,7 +6640,7 @@ static void settings_save(void)
     s.pm_tgt = ui.pm_tgt;
     s.gx_pat = ui.gx_pat;
     s.usb = (uint16_t)(ui.usb_fixed | (!ui.fm_dy) << 1 | ui.scan << 2 |   /* (bit 1: the DX set chosen; DY is the default since 0.14.21, so older settings read as DY) */ (ui.dj_rounds & 7) << 3 | (ui.dj_ramp & 7) << 6 | (ui.intro & 7) << 9);
-    s.viz = (uint8_t)(ui.viz | 0x80u);           /* (bit 7: the Wander settings below are the player's; older records read 0 and keep the defaults) */
+    s.viz = (uint8_t)((ui.viz == VZ_AUTO ? 9 : ui.viz >= VZ_STARS ? ui.viz + 1 : ui.viz) | 0x80u);   /* (kept as before: AUTO is 9, the new ones 10 ..; bit 7: the Wander settings below are the player's; older records read 0 and keep the defaults) */
     s.uiv[11] = (uint8_t)((ui.w_every & 7) | (ui.w_amt & 3) << 3 | (ui.w_piece & 3) << 5 | (ui.w_kits & 1) << 7);
     s.usb |= (uint16_t)((ui.w_voices & 1) << 12 | (ui.w_knobs & 1) << 13 | (ui.w_layers & 1) << 14 | (ui.w_on == 2 ? 1 : 0) << 15);
     if (plat_store_save(OBJ_SET, &s, sizeof s) == 0) {
@@ -6039,7 +6690,7 @@ static void settings_load(void)
     for (p = 0; p < NFXP; p++)
         for (c = 0; c < 4; c++) {
             const int k = K_FXP + 4 * p + c, kind = FXP[p].c[c].kind;
-            if (kind == KN_NONE || kind == KN_PRESET || kind == KN_PAR)   /* (KN_PAR: the project's, not a setting) */
+            if (kind == KN_NONE || kind == KN_PRESET || kind == KN_PAR || kind == KN_JSND)   /* (KN_PAR: the project's, not a setting) */
                 continue;
             if (FXP[p].bit == 63) {              /* the UI's own (not the genre: 11) */
                 if (FXP[p].c[c].idx < 11)
@@ -6065,7 +6716,7 @@ static void settings_load(void)
         ui.gx_pat = s.gx_pat;
         en_gate_pat(ui.gx_pat);
     }
-    ui.viz = (uint8_t)((s.viz & 0x7Fu) % VZ_N);
+    ui.viz = (uint8_t)((s.viz & 0x7Fu) == 9u ? VZ_AUTO : (s.viz & 0x7Fu) > 9u ? ((s.viz & 0x7Fu) - 1u) % VZ_N : (s.viz & 0x7Fu) % VZ_N);
     if (s.viz & 0x80u) {                         /* Wander's settings (1.0.2) */
         ui.w_every = (uint8_t)((s.uiv[11] & 7) % 5), ui.w_amt = (uint8_t)((s.uiv[11] >> 3 & 3) % 3), ui.w_piece = (uint8_t)((s.uiv[11] >> 5 & 3) % 3);
         ui.w_kits = s.uiv[11] >> 7 & 1;
@@ -6181,6 +6832,9 @@ void ui_init(void)
         ui.dj_fillon = 1;
         ui.mood = 50;                          /* the mood macro: the middle leaves the piece as it is */
         ui.jam_oct = 2;                        /* the JAM page: octave 0 */
+        ui.jam_lvl = 1;                        /* Level: loud (a hand-played voice is lifted to at least 70) */
+        ui.arp_rate = 2, ui.arp_range = 1, ui.arp_gate = 2;   /* the arp: 1/16, two octaves, half gate */
+        ui.af_every = 1, ui.af_amt = 1, ui.af_len = 1;        /* Auto FX: every 4 bars, medium, half a bar */
         ui.fm_dy = 1;                          /* the DY voices (0.14.21): the human-made set by default */
         en_fm_set_dy(1);
     }
@@ -6254,10 +6908,13 @@ void ui_frame(void)
     scene_tick();
     dj_tick();
     wander_tick();
+    autofx_tick();
+    drumvary_tick();
     key_tick();
     glide_tick();
     saver_tick();
     jam_tick();
+    arp_tick();
     {   /* the load: a half that was never rendered (a real dropout) or renders that keep running past their half (the margin is gone) make the engine drop the chorus and hold
          * the DX voices to four, then two, then give up the Echoplex and the vinyl; and it eases back a step after twenty seconds of neither. One step at a time (four seconds
          * after the last on a dropout, ten on the other: a step needs time to show; one overrun used to climb all three at once, the peak of the last second still reading 100 %).
@@ -6292,6 +6949,22 @@ void ui_frame(void)
     {   /* the JAM page plays one voice by hand: its own line stops (the engine's hand switch, not the piece's setting), and comes back when you leave */
         static const uint8_t MAN[4] = {P_CM_MAN, P_PAD_MAN, P_AC_MAN, P_DR_MAN};
         const int want = ui.view == V_JAM ? 1 + (ui.jam_voice & 3) : 0;
+        const uint8_t jkey = (uint8_t)(want ? want | (ui.jam_lvl & 3) << 3 : 0);
+        if (jkey != ui.jam_key) {                /* Level: the voice played by hand is lifted to a floor (and the pad's attack is quick), and put back after */
+            static const uint8_t LV[4] = {P_CM_LVL, P_PAD, P_ACID, P_BASS}, FL[4] = {0, 70, 85, 100};
+            int q;
+            ui.jam_key = jkey;
+            for (q = 0; q < 4; q++)
+                en_set(LV[q], mood_val(LV[q], proj.par[LV[q]]));
+            en_set(P_PE_ATK, mood_val(P_PE_ATK, proj.par[P_PE_ATK]));
+            if (want && ui.jam_lvl) {
+                const int v = want - 1, fl = FL[ui.jam_lvl & 3];
+                if (mood_val(LV[v], proj.par[LV[v]]) < fl)
+                    en_set(LV[v], fl);
+                if (v == 1 && proj.par[P_PE_ATK] > 12)
+                    en_set(P_PE_ATK, 12);
+            }
+        }
         if (want != ui.jam_man) {
             if (ui.jam_man)
                 en_set(MAN[ui.jam_man - 1], proj.par[MAN[ui.jam_man - 1]]);

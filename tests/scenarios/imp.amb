@@ -21,8 +21,6 @@ shot imp_acid.png
 tap ARP
 tap ARP
 tap ARP
-tap ARP
-tap ARP
 expect view 14
 wait 600
 shot imp_pluck.png

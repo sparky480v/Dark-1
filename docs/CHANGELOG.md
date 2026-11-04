@@ -1,5 +1,25 @@
 # DARK-1 changelog
 
+## 1.0.4
+
+* **A dots step editor on Jam (new Jam Steps page, the third page of Jam).** The pluck's line or the acid's line shows as a row of sixteen dots over the white keys: a dot is white when the step is empty and coloured when it holds a note (the accent is brighter, a slide is joined to the next dot), with the playhead above and the step you are on framed. Choose a step with a white key or the Step knob, then use the knobs: Line (Pluck or Acid), Step, Type (rest, note, accent, slide) and Note (one knob scrolls up through the scale's notes and octaves; turning it on an empty step sets a note). The line keeps playing while you edit it, and an edited line is kept with the piece.
+* **Note names:** the Note knob and the dots page show the note as its name and octave (C4, D#3, A#4) over the chord of now.
+* **A kept line is never wiped:** the acid's Density and Range knobs (and Wander and the mood, which move them) no longer regenerate a kept acid line.
+* **A second dots page (Jam Steps 2)** with four knobs: **Keep** (which lines are kept as you made them: None, Pluck, Acid, Both; the rest evolve), **Clear** (turn it to Pluck, Acid or Both, then press REC to empty those lines; each line clears on its own), **Range** (the pluck's octaves, now up to 4 so it reaches as high as the acid) and **Length** (the acid line's steps, 1 to 16).
+* **The lines play on while you use Jam:** the pluck and acid lines are no longer taken off while a Jam page is open, so they keep playing as you move through Jam's pages and play over them.
+* **DUNGEON, WITCH and DARKAMB no longer latch the vinyl effect** (tape only): the vinyl's crackle was heard as clicks and hiss even when nothing was playing.
+* **Live record:** press REC on the Jam Steps page, play keys in time with the music and each lands on the nearest sixteenth (play over what is there to change it). REC again stops. SEL + REC clears the line.
+* **The arp has a voice of its own (new Jam Arp 3 page: Sound, Decay, Level, Tone).** Sound: *With line* (as before) or one of twelve FM sounds (Pluck, Marimba, E.Piano, Kalimba, Bell, Vibes, Gong, Clav, Digital, Brass, Bleep, Glass) on three voices of its own, so the arp is heard apart from the pluck and acid lines. Tone takes the FM's bright edge off (Dark, Darker, Darkest, Open; Darker by default).
+* **Fixed: clicking and hissing on the five new genres (Dungeon, Witch, Darkwave, Pwrnoise, DarkAmb):** a name buffer was sized for sixteen genres and the new ones wrote past its end.
+* **Jam Sound has a menu for each line:** **Pluck** (the pluck's sounds), **Acid** (the acid's sounds), Decay and Level. Touch a knob and the Jam voice follows it.
+* **Five new figures for the home screen** (13 now): an inverted pentagram, a horned goat's head, an hourglass whose sand runs while the music plays, a dagger and an eclipse.
+* **Every theme has a background of its own** (Synth keeps its horizon): Crimson a blood moon over mist and dead hills, Acid lasers over an equalizer skyline, Ice an aurora over mountains and falling snow, Ember a glow from below with rising sparks, Phosphor a CRT's scanlines, grid and sweep. They move only while the music plays.
+* **The boot screen shows the version** (V1.0.4) at the bottom.
+* **The Voice knob is gone from the first Jam page** (Hold is there instead): the voice is picked by the sound.
+* **One list of sounds:** the Sound knob on Jam Sound walks through one list of the sounds the step lines play (the pluck's, then the acid's) and the voice follows the sound. The pad and the bass have no step line, so they are not in the list and Jam plays the pluck or the acid only. 
+* **The Acid answer, Acid steps and Pluck steps pages are gone** from the ARP-button walk and the SELECT dial: the Jam Steps page does their job. The ARP button now goes Acid, Acid env, Acid line, Pluck, Pluck 2, Deja vu. The Jam Answer on/off stays on the first Jam page.
+* **Dungeon, Witch, Darkwave, Power noise and Dark ambient:** the pad's tail after the music stops is 1.2 seconds instead of five, so nothing hangs on after Stop.
+
 ## 1.0.3
 
 * **Five new genres, appended after the old sixteen** (so every stored piece and factory piece stays where it was): DUNGEON (dungeon synth), WITCH (witch house), DARKWAVE, PWRNOISE (power noise) and DARKAMB (dark ambient: vast drones, bells, scrapes and rumbles, almost no drums). 21 genres, 210 pieces.

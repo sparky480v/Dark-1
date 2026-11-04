@@ -2,7 +2,7 @@
 # condition of the lane chosen (the kick here: 1:2 plays it every other bar).
 seed 0
 wait 3000
-turn SELECT 25 100
+turn SELECT 22 100
 expect view 25
 expect par164 0
 spin K1 4

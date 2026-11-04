@@ -1,0 +1,40 @@
+# DARK-1 1.0.4: the JAM SOUND page has one list of the sounds the step lines play: the pluck's, then the acid's; the voice follows the sound.
+seed 0
+wait 3000
+turn SELECT 28 100
+expect view 31
+spin SELECT 1
+wait 100
+expect jamv 0
+spin K2 1
+wait 100
+expect jamv 2
+shot jamsound_acid.png
+spin K1 1
+wait 100
+expect jamv 0
+# the second dots page (two pages on): Keep (K1) says which lines are kept; Clear (K2) then REC empties a line; Range (K3) is the pluck's octaves
+spin SELECT 1
+spin SELECT 1
+wait 100
+spin K1 3
+wait 100
+expect par175 1
+expect par173 1
+spin K1 -2
+wait 100
+expect par175 1
+expect par173 0
+spin K1 -1
+wait 100
+expect par175 0
+spin K3 1
+wait 100
+shot jamsteps2.png
+# Clear (K2): turned to Both, then REC empties both lines (the acid's gate mask goes to 0)
+spin K2 3
+wait 100
+tap REC
+wait 300
+expect acidgate 0
+shot jamsteps2_cleared.png

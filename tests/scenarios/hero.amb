@@ -20,7 +20,7 @@ setpar 128 5
 setpar 129 25
 setpar 130 55
 setpar 131 70
-turn SELECT 28 100
+turn SELECT 25 100
 expect view 28
 wait 4300
 shot master_hard.png

@@ -94,7 +94,7 @@ To put a piece back the way it was at the start, go to **GLO** and hold **SEL** 
 You don't need any of this to have fun, but it is there.
 
 - **Turn SELECT** to walk through the pages. Each page has four knobs underneath the screen. The page name tells you what they change: the pad, the bass, the acid, the drums, the reverb and much more.
-- **The Jam page** (turn SELECT past Global) turns the keys into a keyboard you can play along on. It only plays notes that fit, so you can play freely.
+- **The Jam page** (turn SELECT past Global) turns the keys into a keyboard you can play along on. It only plays notes that fit, so you can play freely. Its other pages edit the pluck and acid lines as sixteen dots (you can record into them live), and give the arp a sound of its own.
 - **Hold HOME** for the settings.
 - **The SET page** has an **Intro** that starts with just a pad and brings the band in one part at a time over a few minutes. Great for mixing in, or for playing over. You get there by holding **SEL** and pressing **FX**, then turning SELECT.
 

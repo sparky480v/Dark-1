@@ -30,7 +30,7 @@ with sync_playwright() as p:
     pg.wait_for_timeout(4500)                      # the boot cards
     ng = pg.eval_on_selector_all('#pr-genres button', 'e => e.length'); npc = pg.eval_on_selector_all('#pr-pieces button', 'e => e.length')
     print('genre buttons', ng, 'piece buttons', npc)
-    if ng != 16 or npc != 10: fails.append(f'buttons {ng}x{npc}')
+    if ng != 21 or npc != 10: fails.append(f'buttons {ng}x{npc}')
     keys = pg.evaluate('Object.keys(localStorage)')
     pg.screenshot(path=out.replace('.json', '_start.png'))
     probe = """() => { const an = window.__tap, a = new Float32Array(an.fftSize); let pk = 0, s = 0, n = 0;

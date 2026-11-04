@@ -41,7 +41,7 @@
 #define EN_NCMSND (12 + EN_NCMFM)      /* the counter-melody's sounds */
 #define EN_NCMSTYLE 6                  /* its styles */
 #define EN_NKIT 22                      /* the sounds each drum (kick, snare + clap, hats, perc) can play */
-enum { EN_V_PAD, EN_V_DRONE, EN_V_ACID, EN_V_SAMPLE, EN_V_PLUCK };   /* the voices the keys can play (en_note) */
+enum { EN_V_PAD, EN_V_DRONE, EN_V_ACID, EN_V_SAMPLE, EN_V_PLUCK, EN_V_ARP };   /* the voices the keys can play (en_note) */
 
 /* modes: pools relative to the root (bit i: root + i semitones) */
 enum { MODE_IONIAN, MODE_DORIAN, MODE_PHRYGIAN, MODE_LYDIAN, MODE_MIXOLYDIAN, MODE_AEOLIAN, MODE_PENT_MAJ,
@@ -172,6 +172,7 @@ void en_play(int on);                          /* play / stop (the tails ring on
 void en_next(void);                            /* the next chord: on the next bar (now while resting) */
 void en_freeze(int on);
 void en_seed(uint32_t s);                      /* stir some entropy into the generators */
+void en_arp_cfg(int what, int v);               /* the arp's own voice: 0 sound (0: the line's own, 1..12), 1 decay, 2 level (0..100), 3 tone (0 dark, 1 darker, 2 darkest, 3 open) */
 void en_note(int voice, int note, int on);      /* a key played on the page of a voice off the algorithm (P_*_MAN):
                                                  * EN_V_*, MIDI note, on / off */
 void en_mute(int on);                          /* remote: silent, no MIDI out (1) or back (0), in turn */
@@ -296,6 +297,10 @@ void en_acid_step(int s, int off, int oct, int gate, int accent, int slide);   /
 void en_pluck_step(int s, int rung, int level);   /* set a step of the pluck's line (the Pluck steps page): a rung of the chord's ladder (0 .. 11) and a level (0 rest, 1 soft, 2 note, 3 accent) */
 int en_pluck_pack(uint8_t *b12);               /* the line as stored: 16 steps of six bits (12 bytes); 0 when empty */
 void en_pluck_unpack(const uint8_t *b12);      /* and back into the engine (a stored piece's frozen line) */
+int en_scale_len(void);                        /* the notes in the scale of now (1.0.4: the dots page counts its Note knob in them) */
+int en_pluck_len(void);                        /* the rungs of the pluck's ladder now (1 .. 12) */
+int en_acid_midi(int s);                       /* the note acid step s sounds now (MIDI), over the chord of now: for the screen's note names */
+int en_pluck_midi(int rung);                   /* the note a rung of the chord's ladder is now (MIDI), -1 if there is no chord */
 extern volatile uint8_t en_cm_rung[16], en_cm_lvl[16], en_cm_pos;   /* the loop's first sixteen slots: each one's rung and level (0 a rest), and the slot playing */
 void en_acid_capture(int s, int note, int accent, int slide);   /* Capture: a note played by hand (MIDI) into step s, as the nearest offset and octave the chord and scale of now give; the step sounds */
 void en_pluck_capture(int s, int note);         /* Capture: a note (or a rest, note < 0) into slot s of the pluck's loop; the loop's slot 0 is the next bar's first step */

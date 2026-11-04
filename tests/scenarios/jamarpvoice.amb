@@ -1,0 +1,29 @@
+# DARK-1 1.0.4: the arp has its own voice (JAM ARP 3: Sound, Decay, Level, Tone): heard apart from the pluck and acid lines.
+seed 0
+wait 3000
+turn SELECT 28 100
+expect view 31
+spin SELECT 1
+spin SELECT 1
+spin SELECT 1
+spin SELECT 1
+spin SELECT 1
+spin SELECT 1
+shot arpvoice_page.png
+spin K1 3
+wait 100
+spin K2 1
+spin K4 1
+wait 100
+shot arpvoice_set.png
+spin SELECT -1
+spin SELECT -1
+spin K1 1
+wait 100
+shot arpvoice_arp.png
+wav arpvoice.wav
+key 13 down
+wait 3000
+key 13 up
+wait 1500
+wavstop

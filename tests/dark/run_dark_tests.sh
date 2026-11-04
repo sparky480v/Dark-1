@@ -11,7 +11,7 @@ mkdir -p build/dark
 step() { name=$1; shift; if "$@" > build/dark/$name.log 2>&1; then echo "  ok   $name: $(tail -1 build/dark/$name.log | cut -c1-150)"; else echo "  FAIL $name"; tail -8 build/dark/$name.log | sed 's/^/       /'; FAIL=1; fi; }
 step build-host    sh host/build_host.sh
 step build-tools   sh tests/dark/build_tools.sh
-step build-wasm    env EN_VERSION=DARK-1 sh web/emu/build_clang.sh
+step build-wasm    env EN_VERSION=1.0.4 sh web/emu/build_clang.sh
 step build-html    python3 -I tools/make_standalone.py build/emu build/emu/DARK-1.html
 step fm-voices     sh -c 'python3 -I tools/gen_dark_fm.py build/dark/fm6_dark_check.h && cmp build/dark/fm6_dark_check.h firmware/src/dsp/fm6_dark.h'
 step recipes       sh -c 'build/dark/recipe_dump > build/dark/recipes.jsonl && python3 -I tests/dark/test_recipes.py build/dark/recipes.jsonl'

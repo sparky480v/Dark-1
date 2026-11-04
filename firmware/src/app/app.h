@@ -7,7 +7,7 @@
 #include "../dsp/amb.h"
 
 #ifndef EN_VERSION                       /* a release build passes its own (tools/build.py --release) */
-#define EN_VERSION "DEV"
+#define EN_VERSION "1.0.4"
 #endif
 #define NPIECES EN_NPIECES
 

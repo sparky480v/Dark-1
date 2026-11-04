@@ -2,7 +2,7 @@
 # At 128 BPM a beat is 469 ms: four keys a beat apart, twice over, so the last bar holds a key on each beat whatever the phase.
 seed 0
 wait 3000
-turn SELECT 31 100
+turn SELECT 28 100
 expect view 31
 expect jamv 0
 expect par156 0
@@ -30,7 +30,9 @@ expect par156 100
 expect par157 2
 shot capture_pluck.png
 # the acid: Voice acid, the same four keys, captured as a frozen line with a note on each beat
-spin K1 2
+spin SELECT 1
+spin K2 1
+spin SELECT -1
 wait 100
 expect jamv 2
 expect par173 0
@@ -57,12 +59,3 @@ wait 200
 expect par173 1
 expect acidgate >0
 shot capture_acid.png
-# the pad cannot be captured: Capture says so and changes nothing
-spin K1 -1
-wait 100
-expect jamv 1
-press SEL
-tap REC
-release SEL
-wait 200
-expect par173 1

@@ -24,8 +24,6 @@ tap ARP
 tap ARP
 tap ARP
 tap ARP
-tap ARP
-tap ARP
 wait 300
 expect view 14
 shot dyvoices_pluck.png

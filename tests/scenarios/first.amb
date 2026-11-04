@@ -62,7 +62,7 @@ shot reverb.png
 turn SELECT -1 100
 expect view 26
 shot space.png
-turn SELECT -21 100
+turn SELECT -18 100
 expect view 5
 shot noise.png
 turn SELECT -9 100

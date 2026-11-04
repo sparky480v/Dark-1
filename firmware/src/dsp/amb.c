@@ -71,7 +71,7 @@ static const en_param_t PARAMS[P_NPARAMS] = {
     [P_DD_MUTATE] = {"Mutate", 0, 2, 0},
     [P_CM_LVL] = {"Pluck", 0, 100, 30},     [P_CM_SND] = {"Sound", 0, EN_NCMSND - 1, 1}, [P_CM_DENS] = {"Density", 0, 100, 45},
     [P_CM_OCT] = {"Pluck oct", -2, 2, 0},   [P_CM_DEC] = {"Decay", 0, 100, 45},          [P_CM_STYLE] = {"Style", 0, EN_NCMSTYLE - 1, 0},
-    [P_CM_RATE] = {"Rate", 0, 3, 2},        [P_CM_RANGE] = {"Range", 1, 3, 2},
+    [P_CM_RATE] = {"Rate", 0, 3, 2},        [P_CM_RANGE] = {"Range", 1, 4, 2},
     [P_PROB] = {"Prob", 0, 100, 100},     [P_PROB1] = {"Prob", 0, 100, 100},   [P_PROB2] = {"Prob", 0, 100, 100},
     [P_PROB3] = {"Prob", 0, 100, 100},    [P_PROB4] = {"Prob", 0, 100, 100},   [P_PROB5] = {"Prob", 0, 100, 100},
     [P_PAN] = {"Pan", 0, 100, 50},          [P_PAN1] = {"Pan", 0, 100, 50},        [P_PAN2] = {"Pan", 0, 100, 50},       [P_PAN3] = {"Pan", 0, 100, 50},
@@ -138,7 +138,7 @@ const char *en_piece_name(int i) { static char b[4]; b[0] = DK_PIECE_LETTER[0]; 
 const char *en_genre_name(int g) { return DK_GENRE_NAME[(unsigned)g < EN_NGENRE ? g : 0]; }
 const char *en_piece_name_g(int g, int i)         /* "T01" .. "X10": the genre's letter and the piece's number (the screen shows 4 characters) */
 {
-    static char b[16][10][4];
+    static char b[EN_NGENRE][10][4];
     g = (unsigned)g < EN_NGENRE ? g : 0;
     i = (unsigned)i < EN_NPIECES ? i : 0;
     b[g][i][0] = DK_PIECE_LETTER[g];
@@ -659,7 +659,7 @@ const char *en_chord_name(const int *pcs, int n, char *buf)
 }
 
 /* ------------------------------------------------------------ commands --- */
-enum { C_SET, C_POOL, C_PLAY, C_NEXT, C_FREEZE, C_SEED, C_PANIC, C_CLOCK, C_REGROW, C_SECTION, C_FX, C_MUTE, C_NOTE, C_HUSH, C_FXK, C_TRK, C_GATEPAT, C_FXS, C_FILLQ, C_DJSYNC, C_FLXH, C_SHED, C_USERVOICE, C_USERCLEAR, C_ACSTEP, C_ACCAP, C_CMCAP, C_INTRO, C_CMSTEP };
+enum { C_SET, C_POOL, C_PLAY, C_NEXT, C_FREEZE, C_SEED, C_PANIC, C_CLOCK, C_REGROW, C_SECTION, C_FX, C_MUTE, C_NOTE, C_HUSH, C_FXK, C_TRK, C_GATEPAT, C_FXS, C_FILLQ, C_DJSYNC, C_FLXH, C_SHED, C_USERVOICE, C_USERCLEAR, C_ACSTEP, C_ACCAP, C_CMCAP, C_INTRO, C_CMSTEP, C_ARPCFG };
 static uint8_t muted;                            /* remote: no sound, no MIDI (C_MUTE, after what's queued) */
 static uint8_t hush;                             /* a store while playing: fade out, hold, fade back in (C_HUSH) */
 static float hush_g = 1.0f;                      /* its gain, 0..1 */
@@ -686,6 +686,7 @@ void en_panic(void) { post(C_PANIC, 0, 0); }
 void en_mute(int on) { post(C_MUTE, on, 0); }
 void en_hush(int on) { post(C_HUSH, on, 0); }
 void en_note(int voice, int note, int on) { post(C_NOTE, voice, (note & 0x7F) | (on ? 0x100 : 0)); }
+void en_arp_cfg(int what, int v) { post(C_ARPCFG, what, v); }
 void en_clock(int msg) { post(C_CLOCK, msg, 0); }
 void en_regrow(void) { post(C_REGROW, 0, 0); }
 void en_section(int cmd) { post(C_SECTION, cmd, 0); }
@@ -1409,6 +1410,8 @@ static int acid_raw(int s, int dd)              /* step s's note, the chord's de
         n += 12;
     return n;
 }
+int en_scale_len(void) { return nsteps < 1 ? 7 : nsteps; }
+int en_acid_midi(int s) { return nsteps ? acid_raw(s & 15, 0) : -1; }
 static int ac_centre(void)                      /* the middle of the line's notes (for the mirror) */
 {
     int s, lo = 127, hi = 0, len = par[P_AC_LEN] < 1 ? 1 : par[P_AC_LEN] > EN_NSTEP ? EN_NSTEP : par[P_AC_LEN];
@@ -2378,12 +2381,34 @@ static void cm_play(int key)                    /* a note played by hand (the JA
     cm_trigger(note, 0.95f);
 }
 
+/* THE ARP'S OWN VOICE (1.0.4): the held-key arp can sound on three voices of its own (the plain FM sounds), so it is heard apart from the pluck and
+ * acid lines. arp_snd: 0 the line's own voice (as before), 1..CM_NPLAIN the sound; arp_dec and arp_lvl 0..100. */
+static struct { float ph, ps, inc, env, dm, vel, lp; uint32_t age; } arpv[3];
+static uint8_t arp_snd, arp_dec = 40, arp_lvl = 60, arp_alt;
+static float arp_lpk = 0.12f;                    /* the arp's tone: a one-pole low-pass (the coefficient: 1 is open) that takes the FM's bright edge off */
+static void arp_trigger(int key)
+{
+    int note = key + 12 * par[P_OCT];
+    const int v = arp_alt = (uint8_t)((arp_alt + 1) % 3);
+    const float dec = 0.1f * fm_exp2f((float)arp_dec * 0.045f);
+    while (note > 100)
+        note -= 12;
+    while (note < 36)
+        note += 12;
+    arpv[v].inc = mtof((float)note) * (1.0f / EN_SR);
+    arpv[v].ps = 0.0f;
+    arpv[v].env = 1.0f;
+    arpv[v].age = 0;
+    arpv[v].vel = 0.95f;
+    arpv[v].lp = 0.0f;
+    arpv[v].dm = fm_expf(-6.9f / (dec * EN_SR));
+}
 static int cm_ladder(int *arp)                  /* the chord's tones over the pluck's octaves, low to high: the ladder a slot's index points into */
 {
-    const int range = par[P_CM_RANGE] < 1 ? 1 : par[P_CM_RANGE] > 3 ? 3 : par[P_CM_RANGE], base = 60 + 12 * (par[P_OCT] + par[P_CM_OCT]);
+    const int range = par[P_CM_RANGE] < 1 ? 1 : par[P_CM_RANGE] > 4 ? 4 : par[P_CM_RANGE], base = 60 + 12 * (par[P_OCT] + par[P_CM_OCT]);
     int n = 0, k, o, t;
     for (o = 0; o < range; o++)
-        for (k = 0; k < chord_nt && n < 12; k++)
+        for (k = 0; k < chord_nt && n < 16; k++)
             arp[n++] = base + chord_pcs[k] + 12 * o;
     for (k = 1; k < n; k++) {
         t = arp[k];
@@ -2394,9 +2419,25 @@ static int cm_ladder(int *arp)                  /* the chord's tones over the pl
     return n;
 }
 
+int en_pluck_len(void)
+{
+    int arp[16], n;
+    if (chord_nt < 1)
+        return 16;
+    n = cm_ladder(arp);
+    return n < 1 ? 16 : n;
+}
+int en_pluck_midi(int rung)
+{
+    int arp[16], n;
+    if (chord_nt < 1)
+        return -1;
+    n = cm_ladder(arp);
+    return n < 1 ? -1 : arp[(rung < 0 ? 0 : rung) % n];
+}
 static void cm_capture(int slot, int note)      /* Capture: a note played by hand (or a rest, note < 0) into a slot of the loop, as the nearest rung of the ladder of now, an octave's leap allowed */
 {
-    int arp[12], n, k, best = 0, leap = 0, bd = 999;
+    int arp[16], n, k, best = 0, leap = 0, bd = 999;
     cm_f[slot] = 1;
     cm_g[slot] = (uint8_t)(note >= 0);
     cm_sync = 1;
@@ -2431,7 +2472,7 @@ static void cm_step_set(int s, int rung, int level)   /* the player's edit of a 
 {
     cm_f[s] = 1;
     cm_g[s] = (uint8_t)(level > 0);
-    cm_ix[s] = (uint8_t)((rung > 11 ? 11 : rung) | 128);
+    cm_ix[s] = (uint8_t)((rung > 15 ? 15 : rung) | 128);
     cm_vl[s] = (uint8_t)(level <= 1 ? 110 : level == 2 ? 190 : 255);
     cm_publish();
 }
@@ -2439,7 +2480,7 @@ static void cm_step(int st, int32_t sw)         /* a sixteenth of the counter-me
 {
     static const uint8_t RATE[4] = {4, 3, 2, 1};   /* sixteenths between notes, by the Rate knob */
     const int ri = par[P_CM_RATE] < 0 ? 0 : par[P_CM_RATE] > 3 ? 3 : par[P_CM_RATE];
-    int arp[12], n = 0, note, idx, slot, replay, leap = 0;
+    int arp[16], n = 0, note, idx, slot, replay, leap = 0;
     float dens = (float)par[P_CM_DENS] * 0.01f, vel;
     if (st == 0 && cm_sync) {                   /* a captured loop starts with the bar */
         cm_k = 0;
@@ -3518,8 +3559,8 @@ static void apply(int p, int v)
             ac_pos = 0;
         en_acid_len = (uint8_t)v;
         break;
-    case P_AC_DENS: case P_AC_RANGE:             /* heard at once: the line made again */
-        if (nsteps)
+    case P_AC_DENS: case P_AC_RANGE:             /* heard at once: the line made again (1.0.4: not a kept one: Wander, the mood or a knob never wipes the line you made) */
+        if (nsteps && !par[P_AC_LOCK])
             ac_regrow();
         break;
     case P_DRIVE: drive_k = 1.0f + 0.04f * (float)v; break;
@@ -3705,6 +3746,11 @@ static void note_cmd(int voice, int key, int on)
             cm_play(key);
         return;
     }
+    if (voice == EN_V_ARP) {                    /* the arp's own voice (the off does nothing: it rings out) */
+        if (on && arp_snd)
+            arp_trigger(key);
+        return;
+    }
     if (voice == EN_V_SAMPLE) {                 /* the sampler: its key (the note less 53) */
         smp_note(key - 53, on);
         return;
@@ -3784,6 +3830,7 @@ static void quiet(void)
 {
     int i;
     nheld[0] = nheld[1] = nheld[2] = 0;
+    arpv[0].env = arpv[1].env = arpv[2].env = 0.0f;
     en_held = 0;
     for (i = 0; i < EN_NPAD; i++)
         pad[i].play = 0, pad[i].pamp = 0.0f;
@@ -5417,6 +5464,18 @@ static void drain(void)
         case C_SHED: en_shed_level = (uint8_t)a; break;
         case C_USERVOICE: fm_user_take(a); break;
         case C_USERCLEAR: fm_user_wipe(); break;
+        case C_ARPCFG:
+            if (a == 0)
+                arp_snd = (uint8_t)(b < 0 ? 0 : b > CM_NPLAIN ? CM_NPLAIN : b);
+            else if (a == 1)
+                arp_dec = (uint8_t)(b < 0 ? 0 : b > 100 ? 100 : b);
+            else if (a == 3)
+                arp_lpk = b <= 0 ? 0.25f : b == 1 ? 0.12f : b == 2 ? 0.06f : 1.0f;
+            else if (a == 2)
+                arp_lvl = (uint8_t)(b < 0 ? 0 : b > 100 ? 100 : b);
+            if (!arp_snd)
+                arpv[0].env = arpv[1].env = arpv[2].env = 0.0f;
+            break;
         case C_ACSTEP: ac_step_set(a & 15, b & 15, b >> 4 & 3, b >> 6 & 1, b >> 7 & 1, b >> 8 & 1); break;
         case C_ACCAP: ac_capture(a & 15, b & 127, a >> 4 & 1, a >> 5 & 1); break;
         case C_CMCAP: cm_capture(a & 15, b & 128 ? -1 : b & 127); cm_publish(); break;
@@ -5543,7 +5602,8 @@ static void render_pad(uint32_t n)
     const float g = pad_vol * 0.5f * pad_lvl * (1.0f + 0.01f * (float)SECT[chord_genre].pad * fm_maxf(brk, 0.0f)) * PAD_SOUND[pad_snd()].g *   /* the pad rises in a breakdown */
                     (1.0f + 0.35f * (float)par[P_LK_SNARE] * 0.01f * pad_lk);                    /* and swells with the links */
     uint32_t nb = (n + 31u) >> 5;
-    pad_gain += (pad_gate - pad_gain) * fm_minf((float)n / ((pad_gate > 0.0f ? 2.0f : 5.0f) * EN_SR), 1.0f);
+    /* the pad's fade when the music stops: 5 s in the first sixteen genres (as PERF-1), 1.2 s in the new five (their pads are the main voice, and at 5 s they rang on for tens of seconds) */
+    pad_gain += (pad_gate - pad_gain) * fm_minf((float)n / ((pad_gate > 0.0f ? 2.0f : (chord_genre >= 16 ? 1.2f : 5.0f)) * EN_SR), 1.0f);
     for (i = 0; i < EN_NPAD; i++) {
         pad_t *v = &pad[i];
         float p0 = v->ph[0], p1 = v->ph[1], p2 = v->ph[2], p3 = v->ph[3], ps = v->sub, amp = v->amp,
@@ -5955,6 +6015,44 @@ static void render_cm(uint32_t n)
         cm[v].env = fm_flush(cm[v].env);
     }
     en_cm_level = lvl;
+}
+
+static void render_arp(uint32_t n)
+{
+    const cm_snd_t *S = &CM_SOUND[arp_snd > 0 ? arp_snd - 1 : 0];
+    const float lv = (float)arp_lvl * 0.01f, g = lv * lv * 0.5f * S->g;
+    int v;
+    uint32_t j;
+    if (!arp_snd || g <= 0.0f) {
+        arpv[0].env = arpv[1].env = arpv[2].env = 0.0f;
+        return;
+    }
+    for (v = 0; v < 3; v++) {
+        const float pl = v == 0 ? 0.25f : v == 1 ? 0.5f : 0.75f, pr = 1.0f - pl;
+        if (arpv[v].env < 0.0008f)
+            continue;
+        for (j = 0; j < n; j++) {
+            const float e = arpv[v].env, idx = S->i0 + S->i1 * (S->rise ? 1.0f - e : e),
+                        y0 = sine_any(arpv[v].ph + idx * sine(arpv[v].ps)) * e * fm_minf((float)arpv[v].age * (1.0f / 96.0f), 1.0f) * arpv[v].vel * g *
+                             TG(TR_CM, j);
+            float y;
+            arpv[v].lp += (y0 - arpv[v].lp) * arp_lpk;
+            y = arpv[v].lp;
+            mixl[j] += y * pl * 2.0f;
+            mixr[j] += y * pr * 2.0f;
+            rsend[j] += y * 0.35f;
+            esend[j] += y * 0.5f;
+            arpv[v].ph += arpv[v].inc;
+            if (arpv[v].ph >= 1.0f)
+                arpv[v].ph -= 1.0f;
+            arpv[v].ps += arpv[v].inc * S->fr;
+            if (arpv[v].ps >= 1.0f)
+                arpv[v].ps -= (float)(int)arpv[v].ps;
+            arpv[v].env *= arpv[v].dm;
+            arpv[v].age++;
+        }
+        arpv[v].env = fm_flush(arpv[v].env);
+    }
 }
 
 static void render_acid(uint32_t n)
@@ -6557,6 +6655,7 @@ static void render_chunk(int32_t *out, uint32_t n, float gain)
     DT0();
     mx_begin(3, n);
     render_cm(n);
+    render_arp(n);
     DT(2);
     render_fm(n);                               /* the DX voices' samples from a chunk ago (the other core's), into the fm_ buffers added below */
     mx_end(3, n);

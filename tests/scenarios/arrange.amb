@@ -3,7 +3,8 @@
 seed 0
 wait 3000
 # the Groove page (SEQ x5: the dial, 17): the kick lane (the first), its density
-turn SELECT 22 100
+turn SELECT 19 100
+wait 300
 expect view 22
 expect lanemask0 0x1111
 spin K2 -25

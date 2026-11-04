@@ -559,7 +559,7 @@ enum { DKM_SOFT_OFFHAT = 1, DKM_ACCENT_BACKBEAT = 2, DKM_ACCENT_ONE = 4, DKM_LAT
     {30, 34, 18, 55, 28, 30, 40, 30, 255, 255, 255, 255}, {40, 36, 40, 60, 36, 34, 50, 30, 255, 255, 255, 255}, \
     {12, 14, 30, 40, 255, 255, 255, 255, 255, 255, 255, 255}, {6, 4, 70, 20, 255, 255, 255, 255, 255, 255, 255, 255}, \
     {34, 30, 18, 58, 26, 28, 44, 30, 255, 255, 255, 255} }
-#define DK_FX_LOCK_TABLE { 2, 3, 4, 10, 4, 0, 8, 4, 2, 3, 11, 4, 4, 4, 3, 10, 3, 3, 4, 10, 3 }
+#define DK_FX_LOCK_TABLE { 2, 3, 4, 10, 4, 0, 8, 4, 2, 3, 11, 4, 4, 4, 3, 10, 2, 2, 4, 10, 2 }   /* 1.0.4: DUNGEON, WITCH and DARKAMB latch the tape only: their vinyl's crackle was heard as clicks, even when nothing played */
 
 /* ------------------------------------------------------------------------------------------ drum patterns --- */
 /* Each genre owns a bank of masks per lane (bit s = a hit on sixteenth s).  A piece's six patterns take their masks from the banks by

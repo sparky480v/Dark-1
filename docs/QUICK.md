@@ -84,7 +84,11 @@
 | Comp/Limit | dial | Ratio (off - 10:1) | Thresh (-30 - 0 dB) | Make-up (0 - +12 dB) | Ceiling (-12 - 0 dB) |
 | Mixer | dial | Track (pad .. drums) | Level | Pan (L100 - C - R100) | Send (0-100) |
 | Global | GLO | Root | Theme (6) | Tune (+-50 cents) | Genre (the bank) |
-| Jam | dial | Voice (pluck, pad, acid, bass) | Keys (scale, chords, harp) | Octave (-2 to +2) | Answer (off, on) |
+| Jam | dial | Hold (off, on) | Keys (scale, chords, harp) | Octave (-2 to +2) | Answer (off, on) |
+| Jam Sound | dial | Pluck (sound) | Acid (sound) | Decay | Level |
+| Jam Steps | dial | Line (pluck, acid) | Step | Type | Note |
+| Jam Steps 2 | dial | Keep | Clear | Range (pluck) | Length (acid) |
+| Jam Arp 3 | dial | Sound | Decay | Level | Tone |
 
 <div class="cols">
 
@@ -345,7 +349,7 @@ On any of a voice's pages (**ENV** pad, **LFO** bass, **ARP** acid) hold **SEL**
 
 ### Jam (the dial, after Global)
 
-The 27 keys become an instrument and never edit the scale. **Voice**: pluck, pad, acid or bass (that voice stops its own part while the page is up). **Keys**: Scale (every key a scale note, a black key the one at or below it: no wrong notes), Chords (every key a triad of the scale) or Harp (the scale's notes one per key, from C3). **Octave** -2 to +2. **Answer** on: when you stop (two notes, then quiet), the pluck plays your phrase back an octave up at the next bar line. A nearly silent pluck is raised to 40 so you hear it. Then **SEL + REC** captures the bar (above). Any voice's sound: the Sound knob on its page, or **SEL + ALGORITHM** on any of its pages.
+The 27 keys become an instrument and never edit the scale. Jam is **seven pages** (turn SELECT): **Jam** (Hold, Keys, Octave, Answer), **Jam Sound** (Pluck, Acid, Decay, Level), **Jam Steps** and **Jam Steps 2** (the step editor), **Jam Arp**, **Jam Arp 2** and **Jam Arp 3**. **Keys**: Scale (every key a scale note, a black key the one at or below it: no wrong notes), Chords (every key a triad of the scale) or Harp (the scale's notes one per key, from C3). **Octave** -2 to +2. **Hold** keeps the notes ringing until your next keys. **Answer** on: when you stop (two notes, then quiet), the pluck plays your phrase back an octave up at the next bar line. **Jam Sound** has a menu for each line: **Pluck** (the pluck's sounds) and **Acid** (the acid's); touch a knob and the Jam voice follows it. Decay is the voice's own; Level lifts it (Loud, Louder, Max) and puts it back when you leave Jam. **Jam Steps** shows the pluck's or the acid's line as sixteen dots over the white keys: **Line** picks pluck or acid, **Step** the step, **Type** its kind (rest, note, accent, slide) and **Note** its note, shown by name (C, D#, A#...). Press **REC** to record live: play keys in time with the music and each lands on the nearest sixteenth (SEL + REC clears the line being edited). The lines keep playing while you use any Jam page. **Jam Steps 2:** **Keep** (None, Pluck, Acid, Both: a kept line stays as you made it, the rest evolve; Wander, Density and dice leave it alone), **Clear** (turn to Pluck, Acid or Both, then press REC), **Range** (the pluck's octaves, 1 to 4) and **Length** (the acid's steps). A kept line belongs to the piece: SAVE the piece to keep it. **Jam Arp 3** gives the arp a voice of its own: **Sound** (With line, or one of twelve FM sounds on three voices of their own), **Decay**, **Level** and **Tone** (Dark, Darker, Darkest, Open), so the arp is heard apart from the lines. These arp settings are not kept at power-off. Then **SEL + REC** captures the bar (above).
 
 </div>
 

@@ -52,9 +52,9 @@ static const char *const FXK_LABEL[4] = {"Filter", "Crush", "Throw", "Wash"};
  * the four knobs, the effect itself held on while the page is up, so it is heard as it is edited. K_FXP + 4 *
  * page + knob. The gate's pattern is on the white keys, as the sequencer's steps. */
 enum { K_FXP = 230 };
-enum { KN_PLAIN, KN_PRESET, KN_LEN, KN_TGT, KN_PTGT, KN_NAME, KN_SEC, KN_RANGE, KN_PAR, KN_NONE, KN_JSND };   /* KN_RANGE: 2 .. n; KN_PAR: an engine parameter (idx), the dial pages' knob code; KN_NONE: no knob */
-#define NFXP 33
-#define NJP 4                          /* the JAM pages: the last four of the FXP table (DARK-1 1.0.3) */
+enum { KN_PLAIN, KN_PRESET, KN_LEN, KN_TGT, KN_PTGT, KN_NAME, KN_SEC, KN_RANGE, KN_PAR, KN_NONE, KN_JSND, KN_JST, KN_JKEEP, KN_JCLR };   /* KN_RANGE: 2 .. n; KN_PAR: an engine parameter (idx), the dial pages' knob code; KN_NONE: no knob */
+#define NFXP 36
+#define NJP 7                          /* the JAM pages: the last five of the FXP table (DARK-1 1.0.3; the dots page 1.0.4) */
 static const char *const RATE_NAME[7] = {"1/2", "1/4", "1/6", "1/8", "1/16", "1/32", "1/64"};          /* the roll's rates */
 static const char *const RTIME_NAME[4] = {"1/2 BEAT", "1 BEAT", "2 BEATS", "4 BEATS"};         /* beats at each rate */
 static const char *const PRATE_NAME[5] = {"1/2", "1/4", "1/8", "1/16", "KICK"};                        /* the pump's period, in notes */
@@ -110,6 +110,12 @@ static const char *const ARPSW_NAME[5] = {"OFF", "LIGHT", "MEDIUM", "TRIPLET", "
 static const char *const ARPRA_NAME[4] = {"X1", "X2", "X3", "X4"};
 static const char *const ARPRS_NAME[4] = {"OFF", "FEW", "SOME", "MANY"};
 static const char *const ARPJ_NAME[3] = {"OFF", "SOME", "OFTEN"};
+static const char *const ARSND_NAME[13] = {"WITH LINE", "PLUCK", "MARIMBA", "E.PIANO", "KALIMBA", "BELL", "VIBES", "GONG", "CLAV", "DIGITAL", "BRASS", "BLEEP", "GLASS"};   /* 1.0.4: the arp's own voice (the plain FM sounds); WITH LINE: on the pluck or acid line's voice as before */
+static const char *const ARDEC_NAME[5] = {"SHORT", "MEDIUM", "LONG", "LONGER", "LONGEST"};
+static const char *const ARLV_NAME[4] = {"SOFT", "MEDIUM", "LOUD", "MAX"};
+static const char *const ARTN_NAME[4] = {"DARK", "DARKER", "DARKEST", "OPEN"};
+static const uint8_t ARDEC_V[5] = {10, 30, 50, 70, 90};
+static const uint8_t ARLV_V[4] = {30, 50, 70, 100};
 static const char *const DVCH_NAME[3] = {"LIGHT", "OFTEN", "WILD"};   /* DRUM VARY: how often the patterns change (16, 8, 4 bars) */
 static const char *const DVRAT_NAME[4] = {"OFF", "FEW", "SOME", "LOTS"};
 static const char *const DVEV_NAME[3] = {"1 BAR", "2 BARS", "4 BARS"};
@@ -181,10 +187,13 @@ static const struct {
     {"WANDER 2", 63, 0, {{"Kits", KN_NAME, 22, ONOFF_NAME, 2}, {"Sounds", KN_NAME, 23, ONOFF_NAME, 2}, {"Knobs", KN_NAME, 24, ONOFF_NAME, 2}, {"Layers", KN_NAME, 25, ONOFF_NAME, 2}}},   /* and what it may change */
     {"AUTO FX", 63, 0, {{"Auto FX", KN_NAME, 36, ONOFF_NAME, 2}, {"Every", KN_NAME, 37, AFEV_NAME, 4}, {"Amount", KN_NAME, 38, AFAMT_NAME, 3}, {"Length", KN_NAME, 39, AFLEN_NAME, 4}}},
     {"DRUM VARY", 63, 0, {{"Vary", KN_NAME, 40, ONOFF_NAME, 2}, {"Change", KN_NAME, 41, DVCH_NAME, 3}, {"Ratchets", KN_NAME, 42, DVRAT_NAME, 4}, {"Every", KN_NAME, 43, DVEV_NAME, 3}}},
-    {"JAM", 63, 0, {{"Voice", KN_NAME, 7, JV_NAME, 4}, {"Keys", KN_NAME, 8, JM_NAME, 8}, {"Octave", KN_NAME, 9, JO_NAME, 5}, {"Answer", KN_NAME, 10, ONOFF_NAME, 2}}},   /* (the last four: the JAM pages, ui_knob_param counts on it) */
-    {"JAM SOUND", 63, 0, {{"Sound", KN_JSND, 0, 0, 0}, {"Decay", KN_JSND, 1, 0, 0}, {"Level", KN_NAME, 27, JLV_NAME, 4}, {"Hold", KN_NAME, 26, ONOFF_NAME, 2}}},
+    {"JAM", 63, 0, {{"Hold", KN_NAME, 26, ONOFF_NAME, 2}, {"Keys", KN_NAME, 8, JM_NAME, 8}, {"Octave", KN_NAME, 9, JO_NAME, 5}, {"Answer", KN_NAME, 10, ONOFF_NAME, 2}}},   /* (the last four: the JAM pages, ui_knob_param counts on it) */
+    {"JAM SOUND", 63, 0, {{"Pluck", KN_JSND, 0, 0, 0}, {"Acid", KN_JSND, 2, 0, 0}, {"Decay", KN_JSND, 1, 0, 0}, {"Level", KN_NAME, 27, JLV_NAME, 4}}},   /* 1.0.4: a menu of sounds for each line (the voice follows the knob touched) */
+    {"JAM STEPS", 63, 0, {{"Line", KN_JST, 0, 0, 0}, {"Step", KN_JST, 1, 0, 0}, {"Type", KN_JST, 2, 0, 0}, {"Note", KN_JST, 3, 0, 0}}},
+    {"JAM STEPS 2", 63, 0, {{"Keep", KN_JKEEP, 0, 0, 0}, {"Clear", KN_JCLR, 0, 0, 0}, {"Range", KN_PAR, P_CM_RANGE, 0, 0}, {"Length", KN_PAR, P_AC_LEN, 0, 0}}},
     {"JAM ARP", 63, 0, {{"Arp", KN_NAME, 28, ARP_NAME, 18}, {"Rate", KN_NAME, 29, ARPR_NAME, 8}, {"Range", KN_NAME, 30, ARPRG_NAME, 4}, {"Gate", KN_NAME, 31, ARPG_NAME, 6}}},
     {"JAM ARP 2", 63, 0, {{"Swing", KN_NAME, 32, ARPSW_NAME, 5}, {"Ratchet", KN_NAME, 33, ARPRA_NAME, 4}, {"Rests", KN_NAME, 34, ARPRS_NAME, 4}, {"Jump", KN_NAME, 35, ARPJ_NAME, 3}}},
+    {"JAM ARP 3", 63, 0, {{"Sound", KN_NAME, 44, ARSND_NAME, 13}, {"Decay", KN_NAME, 45, ARDEC_NAME, 5}, {"Level", KN_NAME, 46, ARLV_NAME, 4}, {"Tone", KN_NAME, 47, ARTN_NAME, 4}}},
 };
 /* the gate's patterns (the loop's length in sixteenths; a pattern of 12 or 10 against the bar of 16 is a polymeter),
  * the last "CUSTOM": the keys' own. euc: a Euclidean pattern of that many hits instead of pat. And its targets. */
@@ -499,8 +508,11 @@ static struct {
     uint8_t jam_man;                   /* the voice the JAM page has taken off its line (1 + voice), 0 none */
     uint8_t jam_voice, jam_mode, jam_oct, jam_ans;   /* the JAM page: the voice (pluck, pad, acid, drone), the keys (scale, chords, harp), the octave (0..4: -2..+2), the answer */
     uint8_t jam_n[NKEYS], jam_vc[NKEYS], jam_note[NKEYS][4];   /* what each key is sounding, to let go */
-    uint8_t jam_pg, jam_hold, jam_lvl;   /* the JAM pages (1.0.3): the page (0..3), Hold (the keys let go ring on until the next ones), Level (0 piece .. 3 max) */
-    uint8_t arp_mode, arp_rate, arp_range, arp_gate, arp_swing, arp_ratch, arp_rest, arp_jump;   /* the arp (pattern; rate; range -1; gate; swing; ratchet -1; rests; octave jumps) */
+    uint8_t jam_pg, jam_hold, jam_lvl;   /* the JAM pages (1.0.3): the page (0..4), Hold (the keys let go ring on until the next ones), Level (0 piece .. 3 max) */
+    uint8_t jst_clr;                     /* the Clear knob: 0 none, 1 the pluck, 2 the acid, 3 both (REC does it) */
+    uint8_t jst_line, jst_rec, jst_s, jst_pos;   /* the dots page (1.0.4): the line (0 pluck, 1 acid), recording live, the step chosen, the playhead last seen */
+    uint32_t jst_pt, jst_dt;             /* when the playhead moved last, and how long a sixteenth takes (ms) */
+    uint8_t arp_snd, arp_dk, arp_lv, arp_tn, arp_mode, arp_rate, arp_range, arp_gate, arp_swing, arp_ratch, arp_rest, arp_jump;   /* the arp (pattern; rate; range -1; gate; swing; ratchet -1; rests; octave jumps) */
     uint8_t ap_n, ap_note[8], ap_on_n, ap_on[4], ap_cur_n, ap_cur[4], ap_vc, ap_pos, ap_pend;   /* the arp's notes (as played), what sounds now, the step's notes */
     int32_t ap_tick, ap_base;
     uint32_t ap_t0, ap_bar_ms, ap_bar_seen, ap_rng;
@@ -1179,7 +1191,11 @@ static void mood_apply(void)
 static int view_knob(int i)
 {
     if (ui.view == V_JAM && !ui.fx_menu)
-        return K_FXP + 4 * (NFXP - NJP + (ui.jam_pg & 3)) + i;      /* the JAM pages: the last four of the FXP table's */
+    {
+        if (FXP[NFXP - NJP + (ui.jam_pg % NJP)].c[i].kind == KN_NONE)
+            return K_NONE;
+        return K_FXP + 4 * (NFXP - NJP + (ui.jam_pg % NJP)) + i;      /* the JAM pages: the last five of the FXP table's */
+    }
     if (ui.fx_menu) {
         if (ui.fx_page && FXP[ui.fx_page - 1].c[i].kind == KN_NONE)
             return K_NONE;
@@ -1190,7 +1206,7 @@ static int view_knob(int i)
 static const char *view_label(int i)
 {
     if (ui.view == V_JAM && !ui.fx_menu)
-        return FXP[NFXP - NJP + (ui.jam_pg & 3)].c[i].label;
+        return FXP[NFXP - NJP + (ui.jam_pg % NJP)].c[i].label;
     if (ui.fx_menu)
         return ui.fx_page ? FXP[ui.fx_page - 1].c[i].label : FXK_LABEL[i];
     return KNOB_LABEL[ui.view][i];
@@ -1214,6 +1230,13 @@ static void gx_step(int s)                     /* a step of the gate's pattern o
     ui.gx_preset = NGXP - 1;
     en_gate_pat(ui.gx_pat);
 }
+static void arp_push(void)
+{
+    en_arp_cfg(0, ui.arp_snd);
+    en_arp_cfg(1, ARDEC_V[ui.arp_dk % 5]);
+    en_arp_cfg(2, ARLV_V[ui.arp_lv % 4]);
+    en_arp_cfg(3, ui.arp_tn % 4);
+}
 static uint8_t *uiv(int i)                     /* the PERFORM page's settings (the UI's own) */
 {
     return i == 0 ? &ui.scene_quant : i == 1 ? &ui.dj_len : i == 2 ? &ui.dj_break : i == 3 ? &ui.dj_fillon : i == 4 ? &ui.key_set :
@@ -1221,32 +1244,108 @@ static uint8_t *uiv(int i)                     /* the PERFORM page's settings (t
            i == 12 ? &ui.usb_fixed : i == 13 ? &ui.fm_dy : i == 14 ? &ui.scan : i == 15 ? &ui.dj_rounds : i == 16 ? &ui.dj_ramp : i == 17 ? &ui.intro :
            i == 18 ? &ui.w_on : i == 19 ? &ui.w_every : i == 20 ? &ui.w_amt : i == 21 ? &ui.w_piece : i == 22 ? &ui.w_kits : i == 23 ? &ui.w_voices : i == 24 ? &ui.w_knobs : i == 25 ? &ui.w_layers :
            i == 26 ? &ui.jam_hold : i == 27 ? &ui.jam_lvl : i == 28 ? &ui.arp_mode : i == 29 ? &ui.arp_rate : i == 30 ? &ui.arp_range : i == 31 ? &ui.arp_gate :
-           i == 32 ? &ui.arp_swing : i == 33 ? &ui.arp_ratch : i == 34 ? &ui.arp_rest : i == 35 ? &ui.arp_jump : i == 36 ? &ui.af_on : i == 37 ? &ui.af_every : i == 38 ? &ui.af_amt : i == 39 ? &ui.af_len : i == 40 ? &ui.dv_on : i == 41 ? &ui.dv_chg : i == 42 ? &ui.dv_rat : i == 43 ? &ui.dv_ev :
+           i == 32 ? &ui.arp_swing : i == 33 ? &ui.arp_ratch : i == 34 ? &ui.arp_rest : i == 35 ? &ui.arp_jump : i == 36 ? &ui.af_on : i == 37 ? &ui.af_every : i == 38 ? &ui.af_amt : i == 39 ? &ui.af_len : i == 40 ? &ui.dv_on : i == 41 ? &ui.dv_chg : i == 42 ? &ui.dv_rat : i == 43 ? &ui.dv_ev : i == 44 ? &ui.arp_snd : i == 45 ? &ui.arp_dk : i == 46 ? &ui.arp_lv : i == 47 ? &ui.arp_tn :
            &proj.genre;                         /* 11: the genre (proj's own); 12: the USB audio's level, 13: the voice set, 14: scanlines, 15-17 the SET page (kept in set_t.usb) */
 }
 #define FXP_UI(k) (FXP[((k) - K_FXP) / 4].bit == 63)   /* the PERFORM page: no effect, the UI's own settings */
 static const uint8_t JSND_PAR[4] = {P_CM_SND, P_PADTONE, P_AC_WAVE, P_DR_INST};   /* the JAM page's Sound and Decay: the voice's own (pluck, pad, acid, drone) */
 static const uint8_t JDEC_PAR[4] = {P_CM_DEC, P_PE_REL, P_AC_DEC, P_DE_DEC};
-static const char *jsnd_name(int v)
+static const char *jsnd_name_of(int vc, int v)
 {
-    switch (ui.jam_voice & 3) {
+    switch (vc & 3) {
     case 0: return EN_CM_SOUND[v];
     case 1: return EN_PAD_SOUND[v];
     case 2: return EN_ACID_SOUND[v];
     default: return EN_DRONE_SOUND[v];
     }
 }
-static int jsnd_n(void)
+static int jsnd_n_of(int vc)
 {
     static const uint8_t N[4] = {EN_NCMSND - EN_NUSER, EN_NSOUND, EN_NACID, EN_NSOUND};
-    return N[ui.jam_voice & 3];
+    return N[vc & 3];
 }
-#define JSND_P(k) (FXP_CTL(k).idx == 0 ? JSND_PAR[ui.jam_voice & 3] : JDEC_PAR[ui.jam_voice & 3])
+/* 1.0.4: the JAM SOUND page has a menu for each line: the pluck's sounds, the acid's; the voice follows the knob touched */
+#define JSND_P(k) JDEC_PAR[ui.jam_voice & 3]      /* (the Decay knob: the voice's own) */
+static int knob_get(int k);
+static void knob_range(int k, int *lo, int *hi);
+static void knob_set(int k, int v);
+static void knob_text(int k, char *b);
+static void lt_release(void);
+static void jst_clear(void);
+static void jst_clear_line(int line);
+static void jst_rec_start(void);
+static void jst_record(int note);
+#define JPG_STEPS2 3                             /* the second dots page: Keep, Clear, the pluck's range, the acid's length */
+#define JPG_STEPS 2                              /* the dots page: its place among the JAM pages */
+static int jst_pg(void) { return ui.view == V_JAM && (ui.jam_pg == JPG_STEPS || ui.jam_pg == JPG_STEPS2); }
+static int jst_k(int idx)                        /* the dots page's knob (2 Type) as the step pages' knob */
+{
+    return ui.jst_line ? K_ASTY : K_PSLV;
+}
+static void jst_sel(int s)                       /* the step chosen (both lines' step pages follow it) */
+{
+    ui.jst_s = (uint8_t)(s & 15);
+    ui.astp = ui.pstp = ui.jst_s;
+}
+static void as_sync(void);
+static int as_kind(int s);
+static void as_put(int s, int note, int oct, int kind);
+static int jst_midi(int s)                       /* the note the step sounds now (over the chord of now), MIDI; -1: none */
+{
+    return ui.jst_line ? en_acid_midi(s) : en_pluck_midi(en_cm_rung[s & 15]);
+}
+static void note_name(int m, char *b)            /* "D#3": the note's name and octave (middle C is C4) */
+{
+    static const char *const NN[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    const char *q;
+    int n = 0;
+    if (m < 0) {
+        b[0] = '-';
+        b[1] = 0;
+        return;
+    }
+    for (q = NN[m % 12]; *q;)
+        b[n++] = *q++;
+    itoa_u((uint32_t)(m / 12 > 0 ? m / 12 - 1 : 0), b + n);
+}
+static int jst_note_get(void)                    /* Note: the acid's offset and octave as one number (0 .. 47); the pluck's rung (0 .. 11) */
+{
+    if (ui.jst_line) {
+        as_sync();
+        return ui.as_oct[ui.jst_s & 15] * en_scale_len() + ui.as_off[ui.jst_s & 15];   /* (the scale's degrees, counted up from the lowest: one rising run, as the pitch is) */
+    }
+    return en_cm_rung[ui.jst_s & 15] % en_pluck_len();
+}
+static void jst_note_set(int v)                  /* a step with no note becomes one when its note is turned */
+{
+    const int s = ui.jst_s & 15;
+    jst_sel(s);
+    if (ui.jst_line) {
+        int kind;
+        as_sync();
+        kind = as_kind(s);
+        v = v < 0 ? 0 : v > 4 * en_scale_len() - 1 ? 4 * en_scale_len() - 1 : v;
+        as_put(s, v % en_scale_len(), v / en_scale_len(), kind ? kind : 1);
+    } else {
+        knob_set(K_PSNO, v);
+        if (!en_cm_lvl[s])
+            knob_set(K_PSLV, 2);
+    }
+}
+static const char *const JKEEP_NAME[4] = {"NONE", "PLUCK", "ACID", "BOTH"};   /* the lines kept as they are (the rest evolve) */
 static int fxp_get(int k)
 {
+    if (FXP_CTL(k).kind == KN_JCLR)
+        return ui.jst_clr;
+    if (FXP_CTL(k).kind == KN_JKEEP)
+        return (proj.par[P_CM_LOCK] ? 1 : 0) | (proj.par[P_AC_LOCK] ? 2 : 0);
+    if (FXP_CTL(k).kind == KN_JST) {
+        const int ix = FXP_CTL(k).idx;
+        return ix == 0 ? ui.jst_line : ix == 1 ? ui.jst_s : ix == 3 ? jst_note_get() : (jst_sel(ui.jst_s), knob_get(jst_k(ix)));
+    }
     switch (FXP_CTL(k).kind) {
     case KN_PAR: return knob_get(FXP_CTL(k).idx);
-    case KN_JSND: return knob_get(JSND_P(k));
+    case KN_JSND: return FXP_CTL(k).idx == 1 ? knob_get(JSND_P(k)) : knob_get(JSND_PAR[FXP_CTL(k).idx]);   /* (idx 0: the pluck's sound, 2: the acid's, 1: the decay) */
     case KN_PRESET: return ui.gx_preset;
     case KN_TGT: return ui.gx_tgt;
     case KN_PTGT: return ui.pm_tgt;
@@ -1260,10 +1359,21 @@ static void fxp_range(int k, int *lo, int *hi)
         knob_range(FXP_CTL(k).idx, lo, hi);
         return;
     }
+    if (kind == KN_JKEEP || kind == KN_JCLR) {
+        *lo = 0;
+        *hi = 3;
+        return;
+    }
+    if (kind == KN_JST) {
+        const int ix = FXP_CTL(k).idx;
+        *lo = 0;
+        *hi = ix == 0 ? 1 : ix == 1 ? 15 : ix == 3 ? (ui.jst_line ? 4 * en_scale_len() - 1 : en_pluck_len() - 1) : (ui.jst_line ? 4 : 3);
+        return;
+    }
     if (kind == KN_JSND) {
-        if (FXP_CTL(k).idx == 0) {
+        if (FXP_CTL(k).idx != 1) {
             *lo = 0;
-            *hi = jsnd_n() - 1;
+            *hi = jsnd_n_of(FXP_CTL(k).idx) - 1;
         } else {
             knob_range(JSND_P(k), lo, hi);
         }
@@ -1279,14 +1389,48 @@ static void fxp_set(int k, int v)
     int lo, hi;
     fxp_range(k, &lo, &hi);
     v = v < lo ? lo : v > hi ? hi : v;
-    if (v != fxp_get(k) && FXP_CTL(k).kind != KN_PAR && FXP_CTL(k).kind != KN_JSND && !(FXP_UI(k) && (FXP_CTL(k).idx >= 26 || (FXP_CTL(k).idx == 18 && v != 2 && fxp_get(k) != 2))))
+    if (v != fxp_get(k) && FXP_CTL(k).kind != KN_PAR && FXP_CTL(k).kind != KN_JSND && FXP_CTL(k).kind != KN_JST && FXP_CTL(k).kind != KN_JKEEP && FXP_CTL(k).kind != KN_JCLR && !(FXP_UI(k) && (FXP_CTL(k).idx >= 26 || (FXP_CTL(k).idx == 18 && v != 2 && fxp_get(k) != 2))))
         ui.set_dirty = 1;                        /* a setting changed: written when it has been left alone a moment (settings_save); Wander's are kept since 1.0.2 (on and off alone is not: only "on+keep") */
     switch (FXP_CTL(k).kind) {
     case KN_PAR:                                 /* an engine parameter: the project's, the dial pages' way */
         knob_set(FXP_CTL(k).idx, v);
         break;
-    case KN_JSND:                                /* the JAM page's voice: its sound, its decay */
-        knob_set(JSND_P(k), v);
+    case KN_JSND:                                /* the JAM page's sound (from the one list: the voice follows), its decay */
+        if (FXP_CTL(k).idx != 1) {
+            const int vc = FXP_CTL(k).idx;        /* 0: the pluck's menu, 2: the acid's */
+            if (vc != (ui.jam_voice & 3)) {
+                ui.jam_voice = (uint8_t)vc;
+                lt_release();
+            }
+            knob_set(JSND_PAR[vc], v);
+        } else {
+            knob_set(JSND_P(k), v);
+        }
+        break;
+    case KN_JCLR:                                /* what REC will clear on this page */
+        ui.jst_clr = (uint8_t)v;
+        break;
+    case KN_JKEEP:                               /* which lines are kept (frozen) and which evolve */
+        if ((v & 1) != (proj.par[P_CM_LOCK] ? 1 : 0))
+            knob_set(P_CM_LOCK, v & 1);
+        if ((v >> 1 & 1) != (proj.par[P_AC_LOCK] ? 1 : 0))
+            knob_set(P_AC_LOCK, v >> 1 & 1);
+        break;
+    case KN_JST:                                 /* the dots page: the line, then the step chosen's kind, note, octave */
+        if (FXP_CTL(k).idx == 0) {
+            if (v != ui.jst_line) {
+                ui.jst_line = (uint8_t)v;
+                ui.jst_rec = 0;
+                lt_release();
+            }
+        } else if (FXP_CTL(k).idx == 1) {
+            jst_sel(v);
+        } else if (FXP_CTL(k).idx == 3) {
+            jst_note_set(v);
+        } else {
+            jst_sel(ui.jst_s);
+            knob_set(jst_k(2), v);
+        }
         break;
     case KN_PRESET:
         if (v != ui.gx_preset && v < NGXP - 1)
@@ -1314,6 +1458,8 @@ static void fxp_set(int k, int v)
         }
         if (FXP_UI(k)) {
             *uiv(FXP_CTL(k).idx) = (uint8_t)v;
+            if (FXP_CTL(k).idx >= 44 && FXP_CTL(k).idx <= 47)
+                arp_push();
             if (FXP_CTL(k).idx == 12)
                 en_usb_fixed = (uint8_t)v;       /* the engine renders the USB audio at unity when a computer is recording */
             else if (FXP_CTL(k).idx == 13)
@@ -1336,11 +1482,38 @@ static void fxp_text(int k, char *b)
         knob_text(FXP_CTL(k).idx, b);
         return;
     }
+    if (FXP_CTL(k).kind == KN_JKEEP || FXP_CTL(k).kind == KN_JCLR) {
+        static const char *const CN[4] = {"NO", "PLUCK", "ACID", "BOTH"};
+        const char *q = FXP_CTL(k).kind == KN_JCLR ? CN[v & 3] : JKEEP_NAME[v & 3];
+        int n = 0;
+        while (*q)
+            b[n++] = *q++;
+        b[n] = 0;
+        return;
+    }
+    if (FXP_CTL(k).kind == KN_JST) {
+        if (FXP_CTL(k).idx == 0) {
+            const char *q = ui.jst_line ? "Acid" : "Pluck";
+            int n = 0;
+            while (*q)
+                b[n++] = *q++;
+            b[n] = 0;
+        } else if (FXP_CTL(k).idx == 1) {
+            itoa_u((uint32_t)ui.jst_s + 1u, b);
+        } else if (FXP_CTL(k).idx == 3) {                /* the note's name (over the chord of now: D#3) */
+            note_name(jst_midi(ui.jst_s & 15), b);
+        } else {
+            jst_sel(ui.jst_s);
+            knob_text(jst_k(2), b);
+        }
+        return;
+    }
     if (FXP_CTL(k).kind == KN_JSND) {
-        if (FXP_CTL(k).idx == 0 && v < jsnd_n())
-            s = jsnd_name(v);
+        if (FXP_CTL(k).idx != 1 && v < jsnd_n_of(FXP_CTL(k).idx)) {
+            s = jsnd_name_of(FXP_CTL(k).idx, v);
+        }
         else {
-            knob_text(JSND_P(k), b);
+            knob_text(FXP_CTL(k).idx == 1 ? JSND_P(k) : JSND_PAR[FXP_CTL(k).idx], b);   /* (a sound past the list, a user voice: its own name) */
             return;
         }
     } else if (FXP_CTL(k).kind == KN_PRESET)
@@ -1500,7 +1673,7 @@ static void knob_range(int k, int *lo, int *hi)
     }
     if (k == K_PSNO || k == K_PSLV) {
         *lo = 0;
-        *hi = k == K_PSNO ? 11 : 3;
+        *hi = k == K_PSNO ? 15 : 3;
         return;
     }
     if (k >= K_FXP) {
@@ -1679,7 +1852,7 @@ static void knob_set(int k, int v)
         const int s = ui.pstp & 15;
         int rung = en_cm_rung[s], lvl = en_cm_lvl[s];
         if (k == K_PSNO)
-            rung = v < 0 ? 0 : v > 11 ? 11 : v;
+            rung = v < 0 ? 0 : v > 15 ? 15 : v;
         else
             lvl = v < 0 ? 0 : v > 3 ? 3 : v;
         ps_freeze();
@@ -2645,7 +2818,12 @@ static void button(int b)
                 ui.fx_open_t = 0;
             }
             if (group_of(v) == g && GROUP[g].n > 1)
-                set_view(GROUP[g].first + (v - GROUP[g].first + 1) % GROUP[g].n);       /* inside: the next page */
+            {
+                int nx = GROUP[g].first + (v - GROUP[g].first + 1) % GROUP[g].n, guard = 0;       /* inside: the next page (1.0.4: not the Acid answer's, nor the Acid steps and Pluck steps: the Jam Steps page replaced them) */
+                while ((nx == V_ACANS || nx == V_ACSTEP || nx == V_CMSTEP) && guard++ < 8)
+                    nx = GROUP[g].first + (nx - GROUP[g].first + 1) % GROUP[g].n;
+                set_view(nx);
+            }
             else if (ui.grp_last[g] >= GROUP[g].first && ui.grp_last[g] < GROUP[g].first + GROUP[g].n)
                 set_view(ui.grp_last[g]);                                               /* from elsewhere: back where you were */
             else
@@ -3006,6 +3184,31 @@ static void input(void)
                 runner_start();
                 return;
             }
+            if (i == B_REC && jst_pg() && !ui.fx_menu) {   /* the dots page: REC records live (again: stops); SEL + REC clears the line */
+                ui.btn_used |= m | ((btn >> B_SEL & 1u) ? 1u << B_SEL : 0u);
+                if (ui.jam_pg == JPG_STEPS2) {            /* the second page: REC does what the Clear knob says */
+                    if (ui.jst_clr) {
+                        if (ui.jst_clr & 1)
+                            jst_clear_line(0);
+                        if (ui.jst_clr & 2)
+                            jst_clear_line(1);
+                        say("CLEARED", ui.jst_clr == 3 ? "BOTH LINES" : ui.jst_clr == 2 ? "ACID LINE" : "PLUCK LINE");
+                        ui.jst_clr = 0;
+                    } else {
+                        say("CLEAR", "TURN THE KNOB, THEN REC");
+                    }
+                } else if (btn >> B_SEL & 1u) {
+                    jst_clear();
+                } else {
+                    ui.jst_rec = (uint8_t)!ui.jst_rec;
+                    if (ui.jst_rec)
+                        jst_rec_start();
+                    else
+                        lt_release();
+                    say(ui.jst_rec ? "RECORDING" : "STOPPED", ui.jst_rec ? (en_playing ? "PLAY THE KEYS" : "PRESS PLAY") : "THE LINE KEEPS PLAYING");
+                }
+                continue;
+            }
             if (i == B_REC && (btn >> B_SEL & 1u)) {   /* shift: Capture: the bar played on Jam into the acid line or the pluck loop */
                 ui.btn_used |= m | 1u << B_SEL;
                 jam_capture();
@@ -3231,6 +3434,11 @@ static void input(void)
                     for (s = 0; s < 16; s++)
                         if (WHITE_KEY[s] == i)
                             ui.stp = (uint8_t)s;
+                } else if (jst_pg() && !ui.jst_rec) {   /* the dots page: a white key chooses the step */
+                    int s;
+                    for (s = 0; s < 16; s++)
+                        if (WHITE_KEY[s] == i)
+                            jst_sel(s);
                 } else if (ui.view == V_JAM) {   /* the JAM page: the key plays the voice chosen */
                     jam_down((int)i);
                 } else if (by_hand(voice_of(ui.view))) {   /* a voice off the algorithm, its page: the key plays it */
@@ -3259,6 +3467,8 @@ static void input(void)
     if ((e = plat_enc(EN_SELECT)) != 0) {        /* SELECT: the pages (the steps); with HOME held, the tempo */
         if (ui.view == V_JAM && !ui.fx_menu && !(btn >> B_HOME & 1u) && ((e > 0 && ui.jam_pg < NJP - 1) || (e < 0 && ui.jam_pg > 0))) {   /* the JAM pages: Jam, Sound, Arp, Arp 2 */
             ui.jam_pg = (uint8_t)(ui.jam_pg + (e > 0 ? 1 : -1));
+            ui.jst_rec = 0;
+            jst_sel(ui.jst_s);
             say(FXP[NFXP - NJP + ui.jam_pg].name, "PAGE");
         } else if (!(btn >> B_HOME & 1u) && ui.fx_menu && !ui.fx_page) {   /* the FX keys: the dial is the bank (the effects, the beat effects) (HOME held: the tempo) */
             fx_bank = (uint8_t)(e > 0 ? (fx_bank < 3 ? fx_bank + 1 : 3) : (fx_bank > 0 ? fx_bank - 1 : 0));
@@ -3286,6 +3496,8 @@ static void input(void)
             say("VISUAL", VZ_NAME[ui.viz]);
         } else {
             int v = (ui.view == V_SEQ ? V_DRUMS : ui.view == V_PERF ? V_TEMPO : (int)ui.view) + (e > 0 ? 1 : -1);   /* (out of the sequencer and the perform screen too) */
+            while (v >= 0 && v < NDIAL && (v == V_ACANS || v == V_ACSTEP || v == V_CMSTEP))   /* (1.0.4: the pages the Jam Steps page replaced are not walked) */
+                v += e > 0 ? 1 : -1;
             if (v >= 0 && v < NDIAL)
                 set_view(v);
         }
@@ -3700,7 +3912,7 @@ static struct {
     uint16_t pc_seen;                            /* the genre and piece it was last drawn for (+1) */
     uint32_t rng;
 } sg = {0.0f, 0, 0, 2, 0, 0, 0, 0, {{0, 0, 0}}, 0, 0, 0};
-enum { EMB_EYE, EMB_SCAN, EMB_SKULL, EMB_SPIDER, EMB_BAT, EMB_FLAME, EMB_MOON, EMB_PYRAMID, EMB_N };   /* 1.0.3: the middle of the home screen */
+enum { EMB_EYE, EMB_SCAN, EMB_SKULL, EMB_SPIDER, EMB_BAT, EMB_FLAME, EMB_MOON, EMB_PYRAMID, EMB_PENT, EMB_GOAT, EMB_GLASS, EMB_DAGGER, EMB_ECLIPSE, EMB_N };   /* 1.0.3: the middle of the home screen */
 static uint32_t sg_rand(void)
 {
     if (!sg.rng)
@@ -3752,7 +3964,7 @@ static void sg_emblem(int kind, int32_t ex, int play, int flash, uint32_t now)
     const float kick = fm_clampf(en_drum_glow[0], 0.0f, 1.0f), snare = fm_clampf(en_drum_glow[1], 0.0f, 1.0f);
     const uint16_t fg = flash ? K_TEXT : awake ? K_TEXT : K_DIM, red = RGB(255, 60, 40);
     int j, i;
-    cv_rect(ex - 14, CY - 13, 29, 27, K_BG);     /* a dark surround, so the figure never runs through it */
+    cv_rect(ex - 14, CY - 15, 29, 31, K_BG);     /* a dark surround, so the figure never runs through it */
     if (kind == EMB_SKULL) {
         const int jaw = awake && snare > 0.4f ? 2 : 0, glow = awake ? 1 + (int)(kick * 2.0f) : 0;
         for (j = 0; j < 10; j++)
@@ -3826,6 +4038,88 @@ static void sg_emblem(int kind, int32_t ex, int play, int flash, uint32_t now)
         }
         if (awake && kick > 0.5f)
             cv_rect(ex + 5, CY + 6, 2, 2, K_ACC);
+    } else if (kind == EMB_PENT) {                /* 1.0.4: an inverted pentagram in its circle: the points flare on the kick */
+        int32_t px[5], py[5];
+        const float R = 12.0f;
+        for (j = 0; j < 32; j++) {
+            const float a = (float)j * (FM_TWO_PI / 32.0f);
+            cv_rect(ex + (int)(fm_sinf(a) * R + (fm_sinf(a) < 0 ? -0.5f : 0.5f)), CY + 1 - (int)(fm_cosf(a) * R + (fm_cosf(a) < 0 ? -0.5f : 0.5f)), 1, 1, awake ? K_DIM : K_DIM);
+        }
+        for (j = 0; j < 5; j++) {                 /* a point down, one up-left and up-right, two to the sides */
+            const float a = FM_PI + (float)j * (FM_TWO_PI / 5.0f);
+            px[j] = ex + (int)(fm_sinf(a) * R + (fm_sinf(a) < 0 ? -0.5f : 0.5f));
+            py[j] = CY + 1 - (int)(fm_cosf(a) * R + (fm_cosf(a) < 0 ? -0.5f : 0.5f));
+        }
+        for (j = 0; j < 5; j++)
+            cv_line(px[j], py[j], px[(j + 2) % 5], py[(j + 2) % 5], fg);
+        if (awake && !flash && kick > 0.35f)
+            for (j = 0; j < 5; j++)
+                cv_disc(px[j], py[j], 1 + (kick > 0.7f), red);
+    } else if (kind == EMB_GOAT) {                /* a horned goat's head: red slit eyes that burn on the kick */
+        for (j = 0; j < 17; j++) {                /* the face: wide at the brow, narrowing to the chin */
+            const int w = j < 3 ? 6 : 6 - (j - 3) * 6 / 13;
+            cv_rect(ex - w, CY - 5 + j, 2 * w + 1, 1, fg);
+        }
+        for (j = -1; j <= 1; j += 2) {
+            cv_line(ex + j * 4, CY - 5, ex + j * 10, CY - 8, fg);      /* the horns sweep out and up */
+            cv_line(ex + j * 10, CY - 8, ex + j * 11, CY - 13, fg);
+            cv_line(ex + j * 3, CY - 5, ex + j * 8, CY - 8, fg);
+            cv_line(ex + j * 8, CY - 8, ex + j * 10, CY - 13, fg);
+            cv_line(ex + j * 6, CY - 2, ex + j * 13, CY - 1, fg);      /* the ears */
+            cv_line(ex + j * 13, CY - 1, ex + j * 7, CY + 1, fg);
+            cv_rect(ex + j * 3 - (j < 0 ? 2 : 0), CY - 1, 3, 1, awake ? (flash ? K_TEXT : mix(K_BG, RGB(255, 60, 40), 8 + (int)(kick * 7.0f))) : K_BG);   /* the eyes */
+            cv_rect(ex + j * 1 - (j < 0 ? 0 : 0), CY + 5, 1, 2, K_BG);   /* the nostrils */
+        }
+        cv_rect(ex - 1, CY + 12, 3, 2, fg);       /* the beard */
+        cv_rect(ex, CY + 14, 1, 1, fg);
+    } else if (kind == EMB_GLASS) {               /* an hourglass: the sand runs from the top bulb to the bottom while the music plays */
+        const int lvl = awake ? (int)(now >> 8) % 10 : 9;   /* how much is left above (0..9) */
+        cv_rect(ex - 8, CY - 13, 17, 2, fg);
+        cv_rect(ex - 8, CY + 12, 17, 2, fg);
+        for (j = 0; j < 11; j++) {
+            const int w = 7 - j * 7 / 11;
+            cv_rect(ex - w, CY - 11 + j, 1, 1, fg);
+            cv_rect(ex + w, CY - 11 + j, 1, 1, fg);
+            cv_rect(ex - w, CY + 11 - j, 1, 1, fg);
+            cv_rect(ex + w, CY + 11 - j, 1, 1, fg);
+        }
+        for (j = 0; j < 10 - (awake ? 9 - lvl : 9); j++)    /* the sand above */
+            if (j < lvl + 1 && awake)
+                cv_rect(ex - (6 - (10 - j) * 6 / 11), CY - 2 - j, 2 * (6 - (10 - j) * 6 / 11) + 1, 1, K_ACC);
+        for (j = 0; j < (awake ? 10 - lvl : 5); j++)        /* the sand below */
+            cv_rect(ex - (6 - j * 4 / 10 - 1), CY + 11 - j, 2 * (6 - j * 4 / 10 - 1) + 1, 1, awake ? K_ACC : K_DIM);
+        if (awake)
+            cv_rect(ex, CY - 1, 1, 12, flash ? K_TEXT : K_ACC);   /* the thread of sand */
+    } else if (kind == EMB_DAGGER) {              /* a dagger point down, a drop of blood from the tip */
+        const int drop = awake ? (int)((now >> 7) % 9u) : 0;
+        for (j = 0; j < 14; j++) {                /* the blade */
+            const int w = j < 10 ? 2 : 2 - (j - 9) / 2;
+            cv_rect(ex - (w > 0 ? w : 0), CY - 2 + j, 2 * (w > 0 ? w : 0) + 1, 1, fg);
+        }
+        cv_rect(ex, CY - 1, 1, 10, K_BG);          /* the fuller */
+        cv_rect(ex - 8, CY - 4, 17, 2, fg);        /* the crossguard */
+        cv_rect(ex - 1, CY - 12, 3, 8, fg);         /* the grip */
+        for (j = 0; j < 3; j++)
+            cv_rect(ex - 1, CY - 11 + j * 3, 3, 1, K_BG);
+        cv_disc(ex, CY - 13, 2, fg);                /* the pommel */
+        if (awake && !flash)
+            cv_rect(ex, CY + 12 + (drop > 4 ? 2 : 0), 1 + (drop < 3), 2 + (drop < 3), red);
+        if (awake && kick > 0.5f && !flash)
+            cv_rect(ex - 8, CY - 4, 17, 2, K_ACC);
+    } else if (kind == EMB_ECLIPSE) {             /* a black sun in a ring of fire: its rays leap on the kick */
+        const int ray = awake ? 3 + (int)(kick * 5.0f) : 2;
+        const uint16_t cor = flash ? K_TEXT : awake ? mix(K_BG, RGB(255, 80, 30), 13) : K_DIM;
+        cv_disc(ex, CY, 6, cor);
+        cv_disc(ex, CY, 5, K_BG);
+        cv_disc(ex, CY, 6, cor);
+        cv_disc(ex, CY, 4, K_BG);
+        for (j = 0; j < 12; j++) {
+            const float a = (float)j * (FM_TWO_PI / 12.0f);
+            const float r0 = 8.0f, r1 = 8.0f + (float)(j & 1 ? ray / 2 : ray) + 2.0f;
+            cv_line(ex + (int)(fm_sinf(a) * r0), CY - (int)(fm_cosf(a) * r0), ex + (int)(fm_sinf(a) * r1), CY - (int)(fm_cosf(a) * r1), awake ? K_DIM : K_DIM);
+        }
+        if (awake && !flash)
+            cv_disc(ex + 4, CY - 4, 1, K_ACC);        /* a bead of light on the rim */
     } else {                                      /* the eye in a pyramid */
         cv_line(ex, CY - 12, ex - 13, CY + 11, fg);
         cv_line(ex, CY - 12, ex + 13, CY + 11, fg);
@@ -3846,6 +4140,9 @@ static void sg_emblem(int kind, int32_t ex, int play, int flash, uint32_t now)
 }
 static void draw_sigil(void)
 {
+#ifdef SG_EMB
+    sg.emb = SG_EMB;                             /* (a test build shows one figure) */
+#endif
     static const uint8_t EYE[9] = {12, 12, 11, 11, 10, 9, 7, 5, 2};   /* the eye's half-width, from its middle row out (scaled to its opening) */
     static const uint8_t IRIS[6] = {5, 5, 5, 4, 3, 2};
     const uint32_t now = plat_ms(), abs_pool = pool_abs();
@@ -5462,6 +5759,96 @@ static void draw_horizon(void)
     }
 }
 
+
+/* THE THEMES' BACKGROUNDS (1.0.4): Synth has its horizon; the other five each get a scene of their own behind the sigil, dim enough
+ * never to compete with it: Crimson a blood moon over mist and dead hills, Acid lasers over an equalizer skyline, Ice an aurora over
+ * mountains and falling snow, Ember a glow from below with rising sparks, Phosphor a CRT's scanlines and grid with a sweep. They move
+ * only while the music plays. */
+static void bg_disc(int32_t cx, int32_t cy, int32_t r, uint16_t c)
+{
+    int32_t y;
+    for (y = -r; y <= r; y++) {
+        const int32_t hw = (int32_t)fm_sqrtf((float)(r * r - y * y));
+        if (cy + y >= 0 && cy + y < MAIN_H)
+            cv_rect(cx - hw, cy + y, 2 * hw + 1, 1, c);
+    }
+}
+static void draw_theme_bg(void)
+{
+    const int play = en_playing, kind = ui.theme;
+    const uint32_t now = play ? plat_ms() : 0u, beat = 60000u / (uint32_t)(proj.par[P_TEMPO] > 0 ? proj.par[P_TEMPO] : 120);
+    uint32_t s = 0x9E3779B9u;
+    int i, x, y;
+    if (kind == 0) {                             /* Crimson: a blood moon, mist, dead hills */
+        bg_disc(176, 38, 26, mix(K_BG, RGB(224, 52, 79), 3));
+        bg_disc(176, 38, 20, mix(K_BG, RGB(224, 52, 79), 4));
+        for (i = 0; i < 30; i++) {
+            s = s * 1664525u + 1013904223u;
+            cv_pset((int32_t)(s >> 24) * 240 / 256, (int32_t)((s >> 16) & 255u) * 90 / 256, mix(K_BG, K_TEXT, 3 + (int)((s >> 8) & 3u)));
+        }
+        for (i = 0; i < 3; i++) {
+            const int off = play ? (int)((now >> 6) % 240u) : 0;
+            for (x = 0; x < 240; x += 24)
+                cv_rect((x + off * (i + 1) / 2 + i * 40) % 240, 92 + i * 14, 18 + i * 4, 2, mix(K_BG, K_DIM, 3));
+        }
+        for (x = 0; x < 240; x += 4) {
+            const int h = 10 + (int)((uint32_t)(x * 2654435761u) >> 28) + (int)(fm_sinf((float)x * 0.03f) * 8.0f + 8.0f);
+            cv_rect(x, MAIN_H - h, 4, h, mix(K_BG, K_PANEL, 7));
+        }
+    } else if (kind == 2) {                      /* Acid: lasers over an equalizer skyline */
+        const int sw = play ? (int)((now / 12u) % 240u) : 120, ph = play ? (int)(now / (beat / 4u + 1u)) : 0;
+        for (i = 0; i < 3; i++) {
+            const int ox = 30 + i * 90, tx = (sw + i * 70) % 240 - 120 + ox;
+            cv_line(ox, MAIN_H - 1, tx, 0, mix(K_BG, K_ACID, 4));
+            cv_line(ox, MAIN_H - 1, tx + 40, 0, mix(K_BG, K_ACID, 3));
+        }
+        for (i = 0; i < 24; i++) {
+            const uint32_t h = (uint32_t)(i * 2654435761u + (uint32_t)ph * 40503u) >> 24;
+            const int bh = play ? 6 + (int)(h % 26u) : 8 + (int)((uint32_t)(i * 2654435761u) >> 28);
+            cv_rect(i * 10, MAIN_H - bh, 8, bh, mix(K_BG, K_ACID, 3));
+            cv_rect(i * 10, MAIN_H - bh, 8, 1, mix(K_BG, K_ACID, 6));
+        }
+    } else if (kind == 3) {                      /* Ice: an aurora, mountains, snow */
+        const float t = (float)(now & 0xFFFFu) * 0.0004f;
+        for (i = 0; i < 3; i++)
+            for (x = 0; x < 240; x += 3) {
+                const int yy = 10 + i * 9 + (int)(fm_sinf((float)x * 0.035f + t * (float)(i + 1) + (float)i * 2.0f) * 7.0f + 7.0f);
+                cv_rect(x, yy, 3, 14, mix(K_BG, i == 1 ? K_PAD : i == 2 ? K_BASS : K_ACID, 3 + (i & 1)));
+            }
+        for (x = 0; x < 240; x += 2) {
+            const int h = 18 + (int)(((x * 7) % 64 > 32 ? 64 - (x * 7) % 64 : (x * 7) % 64)) + (int)(fm_sinf((float)x * 0.05f) * 6.0f);
+            cv_rect(x, MAIN_H - h, 2, h, mix(K_BG, K_LINE, 6));
+            cv_rect(x, MAIN_H - h, 2, 1, mix(K_BG, K_TEXT, 7));
+        }
+        for (i = 0; i < 36; i++) {
+            s = s * 1664525u + 1013904223u;
+            x = (int)(s >> 24) * 240 / 256 + (play ? (int)(fm_sinf((float)(now >> 8) * 0.3f + (float)i) * 3.0f) : 0);
+            y = (int)((((s >> 12) & 255u) * (uint32_t)MAIN_H / 256u) + (now >> 5) * (1u + (i & 3u))) % MAIN_H;
+            cv_pset(x < 0 ? 0 : x > 239 ? 239 : x, y, mix(K_BG, K_TEXT, 6 + (i & 3)));
+        }
+    } else if (kind == 4) {                      /* Ember: a glow from below, sparks rising */
+        for (i = 0; i < 8; i++)
+            cv_rect(0, MAIN_H - (i + 1) * 7, 240, 7, mix(K_BG, K_ACID, 7 - i * 6 / 8));
+        for (i = 0; i < 40; i++) {
+            s = s * 1664525u + 1013904223u;
+            x = (int)(s >> 24) * 240 / 256 + (play ? (int)(fm_sinf((float)(now >> 7) * 0.2f + (float)i) * 3.0f) : 0);
+            y = MAIN_H - 1 - (int)((((s >> 12) & 255u) * (uint32_t)MAIN_H / 256u) + (now >> 5) * (1u + (i & 3u))) % MAIN_H;
+            cv_pset(x < 0 ? 0 : x > 239 ? 239 : x, y, mix(K_BG, i & 1 ? K_ACC : K_PULSE, 7 + (y * 8 / MAIN_H)));
+        }
+    } else if (kind == 5) {                      /* Phosphor: scanlines, a grid, a sweep */
+        for (y = 0; y < MAIN_H; y += 3)
+            cv_rect(0, y, 240, 1, mix(K_BG, K_PANEL, 8));
+        for (x = 8; x < 240; x += 24)
+            for (y = 6; y < MAIN_H; y += 24)
+                cv_rect(x, y, 2, 2, mix(K_BG, K_LINE, 8));
+        if (play) {
+            const int sx = (int)((now / 14u) % 240u);
+            for (i = 0; i < 6; i++)
+                cv_rect(sx - i * 3, 0, 3, MAIN_H, mix(K_BG, K_PAD_T, 6 - i));
+        }
+    }
+}
+
 static void draw_main(void)
 {
     uint32_t h = hash(2166136261u, pool_abs() | (uint32_t)sound_root() << 12 | (uint32_t)en_frozen << 16 | proj.piece << 24 |
@@ -5532,7 +5919,17 @@ static void draw_main(void)
     if (ui.view == V_JAM) {                      /* the JAM page: the keyboard, its scale, what is held */
         h = hash(hash(0x4A414D31u, ui.keys | (uint32_t)ui.jam_voice << 27 | (uint32_t)ui.theme << 29), pool_abs() | (uint32_t)ui.jam_mode << 12 | (uint32_t)ui.jam_oct << 14 |
                                                                                                         (uint32_t)ui.jam_ans << 17 | (uint32_t)ui.ans_cnt << 18 | (uint32_t)ui.ans_playing << 22 | (uint32_t)ui.ans_i << 23);
-        h = hash(h, (uint32_t)ui.arp_mode | (uint32_t)ui.arp_rate << 5 | (uint32_t)ui.arp_range << 8 | (uint32_t)ui.ap_n << 10 | (uint32_t)ui.ap_on_n << 14 | (uint32_t)ui.jam_hold << 17 | (uint32_t)ui.jam_lvl << 18 | (uint32_t)ui.jv_w << 20);
+        h = hash(h, (uint32_t)ui.arp_mode | (uint32_t)ui.arp_rate << 5 | (uint32_t)ui.arp_range << 8 | (uint32_t)ui.arp_snd << 22 |  (uint32_t)ui.ap_n << 10 | (uint32_t)ui.ap_on_n << 14 | (uint32_t)ui.jam_hold << 17 | (uint32_t)ui.jam_lvl << 18 | (uint32_t)ui.jv_w << 20);
+        if ((ui.jam_pg == JPG_STEPS || ui.jam_pg == JPG_STEPS2)) {                /* the dots page: the steps, the playhead, the step chosen, recording */
+            int s;
+            as_sync();
+            for (s = 0; s < 16; s++)
+                h = hash(h, (uint32_t)ui.as_off[s] | (uint32_t)ui.as_oct[s] << 4 | (uint32_t)en_cm_rung[s] << 8 | (uint32_t)en_cm_lvl[s] << 12);
+            h = hash(h, (uint32_t)ui.as_gate | (uint32_t)ui.as_acc << 16);
+            h = hash(h, (uint32_t)ui.as_slide | (uint32_t)ui.jst_s << 16 | (uint32_t)ui.jst_line << 20 | (uint32_t)ui.jst_rec << 21 | (uint32_t)ui.jam_pg << 22);
+            h = hash(h, (uint32_t)en_acid_pos | (uint32_t)en_cm_pos << 8 | (uint32_t)en_playing << 16 | (uint32_t)proj.par[P_AC_LOCK] << 17 | (uint32_t)proj.par[P_CM_LOCK] << 18 | (uint32_t)proj.par[P_AC_LEN] << 19 | (ui.jst_rec ? ((ui.frame / 12u) & 1u) << 24 : 0u));
+            h = hash(h, (uint32_t)(jst_midi(ui.jst_s & 15) + 1));   /* (the note's name follows the chord) */
+        }
         if (h != ui.sig[1]) {
             ui.sig[1] = h;
             cv_begin(240, MAIN_H, K_BG);
@@ -5651,6 +6048,8 @@ static void draw_main(void)
     cv_begin(240, MAIN_H, K_BG);
     if (LOOK_SYNTH)
         draw_horizon();
+    else
+        draw_theme_bg();
     if (en_frozen) {                             /* the way to the next chord, top right (held: frozen) */
         cv_text(232 - text_w(&FONT_XS, "held"), 4, &FONT_XS, "held", K_FROST);
     } else {
@@ -5724,6 +6123,8 @@ static void draw_knobs(void)
     int now_touch = plat_ms() < ui.touch_until;
     for (i = 0; i < 4; i++)
         h = hash(h, (uint32_t)knob_get(view_knob((int)i)) + 100u);
+    if (jst_pg())
+        h = hash(h, (uint32_t)(jst_midi(ui.jst_s & 15) + 1));   /* (the Note knob's name follows the chord) */
     h = hash(h, (uint32_t)now_touch | (uint32_t)ui.fx_menu << 1 | (uint32_t)ui.fx_page << 2 | (uint32_t)fx_bank << 10 | (uint32_t)(ui.btn >> B_SEL & 1u) << 20 | (uint32_t)ui.jam_pg << 24);
     if (h == ui.sig[2])
         return;
@@ -5741,7 +6142,7 @@ static void draw_knobs(void)
         } else if (ui.fx_menu) {
             caps(t, ui.fx_page ? FXP[ui.fx_page - 1].name : "FX", sizeof t);
         } else if (ui.view == V_JAM) {
-            caps(t, FXP[NFXP - NJP + (ui.jam_pg & 3)].name, sizeof t);
+            caps(t, FXP[NFXP - NJP + (ui.jam_pg % NJP)].name, sizeof t);
         } else {
             caps(t, VIEW_NAME[ui.view], sizeof t);
         }
@@ -5951,6 +6352,12 @@ static void leds(void)
         as_sync();
         for (i = 0; i < 16; i++)
             if ((uint32_t)i == (uint32_t)(ui.astp & 15u) || (uint32_t)(ui.as_gate >> i & 1u) ^ (uint32_t)(en_playing && i == en_acid_pos))
+                k |= 1u << WHITE_KEY[i];
+    } else if (jst_pg() && !ui.jst_rec) {   /* the dots page: the steps set lit among the white keys, the step chosen too */
+        if (ui.jst_line)
+            as_sync();
+        for (i = 0; i < 16; i++)
+            if ((uint32_t)i == (uint32_t)(ui.jst_s & 15u) || (uint32_t)(ui.jst_line ? ui.as_gate >> i & 1u : en_cm_lvl[i] != 0) ^ (uint32_t)(en_playing && i == (uint32_t)(ui.jst_line ? en_acid_pos : en_cm_pos)))
                 k |= 1u << WHITE_KEY[i];
     } else if (ui.view == V_CMSTEP) {            /* the pluck steps: likewise */
         for (i = 0; i < 16; i++)
@@ -6271,7 +6678,7 @@ static void arp_tick(void)                       /* each frame */
         }
     }
     if (ui.ap_cur_n) {
-        ui.ap_vc = JVC[ui.jam_voice & 3];
+        ui.ap_vc = ui.arp_snd ? EN_V_ARP : JVC[ui.jam_voice & 3];   /* (1.0.4: the arp's own voice, if it has been given one) */
         for (k = 0; k < ui.ap_cur_n; k++) {
             ui.ap_on[k] = ui.ap_cur[k];
             en_note(ui.ap_vc, ui.ap_cur[k], 1);
@@ -6291,7 +6698,7 @@ static void jam_down(int i)
 {
     static const int8_t OFS[4] = {0, 0, 12, 24};   /* the engine plays the acid an octave and the drone two below the key */
     uint8_t nn[4];
-    const int n = jam_notes(i, nn), vc = ui.jam_voice & 3;
+    const int n = jam_notes(i, nn), vc = jst_pg() ? (ui.jst_line ? 2 : 0) : ui.jam_voice & 3;
     int k, others = 0;
     for (k = 0; k < NKEYS; k++)
         if (k != i)
@@ -6320,6 +6727,8 @@ static void jam_down(int i)
         jam_trail(ui.jam_note[i][k]);
     }
     jam_rec(nn[0]);
+    if (jst_pg() && ui.jst_rec && en_playing)
+        jst_record(nn[0]);
     if (en_playing) {                            /* Capture's memory: the note as heard, when, on which key and voice */
         const int w = ui.cap_w & 31;
         ui.cap_t[w] = (uint16_t)en_bars;
@@ -6409,6 +6818,49 @@ static void jam_capture(void)
         say("CAPTURED", "PLUCK LOOP");
     }
 }
+static void jst_clear_line(int line)             /* a line emptied (kept, so it stays empty) */
+{
+    int s;
+    if (line) {
+        as_sync();
+        for (s = 0; s < 16; s++)
+            as_put(s, 0, 0, 0);
+    } else {
+        ps_freeze();
+        for (s = 0; s < 16; s++)
+            en_pluck_step(s, 0, 0);
+        edited();
+    }
+}
+static void jst_clear(void)                      /* the dots page: the line being edited emptied */
+{
+    jst_clear_line(ui.jst_line);
+    say("CLEARED", ui.jst_line ? "ACID LINE" : "PLUCK LINE");
+}
+static void jst_rec_start(void)                  /* live record: the line held (what you play is kept), the pluck loud enough to play */
+{
+    if (ui.jst_line) {
+        knob_set(P_AC_LEN, 16);
+        knob_set(P_AC_LOCK, 1);
+    } else {
+        ps_freeze();
+        if (proj.par[P_CM_LVL] < 15)
+            knob_set(P_CM_LVL, 40);
+    }
+}
+static void jst_record(int note)                 /* a key played while recording: onto the nearest sixteenth (the one that is coming, in its second half) */
+{
+    const int pos = ui.jst_line ? en_acid_pos : en_cm_pos;
+    const uint32_t e = plat_ms() - ui.jst_pt;
+    const int s = (ui.jst_dt && e * 2u > ui.jst_dt ? pos + 1 : pos) & 15;
+    if (ui.jst_line)
+        en_acid_capture(s, note, (s & 3) == 0, 0);
+    else
+        en_pluck_capture(s, note);
+    jst_sel(s);
+    ui.as_t = 0;
+    edited();
+}
 static void jam_tick(void)                       /* the answer, on the sixteenths */
 {
     static uint32_t seen;
@@ -6448,11 +6900,87 @@ static void jam_tick(void)                       /* the answer, on the sixteenth
         ui.ans_cnt = 0;
     }
 }
+/* THE DOTS PAGE (1.0.4): the line as sixteen dots over the keyboard's white keys: white when empty, a colour when a step is set (the accent
+ * brighter, a slide joined to the next), the playhead above, the step chosen framed; below, the pitch of each step as a bar */
+static void draw_jsteps(void)
+{
+    const int ac = ui.jst_line, len = ac ? (proj.par[P_AC_LEN] < 1 ? 1 : proj.par[P_AC_LEN] > 16 ? 16 : proj.par[P_AC_LEN]) : 16, pos = ac ? en_acid_pos : en_cm_pos;
+    const uint16_t col = ac ? K_ACID : PLUCK_COL;
+    const char *nm = ac ? "ACID" : "PLUCK";
+    const int sel = ui.jst_s & 15;
+    int s;
+    char t[24];
+    if (ac)
+        as_sync();
+    cv_text(6, 2, &FONT_B, nm, col);
+    cv_text(6 + text_w(&FONT_B, nm) + 8, 6, &FONT_XS, "STEPS", K_DIM);
+    if (ui.jst_rec && ((ui.frame / 12u) & 1u || !en_playing)) {
+        cv_disc(214, 8, 4, RGB(255, 60, 60));
+        cv_text(160, 6, &FONT_XS, en_playing ? "RECORDING" : "PRESS PLAY", RGB(255, 60, 60));
+    } else if (!ui.jst_rec) {
+        cv_text(150, 6, &FONT_XS, (ac ? proj.par[P_AC_LOCK] : proj.par[P_CM_LOCK]) ? "KEPT" : "FREE: IT EVOLVES", K_DIM);
+    }
+    for (s = 0; s < 16; s++) {
+        const int32_t x0 = 8 + s * 14, cx = x0 + 6;
+        const int kind = ac ? as_kind(s) : (en_cm_lvl[s] ? (en_cm_lvl[s] == 3 ? 2 : 1) : 0), beyond = s >= len;
+        const int slide = ac && kind >= 3, accent = ac ? (kind == 2 || kind == 4) : en_cm_lvl[s] == 3;
+        const int p = ac ? ui.as_off[s] + 7 * ui.as_oct[s] : (int)en_cm_rung[s] * 3;
+        const int32_t h = 3 + (ac ? p : p) * 36 / (ac ? 32 : 33);
+        if (s == sel)
+            cv_rect(x0 - 1, 22, 14, 70, K_PANEL);
+        if (s % 4 == 0)
+            cv_rect(x0 - 2, 22, 1, 70, K_LINE);
+        if (kind) {
+            const uint16_t c = beyond ? K_DIM : accent ? K_ACC : col;
+            cv_disc(cx, 38, accent ? 6 : 5, c);
+            if (slide)
+                cv_rect(cx + 5, 37, 9, 3, beyond ? K_DIM : col);
+            cv_rect(x0 + 2, 88 - h, 8, h, c);
+        } else {
+            cv_disc(cx, 38, 5, beyond ? K_DIM : K_TEXT);
+            cv_disc(cx, 38, 3, K_BG);
+            cv_rect(x0 + 4, 87, 4, 1, K_LINE);
+        }
+        if (en_playing && s == pos)
+            cv_rect(x0 + 1, 26, 10, 3, K_TEXT);
+        if (s == sel)
+            cv_rect(x0 - 1, 91, 14, 2, K_ACC);
+    }
+    {
+        static const char *const AK[5] = {"REST", "NOTE", "ACCENT", "SLIDE", "ACCENT + SLIDE"};
+        static const char *const PK[4] = {"REST", "SOFT", "NOTE", "ACCENT"};
+        int n = 0;
+        const char *q = "STEP ";
+        while (*q)
+            t[n++] = *q++;
+        itoa_u((uint32_t)sel + 1u, t + n);
+        cv_text(6, 98, &FONT_XS, t, K_TEXT);
+        cv_text(52, 98, &FONT_XS, ac ? AK[as_kind(sel)] : PK[en_cm_lvl[sel] & 3], (ac ? as_kind(sel) : en_cm_lvl[sel]) ? K_ACC : K_DIM);
+        {
+            char nb[8];
+            note_name(jst_midi(sel), nb);
+            cv_text(176, 98, &FONT_XS, nb, (ac ? as_kind(sel) : en_cm_lvl[sel]) ? K_TEXT : K_DIM);
+        }
+    }
+    if (ui.jam_pg == JPG_STEPS2) {
+        cv_text(6, 108, &FONT_XS, ui.jst_clr ? "PRESS REC TO CLEAR" : "CLEAR: TURN IT, THEN PRESS REC", ui.jst_clr ? K_ACC : K_TEXT);
+        cv_text(6, 118, &FONT_XS, "KEEP: THE LINES STAY AS MADE", K_DIM);
+        cv_text(6, 128, &FONT_XS, "RANGE: PLUCK OCTAVES  LENGTH: ACID", K_DIM);
+        return;
+    }
+    cv_text(6, 108, &FONT_XS, ui.jst_rec ? "PLAY KEYS: THEY GO ONTO THE STEPS" : "WHITE KEYS: CHOOSE A STEP", K_TEXT);
+    cv_text(6, 118, &FONT_XS, ui.jst_rec ? "REC: STOP" : "REC: PLAY IT IN LIVE   SEL+REC: CLEAR", K_DIM);
+    cv_text(6, 128, &FONT_XS, (ui.jst_line ? proj.par[P_AC_LOCK] : proj.par[P_CM_LOCK]) ? "KEPT: FREE IT ON JAM SOUND (KEEP)" : "FREE: IT EVOLVES. KNOBS: LINE STEP TYPE NOTE", K_DIM);
+}
 static void draw_jam(void)
 {
     const uint32_t pool = pool_abs();
     int w, j;
     char t[16];
+    if ((ui.jam_pg == JPG_STEPS || ui.jam_pg == JPG_STEPS2)) {
+        draw_jsteps();
+        return;
+    }
     {   /* the trail: the notes just played, newest on the right, taller the higher */
         int q;
         for (q = 0; q < 32; q++) {
@@ -6690,7 +7218,7 @@ static void settings_load(void)
     for (p = 0; p < NFXP; p++)
         for (c = 0; c < 4; c++) {
             const int k = K_FXP + 4 * p + c, kind = FXP[p].c[c].kind;
-            if (kind == KN_NONE || kind == KN_PRESET || kind == KN_PAR || kind == KN_JSND)   /* (KN_PAR: the project's, not a setting) */
+            if (kind == KN_NONE || kind == KN_PRESET || kind == KN_PAR || kind == KN_JSND || kind == KN_JST || kind == KN_JKEEP || kind == KN_JCLR)   /* (KN_PAR: the project's, not a setting) */
                 continue;
             if (FXP[p].bit == 63) {              /* the UI's own (not the genre: 11) */
                 if (FXP[p].c[c].idx < 11)
@@ -6774,6 +7302,7 @@ static const uint8_t BIG_GLYPH[BIG_N][7] = {
 #define SPLASH_STEP_Y 184
 static void draw_hyp(void)
 {
+    static const char VER[] = "V" EN_VERSION;
     int g, r, c, pass;
     lcd_fill(0, 0, 240, 240, K_BG);
     cv_begin(240, 140, K_BG);
@@ -6786,6 +7315,9 @@ static void draw_hyp(void)
                                 pass ? K_PAD : K_ACC);
     text_c(120, 82, &FONT_XS, "BY POLYSTELLARFLOW", K_TEXT);   /* DARK-1: the maker, under the title */
     cv_blit(0, 46);                              /* DARK-1: the title alone (the credits are in the source and the docs) */
+    cv_begin(240, 16, K_BG);                     /* 1.0.4: the version, at the bottom */
+    text_c(120, 3, &FONT_XS, VER, K_DIM);
+    cv_blit(0, 214);
     for (c = 0; c < 16; c++)
         lcd_fill(8 + c * 14, SPLASH_STEP_Y, 11, 11, K_PANEL);
 }
@@ -6832,6 +7364,8 @@ void ui_init(void)
         ui.dj_fillon = 1;
         ui.mood = 50;                          /* the mood macro: the middle leaves the piece as it is */
         ui.jam_oct = 2;                        /* the JAM page: octave 0 */
+        ui.arp_dk = 1, ui.arp_lv = 1, ui.arp_tn = 1;          /* the arp's own voice (Sound: with the line until chosen): a medium decay, medium level */
+        arp_push();
         ui.jam_lvl = 1;                        /* Level: loud (a hand-played voice is lifted to at least 70) */
         ui.arp_rate = 2, ui.arp_range = 1, ui.arp_gate = 2;   /* the arp: 1/16, two octaves, half gate */
         ui.af_every = 1, ui.af_amt = 1, ui.af_len = 1;        /* Auto FX: every 4 bars, medium, half a bar */
@@ -6948,7 +7482,20 @@ void ui_frame(void)
     }
     {   /* the JAM page plays one voice by hand: its own line stops (the engine's hand switch, not the piece's setting), and comes back when you leave */
         static const uint8_t MAN[4] = {P_CM_MAN, P_PAD_MAN, P_AC_MAN, P_DR_MAN};
-        const int want = ui.view == V_JAM ? 1 + (ui.jam_voice & 3) : 0;
+        ui.jam_voice &= 2;                       /* (1.0.4: the pluck or the acid only: the pad and the bass have no line) */
+        const int want = ui.view == V_JAM && !jst_pg() ? 1 + (ui.jam_voice & 3) : 0;   /* (the dots page leaves the lines playing) */
+        if (!(jst_pg())) {
+            ui.jst_rec = 0;
+        } else {
+            const uint8_t pos = ui.jst_line ? en_acid_pos : en_cm_pos;
+            if (pos != ui.jst_pos) {
+                const uint32_t t = plat_ms();
+                if (t - ui.jst_pt < 2000u)
+                    ui.jst_dt = t - ui.jst_pt;
+                ui.jst_pt = t;
+                ui.jst_pos = pos;
+            }
+        }
         const uint8_t jkey = (uint8_t)(want ? want | (ui.jam_lvl & 3) << 3 : 0);
         if (jkey != ui.jam_key) {                /* Level: the voice played by hand is lifted to a floor (and the pad's attack is quick), and put back after */
             static const uint8_t LV[4] = {P_CM_LVL, P_PAD, P_ACID, P_BASS}, FL[4] = {0, 70, 85, 100};
@@ -6965,12 +7512,9 @@ void ui_frame(void)
                     en_set(P_PE_ATK, 12);
             }
         }
-        if (want != ui.jam_man) {
-            if (ui.jam_man)
-                en_set(MAN[ui.jam_man - 1], proj.par[MAN[ui.jam_man - 1]]);
-            if (want)
-                en_set(MAN[want - 1], 1);
-            ui.jam_man = (uint8_t)want;
+        if (ui.jam_man) {                        /* (1.0.4: the lines are never taken off any more: they play on whatever Jam page is open; a hand taken off by an older state goes back) */
+            en_set(MAN[ui.jam_man - 1], proj.par[MAN[ui.jam_man - 1]]);
+            ui.jam_man = 0;
         }
     }
     autosave();

@@ -1,0 +1,61 @@
+# The dots page (1.0.4): the Jam page's third page, sixteen dots, REC plays a line in live, SEL+REC clears it.
+seed 0
+wait 3000
+turn SELECT 28 100
+expect view 31
+spin SELECT 1
+spin SELECT 1
+wait 200
+shot jamsteps_pluck.png
+tapkey w3
+wait 200
+spin K2 2
+wait 200
+shot jamsteps_edit.png
+tap REC
+wait 300
+tapkey w0
+wait 469
+tapkey w2
+wait 469
+tapkey w4
+wait 469
+tapkey w2
+wait 700
+shot jamsteps_rec.png
+tap REC
+wait 300
+spin K1 1
+wait 200
+shot jamsteps_acid.png
+tap REC
+tapkey w0
+wait 469
+tapkey w2
+wait 469
+tapkey w5
+wait 700
+shot jamsteps_acidrec.png
+tap REC
+press SEL
+tap REC
+release SEL
+wait 300
+shot jamsteps_cleared.png
+# the Step knob (K2) walks the steps and the Note knob (K4) scrolls the notes of the scale up through the octaves; turning it on an empty step sets a note
+tap REC
+spin K1 -1
+wait 100
+spin K2 3
+wait 100
+spin K4 14
+wait 200
+shot jamsteps_noteknob.png
+# the acid: Note scrolls through the octaves (0 .. 47), on a rest it makes a note
+spin K1 1
+wait 100
+spin K2 -20
+wait 100
+spin K4 30
+wait 200
+shot jamsteps_acidnote.png

@@ -1,6 +1,7 @@
 # DARK-1 1.0.4: the acid's answer page is gone from the walk (ARP x4 goes from Acid line to Acid steps); the engine's answer setting still works if set.
 seed 0
 wait 500
+adv 1
 tap GLO
 tap ARP
 tap ARP

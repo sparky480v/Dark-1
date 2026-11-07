@@ -2,6 +2,7 @@
 # goes quiet. Keys: notes 48 + k; buttons: CC 102 + b; knobs: CC 85 + role (64 + detents); CC 116:
 # hello. The browser's lights come back the same way, CC 117 saying it's there. SEL + GLO: back.
 wait 500
+adv 1
 expect playing 1
 expect remote 0
 # playing, SEL + GLO only says so (it would stop the music); stopped, it goes

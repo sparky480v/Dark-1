@@ -1,6 +1,7 @@
 # the looks: the splash, then the home screen in the Imp theme and in the Synth theme, the eye and the imp in the sigil
 seed 0
 wait 400
+adv 1
 shot splash.png
 wait 2600
 tap PLAY

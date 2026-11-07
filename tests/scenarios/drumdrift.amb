@@ -1,5 +1,6 @@
 # Drum drift (SEQ four times): the patterns change by themselves, a fill the bar before, and mutate.
 wait 1500
+adv 1
 expect playing 1
 tap SEQ
 tap SEQ

@@ -2,6 +2,7 @@
 # (the segments of an eighth should repeat sample for sample). Then the roll (bank 1, G#4 = key 15), recorded too.
 seed 0
 wait 4000
+adv 1
 tap FX
 wait 100
 spin SELECT 1

@@ -12,8 +12,8 @@
 
 const char *const EN_NOTE_NAME[12] = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"};
 const char *const EN_MODE_NAME[EN_NMODES] = {"Ionian", "Dorian", "Phrygian", "Lydian", "Mixolyd.", "Aeolian",
-                                             "Pent maj", "Pent min", "Locrian", "Harm min", "Phryg dom", "Dbl harm", "Whole tone", "Blues min",
-                                             "Hung min", "Neapol min", "Dim W-H", "Persian"};
+                                             "Pent maj", "Pent min", "Locrian", "Harm min", "Phryg dom", "Dbl harm", "Wholetone", "Blues min",
+                                             "Hung min", "Neapol. m", "Dim W-H", "Persian"};
 #define B(a, b, c, d, e, f, g) (1u << (a) | 1u << (b) | 1u << (c) | 1u << (d) | 1u << (e) | 1u << (f) | 1u << (g))
 const uint16_t EN_MODE_POOL[EN_NMODES] = {
     B(0, 2, 4, 5, 7, 9, 11), B(0, 2, 3, 5, 7, 9, 10), B(0, 1, 3, 5, 7, 8, 10), B(0, 2, 4, 6, 7, 9, 11),
@@ -447,7 +447,7 @@ void en_param_text(int i, int v, char *b)
     }
     if (s) {
         int k = 0;
-        while (s[k] && k < 9) {
+        while (s[k] && k < 12) {
             b[k] = s[k];
             k++;
         }
@@ -2316,10 +2316,20 @@ static const cm_snd_t CM_SOUND[CM_NPLAIN] = {
     {1.0f, 0.0f, 0.0f, 0, 1.15f},    /* Bleep: a plain sine */
     {7.01f, 0.1f, 1.0f, 0, 0.9f},    /* Glass */
 };
+/* 1.0.5: more sounds for the arp alone (arp_snd 13 on), dark techno: sharp saw-like plucks, stabs, a sub and metal; the pluck's own list is unchanged */
+#define ARP_NX 6
+static const cm_snd_t ARP_X[ARP_NX] = {
+    {1.0f, 0.9f, 2.8f, 0, 1.0f},     /* Saw pluck */
+    {1.5f, 0.5f, 2.4f, 0, 1.0f},     /* Dark stab */
+    {2.0f, 0.8f, 3.0f, 0, 0.9f},     /* Rave stab */
+    {0.5f, 0.3f, 2.0f, 0, 1.1f},     /* Sub zap */
+    {5.19f, 0.2f, 1.6f, 0, 0.9f},    /* Metal tick */
+    {1.41f, 0.3f, 2.2f, 0, 0.95f},   /* Iron bell */
+};
 const char *EN_CM_SOUND[EN_NCMSND] = {"Pluck", "Marimba", "E.Piano", "Kalimba", "Bell", "Vibes", "Gong", "Clav", "Digital", "Brass", "Bleep", "Glass",
-    "DK TINE EP", "GLASS TOLL", "SUB PULSE", "DREAD BRSS", "GHOST PAD", "LOG SKIN", "COLD ORGAN", "BONE PICK", "BLACK BRSS", "IRON BASS", "CATHEDRAL", "HOLLOW WD", "CLAV BITE", "FUNERAL ST", "SHARD PAD", "WRAITH LD", "DIRGE HARP", "DEAD KALIM", "BREATH FLT", "RUST PANS", "REESE BASS", "DOOM TUBUL", "SLIDE MOAN", "WIRE GTR", "DEAD MUTE", "DRIVE GTR", "ROT SLAP", "SIREN BRSS", "COLD SAX", "MUTE HORN",
-    "ASH PIANO", "VOID BELL", "GRAVE VOX", "TAR STAB", "HEX BASS", "MOLD WIND", "CRYPT HARP", "NEON KNELL",
-    "TOMB GONG", "COLD HARPSI", "RAVEN CALL", "ACID RAIN", "COAL DRUM", "WIDOW FLUTE", "GRIM STRNG", "HOLLOW BELL", "SLAG LEAD", "DUSK CHOIR",
+    "TINE EP", "GLS TOLL", "SUB PULSE", "DREAD BRS", "GHOST PAD", "LOG SKIN", "CLD ORGAN", "BONE PICK", "BLK BRASS", "IRON BASS", "CATHEDRAL", "HOLLOW WD", "CLAV BITE", "FUNRL STR", "SHARD PAD", "WRAITH LD", "DIRGE HRP", "DEAD KAL", "BRTH FLUT", "RUST PANS", "REESE BAS", "DOOM TUB", "SLD MOAN", "WIRE GTR", "DEAD MUTE", "DRIVE GTR", "ROT SLAP", "SIREN BRS", "COLD SAX", "MUTE HORN",
+    "ASH PIANO", "VOID BELL", "GRAVE VOX", "TAR STAB", "HEX BASS", "MOLD WIND", "CRYPT HRP", "NEON KNL",
+    "TOMB GONG", "CLD HARPS", "RAVEN CLL", "ACID RAIN", "COAL DRUM", "WIDOW FLT", "GRIM STR", "HOLLOW BL", "SLAG LEAD", "DUSK CHR",
     "(empty)", "(empty)"};
 const char *const EN_CM_STYLE[EN_NCMSTYLE] = {"Up", "Down", "Up-down", "Random", "Skip", "Thirds"};
 const char *const EN_CM_RATE[4] = {"1/4", "3/16", "1/8", "1/16"};   /* slowest to fastest */
@@ -5466,7 +5476,7 @@ static void drain(void)
         case C_USERCLEAR: fm_user_wipe(); break;
         case C_ARPCFG:
             if (a == 0)
-                arp_snd = (uint8_t)(b < 0 ? 0 : b > CM_NPLAIN ? CM_NPLAIN : b);
+                arp_snd = (uint8_t)(b < 0 ? 0 : b > CM_NPLAIN + ARP_NX ? CM_NPLAIN + ARP_NX : b);
             else if (a == 1)
                 arp_dec = (uint8_t)(b < 0 ? 0 : b > 100 ? 100 : b);
             else if (a == 3)
@@ -6019,8 +6029,8 @@ static void render_cm(uint32_t n)
 
 static void render_arp(uint32_t n)
 {
-    const cm_snd_t *S = &CM_SOUND[arp_snd > 0 ? arp_snd - 1 : 0];
-    const float lv = (float)arp_lvl * 0.01f, g = lv * lv * 0.5f * S->g;
+    const cm_snd_t *S = arp_snd > CM_NPLAIN ? &ARP_X[arp_snd - CM_NPLAIN - 1] : &CM_SOUND[arp_snd > 0 ? arp_snd - 1 : 0];
+    const float lv = (float)arp_lvl * 0.01f, g = lv * lv * 2.0f * S->g;   /* (1.0.5: x4, the arp's own voice sat about 12 dB under the line voice it replaces) */
     int v;
     uint32_t j;
     if (!arp_snd || g <= 0.0f) {

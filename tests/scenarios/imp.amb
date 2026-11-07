@@ -2,6 +2,7 @@
 # Screenshots only: look at them.
 seed 0
 wait 3000
+adv 1
 expect theme 0
 tap GLO
 wait 300

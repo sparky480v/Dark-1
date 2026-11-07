@@ -1,6 +1,7 @@
 # The effects' edit pages draw the effect from its settings (screenshots only: look at them).
 seed 0
 wait 3000
+adv 1
 press SEL
 tap FX
 release SEL

@@ -145,7 +145,7 @@ typedef struct {
     int16_t lo, hi, def;
 } en_param_t;
 const en_param_t *en_param_info(int i);
-void en_param_text(int i, int v, char *buf);   /* the value as the screen shows it (10 bytes) */
+void en_param_text(int i, int v, char *buf);   /* the value as the screen shows it (16 bytes) */
 
 /* commands (main loop -> render) */
 void en_init(void);

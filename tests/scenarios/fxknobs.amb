@@ -2,6 +2,7 @@
 # piece's: not stored. The audio (fxknobs.wav) has each in its own stretch, for listening:
 #   4 s filter left (low-pass) 3 s, 7 s filter right (high-pass) 3 s, 10 s crush 3 s, 13 s throw 3 s, 16 s wash 3 s
 wait 4000
+adv 1
 wav fxknobs.wav
 tap FX
 wait 200

@@ -1,6 +1,7 @@
 # the pieces: PRESETS picks one of ten (01 .. 10), each with its own settings and its own six drum
 # patterns; each remembers its changes while the power is on
 wait 500
+adv 1
 expect piece 0
 expect lane0 0x1111
 # 01's pad down (the Pad page: ENV): an edit, marked
@@ -55,6 +56,7 @@ expect par0 16
 expect lane0 0x1115
 # none of it stored: power off and on, all as it was made
 reboot
+adv 1
 wait 300
 expect piece 0
 expect par0 26

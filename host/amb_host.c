@@ -915,9 +915,10 @@ int main(int argc, char **argv)
             host_seamless = atoi(a);
         } else if (!strcmp(cmd, "battery")) {        /* battery N: the divider's ADC reading (0..1023; the indicator shows from about 500) */
             host_batt = (uint32_t)strtoul(a, 0, 10);
-        } else if (!strcmp(cmd, "emb")) {            /* emb N: the home screen's middle figure (EMB_*), kept for this piece */
-            sg.emb = (uint8_t)(atoi(a) % EMB_N);
-            sg.pc_seen = (uint16_t)(proj.genre * 16u + proj.piece + 1u);
+        } else if (!strcmp(cmd, "adv")) {            /* adv 0/1: the Advanced setting (every page shown); reboot clears it */
+            ui.adv = (uint8_t)atoi(a);
+        } else if (!strcmp(cmd, "setui")) {          /* setui N V: the UI's own setting N (as uivN reads it), for demonstrations */
+            *uiv(atoi(a)) = (uint8_t)atoi(b);
         } else if (!strcmp(cmd, "seed")) {           /* seed N: the next power-on's (reboot) */
             host_seed = (uint32_t)strtoul(a, 0, 10);
         } else if (!strcmp(cmd, "reboot")) {

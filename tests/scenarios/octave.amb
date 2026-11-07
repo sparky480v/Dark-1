@@ -1,6 +1,7 @@
 # OCT- / OCT+: on a voice's pages, that voice's octave (pad, drone, acid), 3 down to 3 up; on any other
 # page, the whole song's; stored with the piece
 wait 500
+adv 1
 # the Tempo page: the song
 expect view 0
 tap OCT+
@@ -61,6 +62,7 @@ tap SAVE
 tap PLAY
 wait 4000
 reboot
+adv 1
 wait 300
 expect par82 1
 expect par83 2

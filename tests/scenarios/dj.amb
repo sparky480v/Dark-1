@@ -3,6 +3,7 @@
 # and the groove again, on the bar clock. The timings below are for the first piece (seed 0).
 seed 0
 wait 1500
+adv 1
 # the groove length (8 bars) is on the PERFORM edit page now (the key it was on is the pluck's solo): SEL + FX, to page 17, Groove
 press SEL
 tap FX

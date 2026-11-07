@@ -1,5 +1,6 @@
 # freeze, next chord, stop, and power-on: the voices start fresh (seed 0: the first piece, exact)
 wait 2000
+adv 1
 tap REC
 wait 50
 expect frozen 1
@@ -26,6 +27,7 @@ expect pad_level <1
 shot stopped.png
 wait 5000
 reboot
+adv 1
 wait 300
 expect par0 26
 expect par45 -1

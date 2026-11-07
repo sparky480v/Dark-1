@@ -1,5 +1,6 @@
 seed 0
 wait 3000
+adv 1
 tap HOME
 wait 100
 tap HOME

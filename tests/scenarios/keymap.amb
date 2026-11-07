@@ -1,6 +1,7 @@
 # Key maps: GLO held on the perform screen shows the mix layer's map (and does not leave the page); SEL held alone for a
 # moment shows what the shift does (the sequencer's differs).
 wait 3000
+adv 1
 tap HOME
 wait 100
 expect view 33

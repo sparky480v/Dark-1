@@ -5,7 +5,7 @@
   python3 tools/make_pages_site.py VERSION OUTDIR      (after tools/release.sh VERSION)
 
 OUTDIR gets index.html (the landing page), install/ (the web installer with the package in it),
-emu/ (the browser emulator), editor/ (the parameter and DX7 voice editor), manual/ and firmware/perf1-VERSION.fwsc.
+emu/ (the browser emulator), editor/ (the parameter and DX7 voice editor), manual/ and firmware/DARK-1-VERSION.fwsc.
 All links are relative, so it works at any path (https://USER.github.io/PERF-1/ and a local server alike)."""
 import json
 import re
@@ -20,7 +20,7 @@ from make_site import product_of, strip_module  # noqa: E402
 ver = sys.argv[1] if len(sys.argv) > 1 else sys.exit(__doc__)
 OUT = Path(sys.argv[2] if len(sys.argv) > 2 else SRC / "build" / "site")
 REPO = "https://github.com/sparky480v/Dark-1"
-pkg = SRC / "build" / f"amb-{ver}.fwsc"
+pkg = SRC / "build" / f"DARK-1-{ver}.fwsc"
 raw = pkg.read_bytes()
 product = product_of(raw)
 if not re.fullmatch(r"FM-1_32\d{6}", product):
@@ -33,7 +33,7 @@ if OUT.exists():
 for d in ("install", "firmware", "img", "manual/img"):
     (OUT / d).mkdir(parents=True, exist_ok=True)
 (OUT / ".nojekyll").write_text("", encoding="utf-8")
-name = f"perf1-{ver}.fwsc"
+name = f"DARK-1-{ver}.fwsc"
 shutil.copy(pkg, OUT / "firmware" / name)
 shutil.copytree(SRC / "build" / "emu", OUT / "emu")
 shutil.copy(SRC / "web" / "img" / "dark1.png", OUT / "img" / "dark1.png")

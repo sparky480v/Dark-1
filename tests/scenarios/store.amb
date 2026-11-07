@@ -1,6 +1,7 @@
 # storing a piece: on Global, SAVE stores the piece as it is (its settings and its six patterns); it
 # goes to flash at once (playing, the music pauses a moment for it). Held, the piece goes back to its factory settings and out of the store.
 wait 500
+adv 1
 expect saved 0
 expect dirty 0
 # change 01: the pad down, a kick on step 3, the snare's level
@@ -49,6 +50,7 @@ spin K1 5
 expect edited 2
 # power off and on (seed 0: 01): 01 as stored, 02 its factory settings, the theme kept
 reboot
+adv 1
 wait 300
 expect piece 0
 expect saved 1
@@ -63,6 +65,7 @@ turn PRESET -1
 # a stored piece is not nudged at power-on: seed 3 lands on 08; store it, then come back to it
 seed 3
 reboot
+adv 1
 wait 300
 expect piece 7
 expect tempo 126
@@ -77,6 +80,7 @@ wait 300
 expect saved 0x81
 expect store_writes >2
 reboot
+adv 1
 wait 300
 expect piece 7
 expect saved 0x81
@@ -84,6 +88,7 @@ expect saved 0x81
 expect tempo 131
 seed 0
 reboot
+adv 1
 wait 300
 # SAVE held on Global: 01 back to its factory settings, out of the store
 tap GLO
@@ -104,6 +109,7 @@ expect dirty 0
 expect playing 1
 # written at once, playing: powered off now, it stays factory
 reboot
+adv 1
 wait 300
 expect saved 0x80
 expect par0 26

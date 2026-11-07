@@ -1,6 +1,7 @@
 # the links: the drums into the voices. SEQ again from Drums: the Links page (the amounts); SEL + SEQ
 # turns them on and off (no sequencer for that hold); stored with the piece
 wait 500
+adv 1
 expect par77 0
 tap SEQ
 expect view 18

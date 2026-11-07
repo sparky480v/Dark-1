@@ -2,6 +2,7 @@
 # closes. The page's effect is on while it is up. The gate's page: the white keys are the pattern's steps, the knobs
 # the pattern (a name), the loop's length, the targets, the depth.
 wait 3000
+adv 1
 expect fxpage -1
 # SEL + FX: the first edit page, the gate
 press SEL

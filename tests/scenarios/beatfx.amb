@@ -3,6 +3,7 @@
 # they are on the first page. The first page keeps the rest (sweep, ring mod, freeze, reverse swell moved there). And the small
 # shortcuts: FX + OCT- everything back, GLO + B3 undo, GLO + E4 tap tempo.
 wait 3000
+adv 1
 tap FX
 wait 100
 expect fxbank 0

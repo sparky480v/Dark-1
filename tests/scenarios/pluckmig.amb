@@ -2,6 +2,7 @@
 # (the bank written by this firmware has its mark in the header; one marked as older is renumbered when it loads).
 seed 0
 wait 3000
+adv 1
 setpar 99 34
 wait 100
 expect par99 34
@@ -11,6 +12,7 @@ wait 500
 expect saved 1
 # as written now: it comes back as it is
 reboot
+adv 1
 wait 500
 expect par99 34
 # as an older firmware wrote it: a user voice's number, renumbered
@@ -20,5 +22,6 @@ tap SAVE
 wait 500
 oldimage
 reboot
+adv 1
 wait 500
 expect par99 50

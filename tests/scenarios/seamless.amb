@@ -2,6 +2,7 @@
 # (Without it, `seamless 0`, the music fades out for the write, as store.amb checks.)
 seed 0
 wait 3000
+adv 1
 seamless 1
 tap GLO
 tap SAVE

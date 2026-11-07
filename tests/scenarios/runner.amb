@@ -1,6 +1,7 @@
 # The secret (SEL + EDIT): KICK RUNNER. A tunnel a ring a beat; the kicks send walls and gates; each gate
 # brings a part of the track back (the mutes lifted), a wall takes one away. SELECT, OCT-/OCT+ steer.
 wait 1500
+adv 1
 expect playing 1
 # playing, SEL + EDIT only says so; stopped, it starts the game and the music
 press SEL

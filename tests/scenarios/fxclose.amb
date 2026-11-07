@@ -2,6 +2,7 @@
 # (fxpage: -1 the menu is closed, 0 its keys)
 seed 0
 wait 500
+adv 1
 tap FX
 expect fxpage 0
 tap ENV

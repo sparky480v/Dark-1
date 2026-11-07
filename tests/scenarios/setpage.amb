@@ -1,6 +1,7 @@
 # the SET page (after USB & MIDI on the dial): Rounds, Ramp, Intro; the intro's countdown in the header once playing
 seed 0
 wait 3000
+adv 1
 press HOME
 wait 900
 release HOME

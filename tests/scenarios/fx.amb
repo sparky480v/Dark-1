@@ -1,6 +1,7 @@
 # FX: one press, the menu (and the keys are effects while held); again, off. The audio (fx.wav) has
 # each effect in its own stretch, for listening: the times are in the comments.
 wait 4000
+adv 1
 wav fx.wav
 wait 4000
 tap FX

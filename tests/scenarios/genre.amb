@@ -2,6 +2,7 @@
 # number plays. A genre brings its effects (from dark_presets.h) and its tempo. Only the first bank stores.
 seed 0
 wait 3000
+adv 1
 expect genre 0
 expect piece 0
 expect tempo 130

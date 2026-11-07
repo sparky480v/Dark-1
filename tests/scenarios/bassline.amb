@@ -1,6 +1,7 @@
 # The Bass line page (the LFO button's fourth page, after Drone LFO): the drone as notes. Mode, Length, Move, Glide; stored with the piece.
 seed 0
 wait 3000
+adv 1
 turn SELECT 8 100
 expect view 8
 expect par152 6

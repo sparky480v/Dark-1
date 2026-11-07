@@ -1,6 +1,7 @@
 # A screenshot for the README: the master bus page working hard (a 6:1 compressor well below the music's level, the limiter's ceiling lowered), the reduction meters moving.
 seed 0
 wait 3000
+adv 1
 # a visualizer with the knobs at home (the other scenarios' shots have a filter turned)
 tap HOME
 wait 100

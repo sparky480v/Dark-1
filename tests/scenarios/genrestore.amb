@@ -1,6 +1,7 @@
 # Every genre stores: lofi piece 3 with its pad level changed, saved; another genre and back brings it as saved; so does a power cycle.
 seed 0
 wait 3000
+adv 1
 press GLO
 turn PRESET 1
 release GLO
@@ -36,6 +37,7 @@ expect saved 4
 expect par0 52
 # a power cycle: the original genre again at power-on, lofi by the dial: still saved
 reboot
+adv 1
 wait 500
 expect genre 0
 press GLO
@@ -58,6 +60,7 @@ release SEL
 wait 600
 expect saved 0
 reboot
+adv 1
 wait 500
 press GLO
 turn PRESET 1

@@ -1,6 +1,7 @@
 # DARK-1 1.0.4: the JAM SOUND page has one list of the sounds the step lines play: the pluck's, then the acid's; the voice follows the sound.
 seed 0
 wait 3000
+adv 1
 turn SELECT 28 100
 expect view 31
 spin SELECT 1

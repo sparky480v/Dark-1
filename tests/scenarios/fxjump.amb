@@ -2,6 +2,7 @@
 # scatter on the beat page, a Flex pad (and the page shows its bar), a sampler key; an effect with no settings says so.
 seed 0
 wait 3000
+adv 1
 tap FX
 wait 100
 press SEL

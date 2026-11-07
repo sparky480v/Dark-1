@@ -184,7 +184,7 @@ int main(void)
 
     /* texts */
     {
-        char t[12];
+        char t[16];
         en_genre(1);                             /* DARK-1: HORROR changes chords on Drift's clock (the first genre counts in bars) */
         en_param_text(P_DRIFT, 0, t);
         CHECK(!strcmp(t, "20s"), "drift 0: %s", t);

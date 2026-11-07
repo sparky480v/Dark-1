@@ -2,6 +2,7 @@
 # after it nothing else is written until the restart; a damaged one is refused.
 seed 0
 wait 3000
+adv 1
 tap GLO
 tap SAVE
 wait 500
@@ -19,6 +20,7 @@ wait 800
 expect storelock 1
 # a restart: unlocked, and a damaged object is not valid and not written
 reboot
+adv 1
 wait 500
 expect storelock 0
 expect rsstate 0

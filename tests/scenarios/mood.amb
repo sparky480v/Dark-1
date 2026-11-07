@@ -2,6 +2,7 @@
 # each listed setting moved by its share (here the acid's density, 60 in the first piece, by 30 at the ends); the piece keeps its own.
 seed 0
 wait 3000
+adv 1
 expect mood 50
 expect moodacid 35
 tap HOME

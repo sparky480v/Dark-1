@@ -1,6 +1,7 @@
 # The dots page (1.0.4): the Jam page's third page, sixteen dots, REC plays a line in live, SEL+REC clears it.
 seed 0
 wait 3000
+adv 1
 turn SELECT 28 100
 expect view 31
 spin SELECT 1

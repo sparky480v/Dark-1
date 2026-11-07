@@ -1,9 +1,11 @@
 # power-on: with a seed, a piece at random, its recipe nudged (seed 0, the tests' default: the first, exact)
 wait 300
+adv 1
 expect piece 0
 expect tempo 130
 seed 2
 reboot
+adv 1
 wait 300
 # piece 09 (Warehouse, 136 BPM), nudged, with its own drum patterns (its second, "floor")
 expect piece 8

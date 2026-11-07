@@ -1,5 +1,24 @@
 # DARK-1 changelog
 
+## 1.0.5
+
+- **Shortcut menu:** tap SEL and a list of every shortcut opens and stays open. Turn SELECT for the next page (6 pages). SEL, HOME or any button closes it.
+- **Arp:** Hold now lives on the Arp page (next to the arp). The Jam page's knobs are Keys, Octave, Answer. Live step record (REC on Jam Steps) now works with the arp on. Six new dark techno arp sounds: Saw pluck, Dark stab, Rave stab, Sub zap, Metal tick, Iron bell. Arp Jump is no longer on a page (the pattern list still has Octaves).
+- **Pages:** the page toast now starts with SELECT so you know which knob turned the page. Plainer help text on the Jam Steps pages.
+
+* **The home page is a dark techno visualizer** (the Grid by default) with the chord's name on top and the Tempo, Evolve, Motion and Drift knobs below. **The Sigil, its figures (gravestone, skull, spider, bat, flame, moon, pyramid, pentagram, goat, hourglass, dagger, eclipse, scanner) and the painted theme backgrounds are removed.** Themes remain as the colours of the screen.
+* **New visualizers:** GRID (a dark floor of lines under a horizon that flares on the kick), PULSE (square frames thrown out of the middle) and SCAN (laser beams lit by the snare). The list is now Tunnel, Vortex, Bars, Stars, Rain, Storm, Ripples, Radar, Waterfall, Grid, Pulse, Scan and Auto. Plasma, Kaleido, Flux, Sigil, Life and Orbit are gone. HOME twice quickly opens the visualizers; the dial picks one.
+* **Every visualizer is dark:** mostly near black, a deep theme colour, the accent only at the peaks.
+* **Sound names fit their cell.** The 21 longest sound names and two scale names are shortened to nine letters or fewer.
+* **Advanced (hold HOME for Settings, knob 2).** Off by default. Off: the SELECT dial and the page buttons walk only the pages most people use (the envelope, LFO, links, drift, steps, feel, phrase, master and second pluck pages are hidden), and HOME no longer opens the Perform screen (Auto DJ and the scenes). On: everything, as before. Nothing is removed and stored pieces are unchanged.
+* **The settings are in order and explain themselves.** Settings: Saver, Advanced, Big text, Scanlines. USB & MIDI: Level, MIDI out, Lights, Voices. SET: Rounds, Ramp, Intro, Key. Auto DJ: Scenes, Groove, Break, Fill. Each of those pages now says in plain words what each of its knobs does.
+* **Big text (Settings, knob 3).** When on, the knob you turn fills the screen with its name and value in the largest type for a second. Kept with the settings; off by default.
+* **The arp keeps playing when you leave Jam** while its keys are held (or Hold is on).
+* **Live record has a count-in:** press REC and it starts recording from the next bar line ("COUNT-IN").
+* **Hold SEL for the shortcut list** (piece, sound, voice by hand, clear or capture, effects, genre, save, settings).
+* **Jam shows where you are:** turning the dial says "PAGE 3 OF 7". The REC help card lists live record and SEL + REC.
+* **START-HERE.md:** a one-page guide to the controls.
+
 ## 1.0.4
 
 * **A dots step editor on Jam (new Jam Steps page, the third page of Jam).** The pluck's line or the acid's line shows as a row of sixteen dots over the white keys: a dot is white when the step is empty and coloured when it holds a note (the accent is brighter, a slide is joined to the next dot), with the playhead above and the step you are on framed. Choose a step with a white key or the Step knob, then use the knobs: Line (Pluck or Acid), Step, Type (rest, note, accent, slide) and Note (one knob scrolls up through the scale's notes and octaves; turning it on an empty step sets a note). The line keeps playing while you edit it, and an edited line is kept with the piece.

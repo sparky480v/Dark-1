@@ -2,6 +2,7 @@
 # step) and a level; a white key chooses the step; stored with the piece (Global, SAVE) and back after a power cycle.
 seed 0
 wait 3000
+adv 1
 turn SELECT 20 100
 expect view 23
 expect mod0_2 0
@@ -43,6 +44,7 @@ wait 500
 expect saved 1
 expect dirty 0
 reboot
+adv 1
 wait 500
 expect mod0_2 83
 expect mod1_12 0

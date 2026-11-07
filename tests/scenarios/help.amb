@@ -1,6 +1,7 @@
 # help cards and the knobs (X0X's ways): a held button shows its card and then does nothing; a few
 # quick clicks are exact, a quick spin sweeps
 wait 300
+adv 1
 expect par0 26
 press REC
 wait 1000

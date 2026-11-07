@@ -1,6 +1,7 @@
 # the Chords page (ENV four times): the kind of chord, the voicing; Drift and Root as on their own pages.
 # Hypnos (01) is A Aeolian on its home chord: Am7 (A C E G).
 wait 800
+adv 1
 expect chordiv 0x40D
 tap ENV
 tap ENV

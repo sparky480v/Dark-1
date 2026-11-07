@@ -1,6 +1,7 @@
 # SEL held is a shift: white keys 1-6 the pattern (on the bar), PRESETS the piece on the next bar; in
 # the sequencer, black keys 1-6 copy the pattern there, OCT- clears the drum's lane, OCT+ puts it back
 wait 500
+adv 1
 expect pat 0
 expect pool 0x5AD
 # SEL + white key 3 (B3 is key 4... white keys: 0 2 4 6 7 9 11 12 ...): pattern 3, on the bar

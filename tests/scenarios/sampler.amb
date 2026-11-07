@@ -1,6 +1,7 @@
 # The DJ snips (the FX menu's fourth bank, the SELECT dial three times; they replaced the sampler): the keys are an air horn, a siren and more, sounding while they are held.
 seed 0
 wait 4000
+adv 1
 tap FX
 wait 100
 spin SELECT 1

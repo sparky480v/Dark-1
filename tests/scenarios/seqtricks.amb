@@ -2,6 +2,7 @@
 # that often). Here the kick (the lane that is first): eight hits are every other step; turned one on, the other ones; 80 percent.
 seed 0
 wait 3000
+adv 1
 press SEQ
 wait 500
 release SEQ

@@ -2,6 +2,7 @@
 # a pattern key held (plays that pattern only while down), scenes that carry the groove, the progression loop.
 seed 0
 wait 3000
+adv 1
 # the Groove page (SEQ x5: the dial, 17): the kick lane (the first), its density
 turn SELECT 19 100
 wait 300

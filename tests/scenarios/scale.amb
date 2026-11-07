@@ -1,5 +1,6 @@
 # the keys are the scale: toggles, the root stays, three notes at least; modes and the root
 wait 300
+adv 1
 # A Aeolian (Hypnos): A B C D E F G. F#3 is key 1: add F#
 tapkey 1
 expect pool 0x5A9

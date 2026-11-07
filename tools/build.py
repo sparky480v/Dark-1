@@ -359,7 +359,7 @@ def main():
             raise SystemExit(f"--release {a.release}: use X.Y[.Z][-suffix], up to two digits each")
         PRODUCT = "FM-1_" + ID_PREFIX + "%02d%02d%02d" % (int(m[1]), int(m[2]), int(m[3] or 0))
         VERSION = a.release.upper()
-        name = f"amb-{a.release}.fwsc"
+        name = f"DARK-1-{a.release}.fwsc"
     fm1pkg_make.SDK = a.sdk
     for rel, sha in SDK_SHA256.items():          # fail early without the SDK
         if hashlib.sha256(fm1pkg_make.sdk_file(rel)).hexdigest() != sha:

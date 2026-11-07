@@ -3,6 +3,7 @@
 # before the bar, nothing. (DARK-1: the first genre is 130 BPM, a bar 1846 ms, and its build is 8 bars.)
 wav sections.wav
 wait 300
+adv 1
 expect sec 0
 wait 62000
 expect sec 0

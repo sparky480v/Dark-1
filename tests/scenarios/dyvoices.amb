@@ -3,6 +3,7 @@
 # and the switch back works.
 seed 0
 wait 500
+adv 1
 setpar 98 80
 setpar 99 12
 wait 1000
@@ -11,6 +12,8 @@ wait 900
 release HOME
 wait 100
 expect fxpage 18
+spin SELECT 1
+wait 100
 expect dyvoices 1
 spin K4 -1
 wait 100
@@ -32,6 +35,8 @@ wait 900
 release HOME
 wait 100
 expect fxpage 18
+spin SELECT 1
+wait 100
 spin K4 1
 wait 100
 expect dyvoices 1

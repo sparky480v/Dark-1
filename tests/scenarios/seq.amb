@@ -2,6 +2,7 @@
 # lit where it hits, tapped to turn a hit on or off; OCT- / OCT+ the drum; it edits the pattern chosen;
 # stored with its piece (Global, SAVE)
 wait 500
+adv 1
 expect pat 0
 expect lane0 4369
 press SEQ
@@ -18,6 +19,7 @@ expect lane0 4369
 tapkey 4
 expect lane0 4373
 # SEL and SELECT edit nothing here
+tap SEL
 tap SEL
 expect lane0 4373
 # the snare (OCT+): the thirteenth white key (D5, key 21), step 13
@@ -72,6 +74,7 @@ expect dirty 0
 expect store_writes >0
 # power off and on: all of it kept
 reboot
+adv 1
 wait 300
 expect theme 2
 expect par48 2

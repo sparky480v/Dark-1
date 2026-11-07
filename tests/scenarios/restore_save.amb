@@ -2,6 +2,7 @@
 # store does not take its place and leave backup/restore refused until a restart (audit B-01)
 seed 0
 wait 3000
+adv 1
 tap GLO
 tap SAVE
 wait 500

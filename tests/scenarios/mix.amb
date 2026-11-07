@@ -3,6 +3,7 @@
 # acid 5, pad 6. Keys: F3 mute kick, F#3 solo kick, G3 hats, A3 snare, C4 perc, D4 drone, F4 acid, G4 pad,
 # A4 / A#4 mute / solo all four drums, B4 clear.
 wait 3000
+adv 1
 expect trkmute 0
 expect trksolo 0
 # GLO tapped: the Global page, as ever

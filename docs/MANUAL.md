@@ -1,4 +1,20 @@
-> **DARK-1:** this manual is PERF-1's and its controls are unchanged. Its genre and piece tables, tempo lists and named examples describe PERF-1's factory set; DARK-1's twenty-one genres and 210 pieces are described in [DARK-1.md](DARK-1.md) and in the page's preset browser. What DARK-1 1.0.3 and 1.0.4 add to the controls is listed in the sections "DARK-1 1.0.4" and "DARK-1 1.0.3: what is new on the controls" below.
+> **DARK-1:** this manual is PERF-1's and its controls are unchanged. Its genre and piece tables, tempo lists and named examples describe PERF-1's factory set; DARK-1's twenty-one genres and 210 pieces are described in [DARK-1.md](DARK-1.md) and in the page's preset browser. What DARK-1 1.0.3, 1.0.4 and 1.0.5 add to the controls is listed in the sections "DARK-1 1.0.5", "DARK-1 1.0.4" and "DARK-1 1.0.3: what is new on the controls" below. **Where an older part of this manual disagrees with the 1.0.5 section (the sigil, the eye, the figures, the old visualizers, the Hold SEL card, Hold on the first Jam page), the 1.0.5 section is right.**
+
+## DARK-1 1.0.5: what is new on the controls
+
+**The home screen** is now a dark visual that moves with the music, with the chord's name on top. The sigil, the eye and the figures are gone, and so are the themes' backgrounds. Press **HOME twice, quickly** to open the visuals and turn **SELECT** to change it (13 of them: Tunnel, Vortex, Bars, Stars, Rain, Storm, Ripples, Radar, Waterfall, Grid, Pulse, Scan and Auto). Press HOME once to go back. The choice is kept. The old Plasma, Kaleido, Flux, Eye, Disco, Life and Orbit visualizers were removed.
+
+**Tap SEL** (do not hold it) and a list of every shortcut opens and **stays open**. Turn **SELECT** for the next page (6 pages). SEL, HOME or any button closes it. Holding SEL and pressing another button still works as the shift (SEL + PLAY is Dice).
+
+**Pages.** Turn **SELECT** to scroll through the pages; a page change says "SELECT" and the page's name and number. Only the pages most people need are shown. To see every page, **hold HOME for a second** (Settings), turn **Advanced** (Knob 2) to ON, and press HOME. Nothing was deleted: Advanced shows the rest again.
+
+**Settings** (hold HOME): Saver, Advanced, Big text, Scanlines; then USB & MIDI, Set, Wander, Wander 2, Flex, Snips, Auto FX and Drum Vary. Every settings page has a short plain help text on the screen. **Big text** makes the knob you touch fill the screen.
+
+**Jam.** The first Jam page is now Keys, Octave and Answer. **Hold moved to Jam Arp**, next to Arp, Rate and Range (Arp, Hold, Rate, Range). Jam Arp 2 is Gate, Swing, Ratchet and Rests; Arp Jump is no longer on a page (the Octaves pattern is still there). The arp **keeps playing when you leave Jam**. **Live step record works with the arp on:** on Jam Steps press REC, wait for the count-in, then play the keys in time.
+
+**Six new arp sounds** on Jam Arp 3 (Sound): Saw pluck, Dark stab, Rave stab, Sub zap, Metal tick and Iron bell. The arp is also louder than in 1.0.4.
+
+**Sound names** are shorter so they are never cut off.
 
 ## DARK-1 1.0.4: what is new on the controls
 

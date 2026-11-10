@@ -2833,8 +2833,8 @@ static void button(int b)
             }
             if (group_of(v) == g && GROUP[g].n > 1)
             {
-                int nx = GROUP[g].first + (v - GROUP[g].first + 1) % GROUP[g].n, guard = 0;       /* inside: the next page (1.0.4: not the Acid answer's, nor the Acid steps and Pluck steps: the Jam Steps page replaced them) */
-                while ((nx == V_ACANS || nx == V_ACSTEP || nx == V_CMSTEP || (!ui.adv && view_adv(nx))) && guard++ < 16)
+                int nx = GROUP[g].first + (v - GROUP[g].first + 1) % GROUP[g].n, guard = 0;       /* inside: the next page (1.0.6: Advanced walks all of them; otherwise not the Acid answer's, nor the Acid steps and Pluck steps) */
+                while ((!ui.adv && (nx == V_ACANS || nx == V_ACSTEP || nx == V_CMSTEP || view_adv(nx))) && guard++ < 16)
                     nx = GROUP[g].first + (nx - GROUP[g].first + 1) % GROUP[g].n;
                 set_view(nx);
             }
@@ -3545,7 +3545,7 @@ static void input(void)
             say("VISUAL", VZ_NAME[ui.viz]);
         } else {
             int v = (ui.view == V_SEQ ? V_DRUMS : ui.view == V_PERF ? V_TEMPO : (int)ui.view) + (e > 0 ? 1 : -1);   /* (out of the sequencer and the perform screen too) */
-            while (v >= 0 && v < NDIAL && (v == V_ACANS || v == V_ACSTEP || v == V_CMSTEP || (!ui.adv && view_adv(v))))   /* (1.0.4: the pages the Jam Steps page replaced are not walked) */
+            while (v >= 0 && v < NDIAL && (!ui.adv && (v == V_ACANS || v == V_ACSTEP || v == V_CMSTEP || view_adv(v))))   /* (1.0.6: Advanced walks every page, including the Acid answer, Acid steps and Pluck steps; the plain walk skips what Jam Steps replaced) */
                 v += e > 0 ? 1 : -1;
             if (v >= 0 && v < NDIAL)
                 set_view(v);

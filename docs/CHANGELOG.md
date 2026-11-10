@@ -1,5 +1,9 @@
 # DARK-1 changelog
 
+## 1.0.6
+
+- **Advanced shows every page.** With Advanced on, turning SELECT (or tapping a page button again) now walks every page, including Acid answer, Acid steps and Pluck steps. 1.0.4 to 1.0.5 skipped those three even in Advanced. With Advanced off nothing changes: Jam Steps still replaces them.
+
 ## 1.0.5
 
 - **Shortcut menu:** tap SEL and a list of every shortcut opens and stays open. Turn SELECT for the next page (6 pages). SEL, HOME or any button closes it.

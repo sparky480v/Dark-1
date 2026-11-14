@@ -1,3 +1,7 @@
+## DARK-1 1.0.7: works on newer FM-1s
+
+Some newer FM-1s have a different flash chip (UCUN UC25HQ80). DARK-1 now accepts both chips, so saved pieces and settings survive a power-off on older and newer units.
+
 > **DARK-1:** this manual is PERF-1's and its controls are unchanged. Its genre and piece tables, tempo lists and named examples describe PERF-1's factory set; DARK-1's twenty-one genres and 210 pieces are described in [DARK-1.md](DARK-1.md) and in the page's preset browser. What DARK-1 1.0.3, 1.0.4 and 1.0.5 add to the controls is listed in the sections "DARK-1 1.0.5", "DARK-1 1.0.4" and "DARK-1 1.0.3: what is new on the controls" below. **Where an older part of this manual disagrees with the 1.0.5 section (the sigil, the eye, the figures, the old visualizers, the Hold SEL card, Hold on the first Jam page), the 1.0.5 section is right.**
 
 ## DARK-1 1.0.6: Advanced shows every page

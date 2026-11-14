@@ -715,7 +715,8 @@ static void fm1_main(void)
     uint32_t last_frame = 0;
     {
         uint32_t f = irq_save();
-        flash_ok = FL_FAR(fl_jedec_ram)() == 0x856014u;
+        { uint32_t jid = FL_FAR(fl_jedec_ram)();
+          flash_ok = jid == 0x856014u || jid == 0xB36014u; }   /* Puya P25Q80 (older FM-1) or UCUN UC25HQ80 (newer) */
         if (flash_ok)
             FL_FAR(fl_resume_ram)();                      /* (an erase left suspended by a reset finishes) */   /* the expected 1 MiB part, else RAM only */
         irq_restore(f);

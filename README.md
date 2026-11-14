@@ -25,3 +25,5 @@ kits and patterns, bass, FM voices, chord habits, scales, builds and breakdowns,
 ## Licence
 
 GPL-3.0-only. See `LICENSE` and `LICENSING.md` for the full chain of credit: AMB-1 by Charles Vestal, HYP-1 by RedtailWorks, PERF-1 by deamonSLINKY, and the Felucca platform.
+
+You can also try DARK-1 in the browser, no flashing needed, in the free community [FM-1 Emulator](https://fm1-emulator.atst.tools/).
